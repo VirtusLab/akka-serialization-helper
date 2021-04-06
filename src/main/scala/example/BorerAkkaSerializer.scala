@@ -6,5 +6,4 @@ class BorerAkkaSerializer extends CborAkkaSerializer[BorerSerializable] with Cod
 
   register[Zoo]
   register[Animal]
-
 }
