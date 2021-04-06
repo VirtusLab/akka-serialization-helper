@@ -1,6 +1,7 @@
 package example
 
 import example.Animal.{Lion, Tiger}
+import example.Zoo.NorthZoo
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -11,7 +12,7 @@ class HelloSpec extends AnyWordSpecLike with Matchers {
       val obj = Tiger
       val serializer = new BorerAkkaSerializer()
       val serialized = serializer.toBinary(obj)
-      val deserialized = serializer.fromBinary(serialized, Some(Tiger.getClass))
+      val deserialized = serializer.fromBinary(serialized, Some(classOf[Animal]))
       assert(deserialized eq obj)
     }
 
@@ -19,8 +20,16 @@ class HelloSpec extends AnyWordSpecLike with Matchers {
       val obj = Lion("lion")
       val serializer = new BorerAkkaSerializer()
       val serialized = serializer.toBinary(obj)
-      val deserialized = serializer.fromBinary(serialized, Some(Animal.getClass))
-      assert(deserialized eq obj)
+      val deserialized = serializer.fromBinary(serialized, Some(classOf[Animal]))
+      assert(deserialized == obj)
+    }
+
+    "serialize nested case class" in {
+      val obj = NorthZoo(Lion("lion"))
+      val serializer = new BorerAkkaSerializer()
+      val serialized = serializer.toBinary(obj)
+      val deserialized = serializer.fromBinary(serialized, Some(classOf[Zoo]))
+      assert(deserialized == obj)
     }
   }
 
