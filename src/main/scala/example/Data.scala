@@ -2,7 +2,7 @@ package example
 
 trait BorerSerializable
 
-sealed abstract class Animal
+sealed abstract class Animal extends BorerSerializable
 
 sealed trait Zoo extends BorerSerializable {
   def primaryAttraction: Animal

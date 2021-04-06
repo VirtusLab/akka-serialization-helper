@@ -5,5 +5,6 @@ class BorerAkkaSerializer extends CborAkkaSerializer[BorerSerializable] with Cod
   override def identifier: Int = 19923
 
   register[Zoo]
+  register[Animal]
 
 }
