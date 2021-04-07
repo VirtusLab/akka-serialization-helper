@@ -15,6 +15,8 @@ object Zoo {
 
   final case class SouthZoo(primaryAttraction: Animal) extends Zoo
 
+  final case class GreetingZoo(primaryAttraction: Animal, greeting: Greeting) extends Zoo
+
 }
 
 object Animal {
@@ -24,5 +26,19 @@ object Animal {
   final case class Elephant(name: String, age: Int) extends Animal
 
   final case object Tiger extends Animal
+
+}
+
+import enumeratum._
+
+sealed trait Greeting extends EnumEntry
+
+object Greeting extends Enum[Greeting] {
+  val values: IndexedSeq[Greeting] = findValues
+
+  case object Hello   extends Greeting
+  case object GoodBye extends Greeting
+  case object Hi      extends Greeting
+  case object Bye     extends Greeting
 
 }
