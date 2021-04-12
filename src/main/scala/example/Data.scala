@@ -27,6 +27,11 @@ object Animal {
 
   final case object Tiger extends Animal
 
+  trait NoCompile
+
+  //Uncommenting this results in failure in compilation
+  //final case class InvalidAnimal(noCompile: NoCompile) extends Animal
+
 }
 
 import enumeratum._
@@ -36,9 +41,12 @@ sealed trait Greeting extends EnumEntry
 object Greeting extends Enum[Greeting] {
   val values: IndexedSeq[Greeting] = findValues
 
-  case object Hello   extends Greeting
+  case object Hello extends Greeting
+
   case object GoodBye extends Greeting
-  case object Hi      extends Greeting
-  case object Bye     extends Greeting
+
+  case object Hi extends Greeting
+
+  case object Bye extends Greeting
 
 }
