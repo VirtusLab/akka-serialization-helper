@@ -36,6 +36,8 @@ object Animal {
 
 import enumeratum._
 
+import scala.collection.immutable.IndexedSeq
+
 sealed trait Greeting extends EnumEntry
 
 object Greeting extends Enum[Greeting] {
