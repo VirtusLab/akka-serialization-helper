@@ -29,8 +29,8 @@ object Animal {
 
   trait NoCompile
 
-  //Uncommenting this results in failure in compilation
-  //final case class InvalidAnimal(noCompile: NoCompile) extends Animal
+//  Uncommenting this results in failure in compilation
+//  final case class InvalidAnimal(noCompile: NoCompile) extends Animal
 
 }
 

@@ -1,6 +1,5 @@
 package example
 
-
 import io.bullet.borer.Codec
 import io.bullet.borer.derivation.MapBasedCodecs.deriveAllCodecs
 
