@@ -1,4 +1,5 @@
 import Dependencies._
+import org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile
 
 ThisBuild / scalaVersion     := "2.12.13"
 ThisBuild / version          := "0.1.0-SNAPSHOT"
@@ -8,6 +9,7 @@ ThisBuild / organizationName := "example"
 lazy val root = (project in file("."))
   .settings(
     name := "akka-safer-serializer",
+    scalafmtOnCompile := true,
     libraryDependencies ++= deps
   )
 

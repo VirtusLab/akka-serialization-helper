@@ -8,7 +8,6 @@ sealed trait Zoo extends BorerSerializable {
   def primaryAttraction: Animal
 }
 
-
 object Zoo {
 
   final case class NorthZoo(primaryAttraction: Animal) extends Zoo

@@ -5,7 +5,6 @@ import io.bullet.borer.{Cbor, Codec, Decoder, Encoder}
 
 import scala.reflect.ClassTag
 
-
 trait CborAkkaSerializer[Ser] extends Serializer {
 
   private var registrations: List[(Class[_], Codec[_])] = Nil
@@ -17,13 +16,13 @@ trait CborAkkaSerializer[Ser] extends Serializer {
   override def includeManifest: Boolean = true
 
   override def toBinary(o: AnyRef): Array[Byte] = {
-    val codec   = getCodec(o.getClass, "encoding")
+    val codec = getCodec(o.getClass, "encoding")
     val encoder = codec.encoder.asInstanceOf[Encoder[AnyRef]]
     Cbor.encode(o)(encoder).toByteArray
   }
 
   override def fromBinary(bytes: Array[Byte], manifest: Option[Class[_]]): AnyRef = {
-    val codec   = getCodec(manifest.get, "decoding")
+    val codec = getCodec(manifest.get, "decoding")
     val decoder = codec.decoder.asInstanceOf[Decoder[AnyRef]]
     Cbor.decode(bytes).to[AnyRef](decoder).value
   }
