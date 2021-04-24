@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   val borerVersion = "1.6.3"
-  val akkaVersion = "2.6.10"
+  val akkaVersion = "2.6.13"
 
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.2"
   val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
