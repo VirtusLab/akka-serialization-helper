@@ -1,10 +1,10 @@
-package example
+package org.virtuslab.akkasaferserializer
 
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, SerializationTestKit}
 import akka.actor.typed.ActorSystem
 import com.typesafe.config.ConfigFactory
-import example.Animal.{Lion, Tiger}
-import example.Zoo.{GreetingZoo, NorthZoo}
+import Animal.{Lion, Tiger}
+import Zoo.{GreetingZoo, NorthZoo}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 

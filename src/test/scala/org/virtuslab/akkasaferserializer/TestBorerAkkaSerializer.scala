@@ -1,4 +1,4 @@
-package example
+package org.virtuslab.akkasaferserializer
 
 class TestBorerAkkaSerializer extends CborAkkaSerializer[BorerSerializable] with Codecs {
 

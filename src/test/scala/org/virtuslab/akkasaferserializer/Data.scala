@@ -1,4 +1,4 @@
-package example
+package org.virtuslab.akkasaferserializer
 
 trait BorerSerializable
 

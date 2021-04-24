@@ -1,4 +1,4 @@
-package example
+package org.virtuslab.akkasaferserializer
 
 import io.bullet.borer.Codec
 import io.bullet.borer.derivation.MapBasedCodecs.deriveAllCodecs

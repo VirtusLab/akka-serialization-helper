@@ -1,4 +1,4 @@
-package example
+package org.virtuslab.akkasaferserializer
 
 import akka.serialization.Serializer
 import io.bullet.borer.{Cbor, Codec, Decoder, Encoder}
