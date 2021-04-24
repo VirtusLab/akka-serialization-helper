@@ -9,7 +9,7 @@ trait CborAkkaSerializer[Ser] extends Serializer {
 
   private var registrations: List[(Class[_], Codec[_])] = Nil
 
-  protected def register[T <: Ser: Encoder: Decoder: ClassTag]: Unit = {
+  protected def register[T <: Ser : Encoder : Decoder : ClassTag]: Unit = {
     registrations ::= scala.reflect.classTag[T].runtimeClass -> Codec.of[T]
   }
 
@@ -35,5 +35,32 @@ trait CborAkkaSerializer[Ser] extends Serializer {
       .getOrElse {
         throw new RuntimeException(s"$action of $classValue is not configured")
       }
+  }
+
+
+  protected def runtimeChecks(cl: Class[_]): Unit = {
+    import org.reflections8.Reflections
+    import shapeless.Typeable
+    import scala.collection.convert.ImplicitConversions._
+    import scala.reflect.runtime.{universe => ru}
+
+    val reflections = new Reflections()
+
+    def findAllObjects[T](cl: Class[T]): Vector[Class[_ <: T]] = {
+      reflections.getSubTypesOf(cl).toVector
+    }
+
+    val found = findAllObjects(cl)
+
+
+    val foundClasses = found.filterNot(x => x.isInterface)
+    foundClasses.foreach { clazz =>
+      try {
+        getCodec(clazz, "encoding")
+        getCodec(clazz, "decoding")
+      } catch {
+        case e: RuntimeException => throw e
+      }
+    }
   }
 }

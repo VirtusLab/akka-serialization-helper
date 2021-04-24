@@ -5,5 +5,7 @@ class TestBorerAkkaSerializer extends CborAkkaSerializer[BorerSerializable] with
   override def identifier: Int = 19923
 
   register[Zoo]
-  register[Animal]
+  //register[Animal]
+
+  runtimeChecks(classOf[BorerSerializable])
 }
