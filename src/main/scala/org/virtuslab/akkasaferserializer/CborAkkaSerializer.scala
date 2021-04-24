@@ -3,14 +3,15 @@ package org.virtuslab.akkasaferserializer
 import akka.serialization.Serializer
 import io.bullet.borer.{Cbor, Codec, Decoder, Encoder}
 
+import java.util.concurrent.atomic._
 import scala.reflect.ClassTag
 
 trait CborAkkaSerializer[Ser] extends Serializer {
 
-  private var registrations: List[(Class[_], Codec[_])] = Nil
+  private val registrations = new AtomicReference[List[(Class[_], Codec[_])]](List.empty)
 
-  protected def register[T <: Ser : Encoder : Decoder : ClassTag]: Unit = {
-    registrations ::= scala.reflect.classTag[T].runtimeClass -> Codec.of[T]
+  protected def register[T <: Ser: Encoder: Decoder: ClassTag]: Unit = {
+    registrations.getAndAccumulate(List(scala.reflect.classTag[T].runtimeClass -> Codec.of[T]), _ ++ _)
   }
 
   override def includeManifest: Boolean = true
@@ -29,6 +30,7 @@ trait CborAkkaSerializer[Ser] extends Serializer {
 
   private def getCodec(classValue: Class[_], action: String): Codec[_] = {
     registrations
+      .get()
       .collectFirst {
         case (clazz, codec) if clazz.isAssignableFrom(classValue) => codec
       }
