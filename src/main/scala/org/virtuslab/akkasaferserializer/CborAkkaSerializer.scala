@@ -10,7 +10,7 @@ trait CborAkkaSerializer[Ser] extends Serializer {
 
   private val registrations = new AtomicReference[List[(Class[_], Codec[_])]](List.empty)
 
-  protected def register[T <: Ser : Encoder : Decoder : ClassTag]: Unit = {
+  protected def register[T <: Ser: Encoder: Decoder: ClassTag]: Unit = {
     registrations.getAndAccumulate(List(scala.reflect.classTag[T].runtimeClass -> Codec.of[T]), _ ++ _)
   }
 
@@ -29,7 +29,8 @@ trait CborAkkaSerializer[Ser] extends Serializer {
   }
 
   private def getCodec(classValue: Class[_], action: String): Codec[_] = {
-    registrations.get()
+    registrations
+      .get()
       .collectFirst {
         case (clazz, codec) if clazz.isAssignableFrom(classValue) => codec
       }
