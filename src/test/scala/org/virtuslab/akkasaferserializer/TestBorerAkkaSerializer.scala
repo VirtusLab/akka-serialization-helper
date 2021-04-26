@@ -8,6 +8,7 @@ class TestBorerAkkaSerializer extends CborAkkaSerializer[BorerSerializable] {
 
   register[Zoo]
   register[Animal]
+  register[DateTimeClass]
 
   runtimeChecks(classOf[BorerSerializable])
 }

@@ -8,6 +8,8 @@ import Zoo.{GreetingZoo, NorthZoo}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
+import java.time.OffsetDateTime
+
 class TestBorerAkkaSerializerSpec extends AnyWordSpecLike with Matchers {
 
   "BorerAkkaSerializer" should {
@@ -31,6 +33,10 @@ class TestBorerAkkaSerializerSpec extends AnyWordSpecLike with Matchers {
 
     "serialize case class with enumeration" in {
       serializationTestKit.verifySerialization(GreetingZoo(Lion("lion"), Greeting.Hello))
+    }
+
+    "serialize case class with additional codecs form StandardCodecs" in {
+      serializationTestKit.verifySerialization(DateTimeClass(0, OffsetDateTime.now()))
     }
   }
 

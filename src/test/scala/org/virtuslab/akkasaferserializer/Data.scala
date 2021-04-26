@@ -28,13 +28,14 @@ object Animal {
 
   trait NoCompile
 
-//  Uncommenting this results in failure in compilation
-//  final case class InvalidAnimal(noCompile: NoCompile) extends Animal
+  //  Uncommenting this results in failure in compilation
+  //  final case class InvalidAnimal(noCompile: NoCompile) extends Animal
 
 }
 
 import enumeratum._
 
+import java.time.OffsetDateTime
 import scala.collection.immutable.IndexedSeq
 
 sealed trait Greeting extends EnumEntry
@@ -51,3 +52,6 @@ object Greeting extends Enum[Greeting] {
   case object Bye extends Greeting
 
 }
+
+
+case class DateTimeClass(id: Int, offsetDateTime: OffsetDateTime) extends BorerSerializable
