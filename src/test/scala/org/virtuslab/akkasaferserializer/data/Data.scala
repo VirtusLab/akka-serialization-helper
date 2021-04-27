@@ -1,6 +1,4 @@
-package org.virtuslab.akkasaferserializer
-
-trait BorerSerializable
+package org.virtuslab.akkasaferserializer.data
 
 sealed abstract class Animal extends BorerSerializable
 
@@ -52,6 +50,3 @@ object Greeting extends Enum[Greeting] {
   case object Bye extends Greeting
 
 }
-
-
-case class DateTimeClass(id: Int, offsetDateTime: OffsetDateTime) extends BorerSerializable

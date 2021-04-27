@@ -3,10 +3,12 @@ package org.virtuslab.akkasaferserializer
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, SerializationTestKit}
 import akka.actor.typed.ActorSystem
 import com.typesafe.config.ConfigFactory
-import Animal.{Lion, Tiger}
-import Zoo.{GreetingZoo, NorthZoo}
+import org.virtuslab.akkasaferserializer.data.Animal.{Lion, Tiger}
+import org.virtuslab.akkasaferserializer.data.Zoo.{GreetingZoo, NorthZoo}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
+import org.virtuslab.akkasaferserializer.data.CodecsData.DateTimeClass
+import org.virtuslab.akkasaferserializer.data.Greeting
 
 import java.time.OffsetDateTime
 
@@ -36,7 +38,7 @@ class TestBorerAkkaSerializerSpec extends AnyWordSpecLike with Matchers {
     }
 
     "serialize case class with additional codecs form StandardCodecs" in {
-      serializationTestKit.verifySerialization(DateTimeClass(0, OffsetDateTime.now()))
+      serializationTestKit.verifySerialization(DateTimeClass(OffsetDateTime.now()))
     }
   }
 
