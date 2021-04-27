@@ -3,7 +3,7 @@ jobs:
   build:
     machine:
       # https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202101-01
 
     working_directory: ~/akka-safer-serializer
 

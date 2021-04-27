@@ -17,7 +17,6 @@ object Dependencies {
   val borerAkka = "io.bullet" %% "borer-compat-akka" % borerVersion
 
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
-  val shapeless = "com.chuusai" %% "shapeless" % "2.3.3"
 
   val deps = Seq(
     scalaTest % Test,
@@ -29,7 +28,6 @@ object Dependencies {
     borerCore,
     borerDerivation,
     borerAkka,
-    reflections,
-    shapeless
+    reflections
   )
 }

@@ -17,7 +17,7 @@ class AkkaStreamSerializerSpec extends AnyWordSpecLike with Matchers {
 
   "BorerAkkaSerializer" should {
 
-    val config = ConfigFactory.load("application.conf").withFallback(ConfigFactory.load())
+    val config = ConfigFactory.load()
     val testKit: ActorTestKit = ActorTestKit(config)
     val system: ActorSystem[Nothing] = testKit.system
     val serializationTestKit = new SerializationTestKit(system)
@@ -27,13 +27,13 @@ class AkkaStreamSerializerSpec extends AnyWordSpecLike with Matchers {
     "serialize class with SourceRef" in {
       val source: Source[Int, NotUsed] = Source(1 to 100)
       val ref: SourceRef[Int] = source.runWith(StreamRefs.sourceRef())
-      serializationTestKit.verifySerialization(SourceRefClass(ref), assertEquality = true)
+      serializationTestKit.verifySerialization(SourceRefClass(ref))
     }
 
     "serialize class with SinkRef" in {
       val sink: Sink[Int, Future[Int]] = Sink.fold[Int, Int](0)(_ + _)
       val ref: SinkRef[Int] = StreamRefs.sinkRef[Int]().to(sink).run()
-      serializationTestKit.verifySerialization(SinkRefClass(ref), assertEquality = true)
+      serializationTestKit.verifySerialization(SinkRefClass(ref))
     }
 
   }

@@ -6,10 +6,11 @@ import io.bullet.borer.{Cbor, Codec, Decoder, Encoder}
 import java.util.concurrent.atomic._
 import scala.reflect.ClassTag
 
-trait CborAkkaSerializer[Ser] extends Serializer {
+trait BorerAkkaSerializer[Ser] extends Serializer {
 
   private val registrations = new AtomicReference[List[(Class[_], Codec[_])]](List.empty)
 
+  //noinspection UnitMethodIsParameterless
   protected def register[T <: Ser: Encoder: Decoder: ClassTag]: Unit = {
     registrations.getAndAccumulate(List(scala.reflect.classTag[T].runtimeClass -> Codec.of[T]), _ ++ _)
   }
@@ -35,34 +36,24 @@ trait CborAkkaSerializer[Ser] extends Serializer {
         case (clazz, codec) if clazz.isAssignableFrom(classValue) => codec
       }
       .getOrElse {
-        throw new RuntimeException(s"$action of $classValue is not configured")
+        throw new RuntimeException(s"$action for $classValue is not configured")
       }
   }
 
-
   protected def runtimeChecks(cl: Class[_]): Unit = {
     import org.reflections8.Reflections
-    import shapeless.Typeable
     import scala.collection.convert.ImplicitConversions._
-    import scala.reflect.runtime.{universe => ru}
 
     val reflections = new Reflections()
 
-    def findAllObjects[T](cl: Class[T]): Vector[Class[_ <: T]] = {
-      reflections.getSubTypesOf(cl).toVector
-    }
+    def findAllObjects[T](cl: Class[T]): Seq[Class[_ <: T]] = reflections.getSubTypesOf(cl).toSeq
 
     val found = findAllObjects(cl)
 
-
-    val foundClasses = found.filterNot(x => x.isInterface)
+    val foundClasses = found.filterNot(_.isInterface)
     foundClasses.foreach { clazz =>
-      try {
-        getCodec(clazz, "encoding")
-        getCodec(clazz, "decoding")
-      } catch {
-        case e: RuntimeException => throw e
-      }
+      getCodec(clazz, "encoding")
+      getCodec(clazz, "decoding")
     }
   }
 }

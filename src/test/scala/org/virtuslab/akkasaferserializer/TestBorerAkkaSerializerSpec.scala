@@ -16,7 +16,7 @@ class TestBorerAkkaSerializerSpec extends AnyWordSpecLike with Matchers {
 
   "BorerAkkaSerializer" should {
 
-    val config = ConfigFactory.load("application.conf").withFallback(ConfigFactory.load())
+    val config = ConfigFactory.load()
     val testKit: ActorTestKit = ActorTestKit(config)
     val system: ActorSystem[Nothing] = testKit.system
     val serializationTestKit = new SerializationTestKit(system)
