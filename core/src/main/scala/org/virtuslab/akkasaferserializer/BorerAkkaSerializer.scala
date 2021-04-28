@@ -40,18 +40,7 @@ trait BorerAkkaSerializer[Ser] extends Serializer {
       }
   }
 
-  protected def runtimeChecks(cl: Class[_]): Unit = {
-    import org.reflections8.Reflections
-    import scala.collection.convert.ImplicitConversions._
-
-    val reflections = new Reflections()
-
-    def findAllObjects[T](cl: Class[T]): Seq[Class[_ <: T]] = reflections.getSubTypesOf(cl).toSeq
-
-    val found = findAllObjects(cl)
-
-    val foundClasses = found.filterNot(_.isInterface)
-
-    foundClasses.foreach(getCodec(_, "codec"))
+  protected def runtimeChecks(prefix: String, cl: Class[_]): Unit = {
+    RuntimeReflections(prefix).findAllObjects(cl).filterNot(_.isInterface).foreach(getCodec(_, "codec"))
   }
 }

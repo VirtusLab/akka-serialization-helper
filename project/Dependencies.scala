@@ -18,6 +18,8 @@ object Dependencies {
 
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
 
+  val logger = "org.slf4j" % "slf4j-simple" % "1.7.30"
+
   val deps = Seq(
     scalaTest % Test,
     akkaTestKit % Test,
@@ -28,6 +30,6 @@ object Dependencies {
     borerCore,
     borerDerivation,
     borerAkka,
-    reflections
-  )
+    reflections,
+    logger % Test)
 }

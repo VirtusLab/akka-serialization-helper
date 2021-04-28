@@ -12,5 +12,5 @@ class TestBorerAkkaSerializer extends BorerAkkaSerializer[BorerSerializable] {
   register[Animal]
   register[CodecsData]
 
-  runtimeChecks(classOf[BorerSerializable])
+  runtimeChecks("org.virtuslab", classOf[BorerSerializable])
 }

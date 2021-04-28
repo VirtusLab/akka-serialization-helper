@@ -3,6 +3,8 @@
 
 .bsp/
 .idea/
+.sbt/
+null/
 
 dist/*
 target/
