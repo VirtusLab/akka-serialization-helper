@@ -18,25 +18,25 @@ trait BorerAkkaSerializer[Ser] extends Serializer {
   override def includeManifest: Boolean = true
 
   override def toBinary(o: AnyRef): Array[Byte] = {
-    val codec = getCodec(o.getClass, "encoding")
+    val codec = getCodec(o.getClass, "encoder")
     val encoder = codec.encoder.asInstanceOf[Encoder[AnyRef]]
     Cbor.encode(o)(encoder).toByteArray
   }
 
   override def fromBinary(bytes: Array[Byte], manifest: Option[Class[_]]): AnyRef = {
-    val codec = getCodec(manifest.get, "decoding")
+    val codec = getCodec(manifest.get, "decoder")
     val decoder = codec.decoder.asInstanceOf[Decoder[AnyRef]]
     Cbor.decode(bytes).to[AnyRef](decoder).value
   }
 
-  private def getCodec(classValue: Class[_], action: String): Codec[_] = {
+  private def getCodec(clazz: Class[_], item: String): Codec[_] = {
     registrations
       .get()
       .collectFirst {
-        case (clazz, codec) if clazz.isAssignableFrom(classValue) => codec
+        case (clazz, codec) if clazz.isAssignableFrom(clazz) => codec
       }
       .getOrElse {
-        throw new RuntimeException(s"$action for $classValue is not configured")
+        throw new RuntimeException(s"$item for $clazz is not registered")
       }
   }
 
@@ -51,9 +51,7 @@ trait BorerAkkaSerializer[Ser] extends Serializer {
     val found = findAllObjects(cl)
 
     val foundClasses = found.filterNot(_.isInterface)
-    foundClasses.foreach { clazz =>
-      getCodec(clazz, "encoding")
-      getCodec(clazz, "decoding")
-    }
+
+    foundClasses.foreach(getCodec(_, "codec"))
   }
 }
