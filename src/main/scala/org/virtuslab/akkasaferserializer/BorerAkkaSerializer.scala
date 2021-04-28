@@ -29,14 +29,14 @@ trait BorerAkkaSerializer[Ser] extends Serializer {
     Cbor.decode(bytes).to[AnyRef](decoder).value
   }
 
-  private def getCodec(clazz: Class[_], item: String): Codec[_] = {
+  private def getCodec(clazzToFind: Class[_], item: String): Codec[_] = {
     registrations
       .get()
       .collectFirst {
-        case (clazz, codec) if clazz.isAssignableFrom(clazz) => codec
+        case (clazz, codec) if clazz.isAssignableFrom(clazzToFind) => codec
       }
       .getOrElse {
-        throw new RuntimeException(s"$item for $clazz is not registered")
+        throw new RuntimeException(s"$item for $clazzToFind is not registered")
       }
   }
 
