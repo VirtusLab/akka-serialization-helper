@@ -1,0 +1,19 @@
+version: 2.1
+jobs:
+  build:
+    machine:
+      # https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
+      image: ubuntu-2004:202101-01
+
+    working_directory: ~/akka-safer-serializer
+
+    steps:
+      - checkout
+
+      # -batch is necessary to make sure sbt doesn't stall waiting for user input in case of certain failures
+      - run: echo '-batch' >> .sbtopts
+      - run: sbt update
+      - run: sbt scalafmtCheckAll
+      - run: sbt compile
+      - run: sbt test:compile
+      - run: sbt test
