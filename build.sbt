@@ -28,34 +28,35 @@ lazy val commonSettings = Seq(
       "-Ywarn-dead-code",
       "-Ywarn-unused:-imports,_",
       "-unchecked"),
-  libraryDependencies ++= standardDeps)
-
-//lazy val root = (project in file("."))
-//  .aggregate(serializer.projectRefs ++ codecs.projectRefs: _*)
-//  .settings(name := "akka-safer-serializer", crossScalaVersions := Nil, publish / skip := true)
+  libraryDependencies ++= commonDeps)
 
 lazy val serializer = (projectMatrix in file("serializer"))
-  .dependsOn(codecs)
+  .dependsOn(codecs % "test")
   .settings(name := "borer-akka-serializer")
   .settings(commonSettings)
   .settings(libraryDependencies ++= {
-    virtualAxes.value.collectFirst({ case x: ScalaVersionAxis => x.value }).fold(Seq[ModuleID]()) {
-      case "2.13" => scala213Deps
-      case "2.12" => scala212Deps
-    }
-  })
-  .jvmPlatform(scalaVersions = supportedScalaVersions)
-
-lazy val codecs =
-  (projectMatrix in file("codecs"))
-    .settings(name := "borer-extra-codecs")
-    .settings(commonSettings)
-    .settings(libraryDependencies ++= {
-      virtualAxes.value.collectFirst({ case x: ScalaVersionAxis => x.value }).fold(Seq[ModuleID]()) {
+    virtualAxes.value
+      .collectFirst { case x: ScalaVersionAxis => x.value }
+      .map {
         case "2.13" => scala213Deps
         case "2.12" => scala212Deps
       }
-    })
-    .jvmPlatform(scalaVersions = supportedScalaVersions)
+      .getOrElse(Seq.empty)
+  })
+  .jvmPlatform(scalaVersions = supportedScalaVersions)
+
+lazy val codecs = (projectMatrix in file("codecs"))
+  .settings(name := "borer-extra-codecs")
+  .settings(commonSettings)
+  .settings(libraryDependencies ++= {
+    virtualAxes.value
+      .collectFirst { case x: ScalaVersionAxis => x.value }
+      .map {
+        case "2.13" => scala213Deps
+        case "2.12" => scala212Deps
+      }
+      .getOrElse(Seq.empty)
+  })
+  .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
