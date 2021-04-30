@@ -14,6 +14,8 @@ object Dependencies {
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.30"
 
+  val scalaCompiler213 = "org.scala-lang" % "scala-compiler" % "2.13.5"
+
   val commonDeps = Seq(
     scalaTest % Test,
     akkaTestKit % Test,

@@ -43,4 +43,8 @@ lazy val codecs = (projectMatrix in file("codecs"))
   .settings(libraryDependencies ++= borerDeps)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-// See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
+lazy val plugin = (projectMatrix in file("plugin"))
+  .settings(name := "safer-serializer-plugin")
+  .settings(commonSettings)
+  .settings(libraryDependencies += scalaCompiler213)
+  .jvmPlatform(scalaVersions = Seq(scala213))

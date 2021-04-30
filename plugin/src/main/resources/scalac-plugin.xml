@@ -1,0 +1,4 @@
+<plugin>
+    <name>safer-serializer-plugin</name>
+    <classname>org.virtuslab.akkasaferserializer.SaferSerializerPlugin</classname>
+</plugin>
