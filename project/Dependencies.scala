@@ -8,6 +8,7 @@ object Dependencies {
   val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
   val akkaTestKit = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
   val akkaStream = "com.typesafe.akka" %% "akka-stream" % akkaVersion
+  val akkaPersistence = "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion
   val akkaStreamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
 
   val enumeratum = "com.beachape" %% "enumeratum" % "1.6.1"
@@ -20,6 +21,7 @@ object Dependencies {
     akkaStreamTestKit % Test,
     akkaTyped % Provided,
     akkaStream % Provided,
+    akkaPersistence % Provided,
     enumeratum % Test,
     reflections,
     logger % Test)
