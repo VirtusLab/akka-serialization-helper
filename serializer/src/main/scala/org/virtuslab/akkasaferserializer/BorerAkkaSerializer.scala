@@ -48,11 +48,11 @@ trait BorerAkkaSerializer[Ser] extends Serializer {
     checkMarkerTrait(prefix, cl)
   }
 
-  private def checkCodecs(prefix: String, cl: Class[_]): Unit ={
+  private def checkCodecs(prefix: String, cl: Class[_]): Unit = {
     RuntimeReflections(prefix).findAllObjects(cl).filterNot(_.isInterface).foreach(getCodec(_, "codec"))
   }
 
-  private def checkMarkerTrait(prefix: String, cl: Class[_]): Unit ={
+  private def checkMarkerTrait(prefix: String, cl: Class[_]): Unit = {
     RuntimeReflections(prefix)
       .findAllObjects(classOf[Behavior[_]])
       .flatMap(f => f.getMethods)
@@ -68,7 +68,7 @@ trait BorerAkkaSerializer[Ser] extends Serializer {
             case clazz: Class[_] if !cl.isAssignableFrom(clazz) =>
               val message =
                 s"Type ${clazz.getName} is used as Akka $category (as observed in the return type of method $method method), " +
-                  s"but does NOT extend $cl marker trait name; this will fail in the runtime $failsWhen"
+                s"but does NOT extend $cl marker trait name; this will fail in the runtime $failsWhen"
               println(message)
               throw new IllegalStateException(message)
 
@@ -85,7 +85,7 @@ trait BorerAkkaSerializer[Ser] extends Serializer {
               checkType(messageType, "message", "when sending a message outside of the current JVM")
             case _ =>
           }
-        } else if(returnType == classOf[ReplyEffect[_,_]]){
+        } else if (returnType == classOf[ReplyEffect[_, _]]) {
           case parameterizedType: ParameterizedType =>
             val Array(eventType, stateType) = parameterizedType.getActualTypeArguments
             checkType(eventType, "event", "when saving to the journal")
