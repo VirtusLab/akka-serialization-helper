@@ -15,6 +15,7 @@ object Dependencies {
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.30"
 
   val scalaCompiler213 = "org.scala-lang" % "scala-compiler" % "2.13.5"
+  val scalaLibrary213 = "org.scala-lang" % "scala-library" % "2.13.5"
 
   val commonDeps = Seq(
     scalaTest % Test,
