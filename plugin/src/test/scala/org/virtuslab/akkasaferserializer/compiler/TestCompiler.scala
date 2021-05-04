@@ -1,4 +1,6 @@
-package org.virtuslab.akkasaferserializer
+package org.virtuslab.akkasaferserializer.compiler
+
+import org.virtuslab.akkasaferserializer.SaferSerializerPlugin
 
 import java.io.{BufferedReader, PrintWriter, StringReader, StringWriter}
 import java.net.URLClassLoader
@@ -14,15 +16,18 @@ object TestCompiler {
 
     val settings = new Settings()
 
-    val loader = getClass.getClassLoader.asInstanceOf[URLClassLoader]
-    val entries = loader.getURLs.map(_.getPath).toList
-    val libraryPath = entries.collectFirst {
-      case x if x.contains("scala-compiler") => x.replaceAll("scala-compiler", "scala-library")
-    } match {
-      case Some(value) => value
-      case None        => throw new RuntimeException("Scala compiler in classpath not found")
+    getClass.getClassLoader match {
+      case loader: URLClassLoader =>
+        val entries = loader.getURLs.map(_.getPath).toList
+        val libraryPath = entries
+          .collectFirst {
+            case x if x.contains("scala-compiler") => x.replaceAll("scala-compiler", "scala-library")
+          }
+          .getOrElse(throw new RuntimeException("Scala compiler in classpath not found"))
+        settings.classpath.value = ClassPath.join(libraryPath :: entries: _*)
+      case _ =>
+        settings.usejavacp.value = true
     }
-    settings.classpath.value = ClassPath.join(libraryPath :: entries: _*)
 
     settings.outputDirs.setSingleOutput(new VirtualDirectory("out", None))
 

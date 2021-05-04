@@ -16,6 +16,7 @@ object Dependencies {
 
   val scalaCompiler213 = "org.scala-lang" % "scala-compiler" % "2.13.5"
   val scalaLibrary213 = "org.scala-lang" % "scala-library" % "2.13.5"
+  val scalaReflect213 ="org.scala-lang" % "scala-reflect" % "2.13.5"
 
   val commonDeps = Seq(
     scalaTest % Test,

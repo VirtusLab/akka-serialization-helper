@@ -1,8 +1,7 @@
-package org.virtuslab.akkasaferserializer
+package org.virtuslab.akkasaferserializer.compiler
 
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.{AnyWordSpec, AnyWordSpecLike}
 
 class TestCompilerSpec extends AnyFlatSpecLike with Matchers {
   "Test compiler".can("compile good code") in {

@@ -1,6 +1,6 @@
 package org.virtuslab.akkasaferserializer
 
-import scala.tools.nsc.{Global, Phase}
+import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.{Plugin, PluginComponent}
 
 class SaferSerializerPlugin(override val global: Global) extends Plugin {
