@@ -8,6 +8,7 @@ import io.bullet.borer.Codec
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 import java.time.OffsetDateTime
+import scala.concurrent.duration.FiniteDuration
 
 object StandardCodecs {
 
@@ -25,10 +26,14 @@ object StandardCodecs {
 
   private def serializationSystem: actor.ActorSystem = Serialization.getCurrentTransportInformation().system
 
-  implicit val offsetDateTimeCodec: Codec[OffsetDateTime] =
-    Codec.bimap[Array[Byte], OffsetDateTime](
-      serializeSerializable[OffsetDateTime],
-      deserializeSerializable[OffsetDateTime])
+  implicit val offsetDateTimeCodec: Codec[OffsetDateTime] = universalSerializableCodec[OffsetDateTime]
+
+  implicit val finiteDurationCodec: Codec[FiniteDuration] = universalSerializableCodec[FiniteDuration]
+
+  private def universalSerializableCodec[A <: java.io.Serializable]: Codec[A] = Codec.bimap[Array[Byte], A](
+    serializeSerializable[A],
+    deserializeSerializable[A]
+  )
 
   private def serializeSerializable[T <: java.io.Serializable](ser: T): Array[Byte] = {
     val os = new ByteArrayOutputStream()
