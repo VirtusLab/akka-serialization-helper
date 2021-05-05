@@ -14,7 +14,7 @@ object Dependencies {
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.30"
 
-  val commonDeps  = Seq(
+  val commonDeps = Seq(
     scalaTest % Test,
     akkaTestKit % Test,
     akkaStreamTestKit % Test,
@@ -24,13 +24,12 @@ object Dependencies {
     reflections,
     logger % Test)
 
-  val borerCore = "io.bullet" %% "borer-core"
-  val borerDerivation = "io.bullet" %% "borer-derivation"
-  val borerAkka = "io.bullet" %% "borer-compat-akka"
+  val borerVersion = "1.7.2"
 
-  val borerVersion212 = "1.6.3"
-  val borerVersion213 = "1.7.1"
-  val scala212Deps = Seq(borerCore % borerVersion212, borerDerivation % borerVersion212, borerAkka % borerVersion212)
-  val scala213Deps = Seq(borerCore % borerVersion213, borerDerivation % borerVersion213, borerAkka % borerVersion213)
+  val borerCore = "io.bullet" %% "borer-core" % borerVersion
+  val borerDerivation = "io.bullet" %% "borer-derivation" % borerVersion
+  val borerAkka = "io.bullet" %% "borer-compat-akka" % borerVersion
+
+  val borerDeps = Seq(borerCore, borerDerivation, borerAkka)
 
 }

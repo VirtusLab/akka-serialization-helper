@@ -34,29 +34,13 @@ lazy val serializer = (projectMatrix in file("serializer"))
   .dependsOn(codecs % "test")
   .settings(name := "borer-akka-serializer")
   .settings(commonSettings)
-  .settings(libraryDependencies ++= {
-    virtualAxes.value
-      .collectFirst { case x: ScalaVersionAxis => x.value }
-      .map {
-        case "2.13" => scala213Deps
-        case "2.12" => scala212Deps
-      }
-      .getOrElse(Seq.empty)
-  })
+  .settings(libraryDependencies ++= borerDeps)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val codecs = (projectMatrix in file("codecs"))
   .settings(name := "borer-extra-codecs")
   .settings(commonSettings)
-  .settings(libraryDependencies ++= {
-    virtualAxes.value
-      .collectFirst { case x: ScalaVersionAxis => x.value }
-      .map {
-        case "2.13" => scala213Deps
-        case "2.12" => scala212Deps
-      }
-      .getOrElse(Seq.empty)
-  })
+  .settings(libraryDependencies ++= borerDeps)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
