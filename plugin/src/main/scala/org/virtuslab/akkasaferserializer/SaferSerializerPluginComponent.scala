@@ -24,18 +24,7 @@ class SaferSerializerPluginComponent(val global: Global) extends PluginComponent
           case x: TypeTree if compareGenerics(x.tpe, typeOf[Behavior[Nothing]]) => x.tpe.typeArgs
         }.flatten
 
-        @tailrec
-        def typesBfs(prev: List[Type], targets: Set[Type]): Boolean = {
-          val nextGen = prev.flatMap(x => x.parents)
-          if (nextGen.isEmpty)
-            false
-          else if (nextGen.exists(targets(_)))
-            true
-          else
-            typesBfs(nextGen, targets)
-        }
-
-        typesToCheck.find(x => !typesBfs(List(x), roots)) match {
+        typesToCheck.find(x => !roots.exists(y => x <:< y)) match {
           case Some(tp) => reporter.error(tp.termSymbol.pos, s"${tp.toString()} does not extend annotated trait")
           case None     => () //Everything ok
         }
