@@ -11,8 +11,8 @@ import scala.tools.nsc.util.ClassPath
 import scala.tools.nsc.{Global, Settings}
 
 object TestCompiler {
-  def compileCode(code: String): String = {
-    val sources = List(new BatchSourceFile("test.scala", code))
+  def compileCode(code: List[String]): String = {
+    val sources = code.zipWithIndex.map(x => new BatchSourceFile(s"test${x._2}.scala", x._1))
 
     val settings = new Settings()
 

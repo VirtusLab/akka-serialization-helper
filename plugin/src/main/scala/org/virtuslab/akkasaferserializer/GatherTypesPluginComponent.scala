@@ -3,31 +3,33 @@ package org.virtuslab.akkasaferserializer
 import akka.actor.typed.Behavior
 
 import scala.annotation.tailrec
+import scala.collection.mutable
 import scala.tools.nsc.plugins.PluginComponent
 import scala.tools.nsc.{Global, Phase}
 
-class SaferSerializerPluginComponent(val global: Global) extends PluginComponent {
+class GatherTypesPluginComponent(val global: Global) extends PluginComponent {
   import global._
-  override val phaseName: String = "safer-serializer"
+  override val phaseName: String = "akka-safer-serializer-gather"
   override val runsAfter: List[String] = List("refchecks")
+
+  val roots: mutable.Buffer[Type] = mutable.Buffer[Type]()
+  val leafs: mutable.Buffer[Type] = mutable.Buffer[Type]()
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
 
-        val roots = body.collect {
+        val currentRoots = body.collect {
           case x: ClassDef if x.symbol.annotations.exists(_.atp =:= typeOf[SerializerTrait]) => x.symbol.tpe
         }.toSet
 
-        val typesToCheck = body.collect {
+        val currentLeafs = body.collect {
           case x: TypeTree if compareGenerics(x.tpe, typeOf[Behavior[Nothing]]) => x.tpe.typeArgs
         }.flatten
 
-        typesToCheck.find(x => !roots.exists(y => x <:< y)) match {
-          case Some(tp) => reporter.error(tp.termSymbol.pos, s"${tp.toString()} does not extend annotated trait")
-          case None     => () //Everything ok
-        }
+        roots.addAll(currentRoots)
+        leafs.addAll(currentLeafs)
       }
       private def compareGenerics(t1: Type, t2: Type): Boolean = {
         t1.prefix =:= t2.prefix && t1.typeSymbol == t2.typeSymbol

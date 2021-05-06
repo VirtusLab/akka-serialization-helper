@@ -15,14 +15,15 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
       .lines()
       .collect(Collectors.joining("\n"))
 
+  private val serCode = getResourceAsString("MySer.scala")
+
   "Plugin" should "correctly traverse from Behavior to serializer trait" in {
-    val out = TestCompiler.compileCode(getResourceAsString("SingleBehaviorYes.scala"))
+    val out = TestCompiler.compileCode(List(serCode, getResourceAsString("SingleBehaviorYes.scala")))
     out.length shouldEqual 0
   }
 
   it should "detect lack of serializer trait" in {
-    val out = TestCompiler.compileCode(getResourceAsString("SingleBehaviorNo.scala"))
-    print(out)
+    val out = TestCompiler.compileCode(List(serCode, getResourceAsString("SingleBehaviorNo.scala")))
     out.length should not be 0
   }
 
