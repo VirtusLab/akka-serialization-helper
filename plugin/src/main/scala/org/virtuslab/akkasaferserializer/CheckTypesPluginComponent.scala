@@ -15,8 +15,8 @@ class CheckTypesPluginComponent(val gatherTypes: GatherTypesPluginComponent, val
 
       override def apply(unit: global.CompilationUnit): Unit = {
         if (runOnce) {
-          val roots = gatherTypes.roots.toSeq
-          val leafs = gatherTypes.leafs.toSeq
+          val roots = gatherTypes.roots
+          val leafs = gatherTypes.leafs
 
           leafs.find(x => !roots.exists(y => x <:< y)) match {
             case Some(tp) => reporter.error(tp.typeSymbol.pos, s"${tp.toString()} does not extend annotated trait")
