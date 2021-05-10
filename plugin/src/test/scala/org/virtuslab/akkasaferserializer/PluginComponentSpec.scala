@@ -15,10 +15,10 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
       .lines()
       .collect(Collectors.joining("\n"))
 
-  private val serYesCode = getResourceAsString("MySerYes.scala")
-  private val serNoCode = getResourceAsString("MySerNo.scala")
+  private val serYesCode = getResourceAsString("MySerializableYes.scala")
+  private val serNoCode = getResourceAsString("MySerializableNo.scala")
 
-  private val singleBehavior = getResourceAsString("SingleBehavior.scala")
+  private val singleBehavior = getResourceAsString("SingleBehaviorTest.scala")
   "Plugin" should "correctly traverse from Behavior to serializer trait" in {
     val out = TestCompiler.compileCode(List(serYesCode, singleBehavior))
     out should have size 0
@@ -28,7 +28,6 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
     val out = TestCompiler.compileCode(List(serNoCode, singleBehavior))
     out should include("error")
   }
-
 
   it should "correctly traverse from EventEnvelope to serializer trait" in {
     val eventEnvelope = getResourceAsString("EventEnvelopeTest.scala")
@@ -48,5 +47,12 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
 
     val out2 = TestCompiler.compileCode(List(serNoCode, replyEffect))
     out2 should include("error")
+  }
+
+  it should "whitelist all akka types from checks" in {
+    val akkaWhitelist = getResourceAsString("AkkaWhitelistTest.scala")
+
+    val out = TestCompiler.compileCode(List(serYesCode, akkaWhitelist))
+    out should have size 0
   }
 }

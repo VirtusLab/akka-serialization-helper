@@ -7,9 +7,8 @@ import akka.projection.eventsourced.scaladsl.EventSourcedProvider
 import akka.projection.scaladsl.SourceProvider
 import akka.persistence.typed.scaladsl.ReplyEffect
 import akka.actor.typed.Behavior
+import akka.NotUsed
 
-object ReplyEffectTest {
-  trait Command extends MySerializable
-
-  def test: ReplyEffect[Command, Command] = ???
+object AkkaWhitelistTest {
+  def test: EventEnvelope[NotUsed] = ???
 }

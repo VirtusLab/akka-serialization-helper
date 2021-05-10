@@ -9,7 +9,7 @@ import akka.persistence.typed.scaladsl.ReplyEffect
 import akka.actor.typed.Behavior
 
 object EventEnvelopeTest {
-  trait Command extends MySer
+  trait Command extends MySerializable
 
   def test: EventEnvelope[Command] = ???
 }

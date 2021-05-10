@@ -1,8 +1,8 @@
 import sbt._
 
 object Dependencies {
-  lazy val scala212 = "2.12.13"
-  lazy val scala213 = "2.13.5"
+  val scala213 = "2.13.5"
+  val scala212 = "2.12.13"
 
   val akkaVersion = "2.6.13"
 

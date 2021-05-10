@@ -1,0 +1,3 @@
+package org.virtuslab.akkasaferserializer
+
+class SerializabilityTrait extends scala.annotation.StaticAnnotation

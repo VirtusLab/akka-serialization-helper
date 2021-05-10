@@ -1,7 +1,5 @@
 package org.virtuslab.akkasaferserializer
 
-import akka.actor.typed.Behavior
-
 import scala.tools.nsc.plugins.PluginComponent
 import scala.tools.nsc.{Global, Phase}
 
@@ -10,7 +8,7 @@ class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val globa
   override val phaseName: String = "akka-safer-serializer-gather"
   override val runsAfter: List[String] = List("refchecks")
 
-  var rootsCache: List[Type] = List()
+  var annotatedTraitsCache: List[Type] = List()
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
@@ -18,47 +16,49 @@ class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val globa
         val body = unit.body
         val reporter = CrossVersionReporter(global)
 
-        val generics = Seq(
-          typeOf[akka.actor.typed.Behavior[_]],
-          typeOf[akka.persistence.typed.scaladsl.ReplyEffect[Any, _]],
-          typeOf[akka.persistence.typed.scaladsl.ReplyEffect[_, _]],
-          typeOf[akka.projection.eventsourced.EventEnvelope[_]])
+        val genericsNames = Seq(
+          "akka.actor.typed.Behavior",
+          "akka.persistence.typed.scaladsl.ReplyEffect",
+          "akka.projection.eventsourced.EventEnvelope")
 
-        rootsCache = body
+        annotatedTraitsCache = body
           .collect {
-            case x: TypeTree if generics.exists(x.tpe.erasure =:= _) => x.tpe.typeArgs
+            case x: TypeTree if genericsNames.contains(x.tpe.typeSymbol.fullName) => x.tpe.typeArgs
           }
           .flatten
-          .foldRight(rootsCache) { (next, roots) =>
-            if (roots.exists(next <:< _)) {
-              roots
+          .foldRight(annotatedTraitsCache) { (next, annotatedTraits) =>
+            if (annotatedTraits.exists(next <:< _) || next.typeSymbol.fullName.startsWith("akka")) {
+              annotatedTraits
             } else {
-              superclassDfs(next) match {
-                case Some(tp) =>
+              findSuperclassAnnotatedWithSerializabilityTrait(next) match {
+                case Some(annotatedType) =>
                   if (pluginOptions.verbose)
-                    reporter.echo(s"SSP: Found new root: ${tp.typeSymbol.fullName}")
-                  tp :: roots
+                    reporter.echo(
+                      s"${classOf[SaferSerializerPlugin].getSimpleName}: Found new annotated trait: ${annotatedType.typeSymbol.fullName}")
+                  annotatedType :: annotatedTraits
                 case None =>
                   reporter.error(
                     next.typeSymbol.pos,
-                    s"""${next.toString()} is used as Akka message but does is not annotated or extends annotated trait
-                     |Annotate it or its superclass with @${classOf[SerializerTrait].getName}
-                     |This may cause an unexpected use of java serialization during runtime
+                    s"""${next.toString()} is used as Akka message but does not extend a trait annotated with ${classOf[
+                      SerializabilityTrait].getName}.
+                     |Annotate this class or one of the traits/classes it extends with @${classOf[SerializabilityTrait].getName}.
+                     |Passing an object NOT extending ${classOf[SerializabilityTrait].getSimpleName} as a message may cause Akka to fall back to Java serialization during runtime.
+                     |
                      |""".stripMargin)
-                  roots
+                  annotatedTraits
               }
             }
 
           }
 
       }
-      private def superclassDfs(tp: Type): Option[Type] = {
+      private def findSuperclassAnnotatedWithSerializabilityTrait(tp: Type): Option[Type] = {
         if (tp =:= typeTag[AnyRef].tpe || tp =:= typeTag[Any].tpe)
           None
-        else if (tp.typeSymbol.annotations.exists(_.atp =:= typeOf[SerializerTrait]))
+        else if (tp.typeSymbol.annotations.exists(_.atp =:= typeOf[SerializabilityTrait]))
           Some(tp)
         else
-          tp.parents.flatMap(superclassDfs).headOption
+          tp.parents.flatMap(findSuperclassAnnotatedWithSerializabilityTrait).headOption
       }
     }
 }
