@@ -2,12 +2,10 @@ package org.virtuslab.akkasaferserializer
 
 import akka.actor.typed.Behavior
 
-import scala.annotation.tailrec
-import scala.collection.mutable
 import scala.tools.nsc.plugins.PluginComponent
 import scala.tools.nsc.{Global, Phase}
 
-class GatherTypesPluginComponent(val global: Global) extends PluginComponent {
+class GatherTypesPluginComponent(val pluginOptions: PluginOptions, val global: Global) extends PluginComponent {
   import global._
   override val phaseName: String = "akka-safer-serializer-gather"
   override val runsAfter: List[String] = List("refchecks")
