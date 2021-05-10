@@ -9,8 +9,11 @@ object Dependencies {
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.2"
 
   val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
-  val akkaTestKit = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
   val akkaStream = "com.typesafe.akka" %% "akka-stream" % akkaVersion
+  val akkaPersistence = "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion
+  val akkaProjections = "com.lightbend.akka" %% "akka-projection-eventsourced" % "1.2.0"
+
+  val akkaTestKit = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
   val akkaStreamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
 
   val enumeratum = "com.beachape" %% "enumeratum" % "1.6.1"

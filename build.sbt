@@ -54,4 +54,5 @@ lazy val plugin = (projectMatrix in file("plugin"))
         }
         .getOrElse(Seq.empty)
   })
+  .settings(libraryDependencies ++= Seq(akkaPersistence, akkaProjections))
   .jvmPlatform(scalaVersions = supportedScalaVersions)

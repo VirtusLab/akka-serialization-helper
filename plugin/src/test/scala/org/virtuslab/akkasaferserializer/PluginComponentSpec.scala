@@ -15,16 +15,38 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
       .lines()
       .collect(Collectors.joining("\n"))
 
-  private val serCode = getResourceAsString("MySer.scala")
+  private val serYesCode = getResourceAsString("MySerYes.scala")
+  private val serNoCode = getResourceAsString("MySerNo.scala")
 
+  private val singleBehavior = getResourceAsString("SingleBehavior.scala")
   "Plugin" should "correctly traverse from Behavior to serializer trait" in {
-    val out = TestCompiler.compileCode(List(serCode, getResourceAsString("SingleBehaviorYes.scala")))
+    val out = TestCompiler.compileCode(List(serYesCode, singleBehavior))
     out should have size 0
   }
 
-  it should "detect lack of serializer trait" in {
-    val out = TestCompiler.compileCode(List(serCode, getResourceAsString("SingleBehaviorNo.scala")))
+  it should "detect lack of serializer trait with Behavior" in {
+    val out = TestCompiler.compileCode(List(serNoCode, singleBehavior))
     out should include("error")
   }
 
+
+  it should "correctly traverse from EventEnvelope to serializer trait" in {
+    val eventEnvelope = getResourceAsString("EventEnvelopeTest.scala")
+
+    val out = TestCompiler.compileCode(List(serYesCode, eventEnvelope))
+    out should have size 0
+
+    val out2 = TestCompiler.compileCode(List(serNoCode, eventEnvelope))
+    out2 should include("error")
+  }
+
+  it should "correctly traverse from ReplyEffect to serializer trait" in {
+    val replyEffect = getResourceAsString("ReplyEffectTest.scala")
+
+    val out = TestCompiler.compileCode(List(serYesCode, replyEffect))
+    out should have size 0
+
+    val out2 = TestCompiler.compileCode(List(serNoCode, replyEffect))
+    out2 should include("error")
+  }
 }

@@ -18,9 +18,15 @@ class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val globa
         val body = unit.body
         val reporter = CrossVersionReporter(global)
 
+        val generics = Seq(
+          typeOf[akka.actor.typed.Behavior[_]],
+          typeOf[akka.persistence.typed.scaladsl.ReplyEffect[Any, _]],
+          typeOf[akka.persistence.typed.scaladsl.ReplyEffect[_, _]],
+          typeOf[akka.projection.eventsourced.EventEnvelope[_]])
+
         rootsCache = body
           .collect {
-            case x: TypeTree if compareGenerics(x.tpe, typeOf[Behavior[Nothing]]) => x.tpe.typeArgs
+            case x: TypeTree if generics.exists(x.tpe.erasure =:= _) => x.tpe.typeArgs
           }
           .flatten
           .foldRight(rootsCache) { (next, roots) =>
@@ -39,15 +45,12 @@ class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val globa
                      |Annotate it or its superclass with @${classOf[SerializerTrait].getName}
                      |This may cause an unexpected use of java serialization during runtime
                      |""".stripMargin)
-                  rootsCache
+                  roots
               }
             }
 
           }
 
-      }
-      private def compareGenerics(t1: Type, t2: Type): Boolean = {
-        t1.prefix =:= t2.prefix && t1.typeSymbol == t2.typeSymbol
       }
       private def superclassDfs(tp: Type): Option[Type] = {
         if (tp =:= typeTag[AnyRef].tpe || tp =:= typeTag[Any].tpe)
