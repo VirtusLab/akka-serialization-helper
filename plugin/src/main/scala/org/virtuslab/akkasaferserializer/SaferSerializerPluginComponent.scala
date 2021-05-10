@@ -16,6 +16,7 @@ class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val globa
     new StdPhase(prev) {
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
+        val reporter = CrossVersionReporter(global)
 
         rootsCache = body
           .collect {
