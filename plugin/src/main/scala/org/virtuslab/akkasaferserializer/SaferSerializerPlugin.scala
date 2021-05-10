@@ -8,9 +8,8 @@ class SaferSerializerPlugin(override val global: Global) extends Plugin {
   override val description: String = "checks for Behavior[A] and ActorRef[A]"
   private val pluginOptions = new PluginOptions(false)
 
-  private val gatherTypes = new GatherTypesPluginComponent(pluginOptions, global)
-  private val checkTypes = new CheckTypesPluginComponent(pluginOptions, gatherTypes, global)
-  override val components: List[PluginComponent] = List(gatherTypes, checkTypes)
+  private val gatherTypes = new SaferSerializerPluginComponent(pluginOptions, global)
+  override val components: List[PluginComponent] = List(gatherTypes)
 
   override def init(options: List[String], error: String => Unit): Boolean = {
     pluginOptions.verbose = options.exists(_.equals("verbose"))
