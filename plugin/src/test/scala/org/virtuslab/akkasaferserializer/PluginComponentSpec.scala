@@ -1,6 +1,5 @@
 package org.virtuslab.akkasaferserializer
 
-import akka.util.ByteString
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should
 import org.virtuslab.akkasaferserializer.compiler.TestCompiler
@@ -18,7 +17,12 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
   private val serYesCode = getResourceAsString("MySerializableYes.scala")
   private val serNoCode = getResourceAsString("MySerializableNo.scala")
 
-  private val singleBehavior = getResourceAsString("SingleBehaviorTest.scala")
+  private def testCode(code: String) = {
+    TestCompiler.compileCode(List(serYesCode, code)) should have size 0
+    TestCompiler.compileCode(List(serNoCode, code)) should include("error")
+  }
+
+  private val singleBehavior = getResourceAsString("BehaviorTest.scala")
   "Plugin" should "correctly traverse from Behavior to serializer trait" in {
     val out = TestCompiler.compileCode(List(serYesCode, singleBehavior))
     out should have size 0
@@ -30,23 +34,11 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
   }
 
   it should "correctly traverse from EventEnvelope to serializer trait" in {
-    val eventEnvelope = getResourceAsString("EventEnvelopeTest.scala")
-
-    val out = TestCompiler.compileCode(List(serYesCode, eventEnvelope))
-    out should have size 0
-
-    val out2 = TestCompiler.compileCode(List(serNoCode, eventEnvelope))
-    out2 should include("error")
+    testCode(getResourceAsString("EventEnvelopeTest.scala"))
   }
 
   it should "correctly traverse from ReplyEffect to serializer trait" in {
-    val replyEffect = getResourceAsString("ReplyEffectTest.scala")
-
-    val out = TestCompiler.compileCode(List(serYesCode, replyEffect))
-    out should have size 0
-
-    val out2 = TestCompiler.compileCode(List(serNoCode, replyEffect))
-    out2 should include("error")
+    testCode(getResourceAsString("ReplyEffectTest.scala"))
   }
 
   it should "whitelist all akka types from checks" in {
@@ -54,5 +46,13 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
 
     val out = TestCompiler.compileCode(List(serYesCode, akkaWhitelist))
     out should have size 0
+  }
+
+  it should "correctly traverse from Effect to serializer trait" in {
+    testCode(getResourceAsString("EffectTest.scala"))
+  }
+
+  it should "be able to detect serializer trait in generics" in {
+    testCode(getResourceAsString("GenericsTest.scala"))
   }
 }

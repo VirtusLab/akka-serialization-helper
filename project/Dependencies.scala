@@ -1,8 +1,8 @@
 import sbt._
 
 object Dependencies {
-  val scala213 = "2.13.5"
-  val scala212 = "2.12.13"
+  val scalaVersion213 = "2.13.5"
+  val scalaVersion212 = "2.12.13"
 
   val akkaVersion = "2.6.13"
 
@@ -42,8 +42,8 @@ object Dependencies {
   val scalaLibrary = "org.scala-lang" % "scala-library"
   val scalaReflect = "org.scala-lang" % "scala-reflect"
 
-  private val scalaCompilerDeps = Seq(scalaCompiler, scalaLibrary, scalaReflect)
-  val scalaCompiler213Deps: Seq[ModuleID] = scalaCompilerDeps map (_ % scala213)
-  val scalaCompiler212Deps: Seq[ModuleID] = scalaCompilerDeps map (_ % scala212)
+  private val scalaPluginDeps = Seq(scalaCompiler, scalaLibrary, scalaReflect)
+  val scalaPluginDeps213: Seq[ModuleID] = scalaPluginDeps map (_ % scalaVersion213)
+  val scalaPluginDeps212: Seq[ModuleID] = scalaPluginDeps map (_ % scalaVersion212)
 
 }

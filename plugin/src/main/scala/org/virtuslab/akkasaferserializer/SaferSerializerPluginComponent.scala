@@ -19,7 +19,8 @@ class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val globa
         val genericsNames = Seq(
           "akka.actor.typed.Behavior",
           "akka.persistence.typed.scaladsl.ReplyEffect",
-          "akka.projection.eventsourced.EventEnvelope")
+          "akka.projection.eventsourced.EventEnvelope",
+          "akka.persistence.typed.scaladsl.Effect")
 
         annotatedTraitsCache = body
           .collect {
@@ -27,24 +28,29 @@ class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val globa
           }
           .flatten
           .foldRight(annotatedTraitsCache) { (next, annotatedTraits) =>
-            if (annotatedTraits.exists(next <:< _) || next.typeSymbol.fullName.startsWith("akka")) {
+            if (annotatedTraits.exists(next <:< _) || next.dealias.typeSymbol.fullName.startsWith("akka.")) {
               annotatedTraits
             } else {
               findSuperclassAnnotatedWithSerializabilityTrait(next) match {
                 case Some(annotatedType) =>
-                  if (pluginOptions.verbose)
-                    reporter.echo(
-                      s"${classOf[SaferSerializerPlugin].getSimpleName}: Found new annotated trait: ${annotatedType.typeSymbol.fullName}")
-                  annotatedType :: annotatedTraits
+                  if (annotatedTraits.contains(annotatedType)) {
+                    annotatedTraits
+                  } else {
+                    if (pluginOptions.verbose) {
+                      reporter.echo(
+                        s"${classOf[SaferSerializerPlugin].getSimpleName}: Found new annotated trait: ${annotatedType.typeSymbol.fullName}")
+                    }
+                    annotatedType :: annotatedTraits
+                  }
                 case None =>
                   reporter.error(
                     next.typeSymbol.pos,
                     s"""${next.toString()} is used as Akka message but does not extend a trait annotated with ${classOf[
                       SerializabilityTrait].getName}.
-                     |Annotate this class or one of the traits/classes it extends with @${classOf[SerializabilityTrait].getName}.
-                     |Passing an object NOT extending ${classOf[SerializabilityTrait].getSimpleName} as a message may cause Akka to fall back to Java serialization during runtime.
-                     |
-                     |""".stripMargin)
+                      |Passing an object NOT extending ${classOf[SerializabilityTrait].getSimpleName} as a message may cause Akka to fall back to Java serialization during runtime.
+                      |Annotate this class or one of the traits/classes it extends with @${classOf[SerializabilityTrait].getName}.
+                      |
+                      |""".stripMargin)
                   annotatedTraits
               }
             }
@@ -57,6 +63,8 @@ class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val globa
           None
         else if (tp.typeSymbol.annotations.exists(_.atp =:= typeOf[SerializabilityTrait]))
           Some(tp)
+        else if (tp.typeSymbol.isAbstractType)
+          findSuperclassAnnotatedWithSerializabilityTrait(tp.upperBound)
         else
           tp.parents.flatMap(findSuperclassAnnotatedWithSerializabilityTrait).headOption
       }

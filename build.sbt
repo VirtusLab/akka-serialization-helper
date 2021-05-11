@@ -2,14 +2,14 @@ import Dependencies._
 import org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile
 import sbt.VirtualAxis.ScalaVersionAxis
 
+lazy val supportedScalaVersions = List(scalaVersion213, scalaVersion212)
 
-ThisBuild / scalaVersion := scala213
+ThisBuild / scalaVersion := supportedScalaVersions.head
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "org.virtuslab"
 ThisBuild / organizationName := "VirtusLab"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-lazy val supportedScalaVersions = List(scala212, scala213)
 
 lazy val commonSettings = Seq(
   scalafmtOnCompile := true,
@@ -42,6 +42,12 @@ lazy val codecs = (projectMatrix in file("codecs"))
   .settings(libraryDependencies ++= borerDeps)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
+lazy val pluginLibrary = (projectMatrix in file("plugin-library"))
+  .settings(name := "safer-serializer-library")
+  .settings(commonSettings)
+  .jvmPlatform(scalaVersions = supportedScalaVersions)
+
+
 lazy val plugin = (projectMatrix in file("plugin"))
   .settings(name := "safer-serializer-plugin")
   .settings(commonSettings)
@@ -49,10 +55,12 @@ lazy val plugin = (projectMatrix in file("plugin"))
       virtualAxes.value
         .collectFirst { case x: ScalaVersionAxis => x.value }
         .map {
-            case "2.13" => scalaCompiler213Deps
-            case "2.12" => scalaCompiler212Deps
+            case "2.13" => scalaPluginDeps213
+            case "2.12" => scalaPluginDeps212
         }
         .getOrElse(Seq.empty)
   })
   .settings(libraryDependencies ++= Seq(akkaPersistence % Test, akkaProjections % Test))
+  .dependsOn(pluginLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
+
