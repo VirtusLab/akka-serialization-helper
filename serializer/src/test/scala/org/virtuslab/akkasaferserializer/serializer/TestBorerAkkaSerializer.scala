@@ -1,7 +1,7 @@
 package org.virtuslab.akkasaferserializer.serializer
 
 import org.virtuslab.akkasaferserializer.BorerAkkaSerializer
-import org.virtuslab.akkasaferserializer.data.{Animal, BorerSerializable, CodecsData, Zoo}
+import org.virtuslab.akkasaferserializer.data.{AkkaData, Animal, BorerSerializable, Zoo}
 
 class TestBorerAkkaSerializer extends BorerAkkaSerializer[BorerSerializable] {
   import org.virtuslab.akkasaferserializer.serializer.Codecs._
@@ -10,7 +10,7 @@ class TestBorerAkkaSerializer extends BorerAkkaSerializer[BorerSerializable] {
 
   register[Zoo]
   register[Animal]
-  register[CodecsData]
+  register[AkkaData]
 
   runtimeChecks("org.virtuslab", classOf[BorerSerializable])
 }

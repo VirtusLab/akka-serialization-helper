@@ -29,10 +29,10 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= commonDeps)
 
 lazy val serializer = (projectMatrix in file("serializer"))
-  .dependsOn(codecs % "test")
   .settings(name := "borer-akka-serializer")
   .settings(commonSettings)
   .settings(libraryDependencies ++= borerDeps)
+  .dependsOn(codecs % Test)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val codecs = (projectMatrix in file("codecs"))

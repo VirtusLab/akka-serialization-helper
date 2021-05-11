@@ -31,9 +31,9 @@ object Animal {
 
 }
 
+import akka.stream.{SinkRef, SourceRef}
 import enumeratum._
 
-import java.time.OffsetDateTime
 import scala.collection.immutable.IndexedSeq
 
 sealed trait Greeting extends EnumEntry
@@ -49,4 +49,12 @@ object Greeting extends Enum[Greeting] {
 
   case object Bye extends Greeting
 
+}
+
+sealed trait AkkaData extends BorerSerializable
+
+object AkkaData {
+  case class SourceRefClass(ref: SourceRef[Int]) extends AkkaData
+
+  case class SinkRefClass(ref: SinkRef[Int]) extends AkkaData
 }
