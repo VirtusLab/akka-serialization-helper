@@ -31,14 +31,28 @@ lazy val commonSettings = Seq(
 lazy val serializer = (projectMatrix in file("serializer"))
   .settings(name := "borer-akka-serializer")
   .settings(commonSettings)
-  .settings(libraryDependencies ++= borerDeps)
+  .settings(
+    libraryDependencies ++= Seq(
+        borerCore,
+        akkaTyped % Provided,
+        reflections,
+        borerDerivation % Test,
+        akkaTestKit % Test,
+        akkaStream % Test,
+        akkaStreamTestKit % Test,
+        enumeratum % Test))
   .dependsOn(codecs % Test)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val codecs = (projectMatrix in file("codecs"))
   .settings(name := "borer-extra-codecs")
   .settings(commonSettings)
-  .settings(libraryDependencies ++= borerDeps)
+  .settings(
+    libraryDependencies ++= Seq(
+        borerCore % Provided,
+        akkaTyped % Provided,
+        akkaStream % Provided,
+        borerDerivation % Test))
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val checkerLibrary = (projectMatrix in file("checker-library"))
@@ -58,6 +72,6 @@ lazy val checkerPlugin = (projectMatrix in file("checker-plugin"))
       }
       .getOrElse(Seq.empty)
   })
-  .settings(libraryDependencies ++= Seq(akkaPersistence % Test, akkaProjections % Test))
+  .settings(libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test))
   .dependsOn(checkerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
