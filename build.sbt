@@ -10,7 +10,6 @@ ThisBuild / organization := "org.virtuslab"
 ThisBuild / organizationName := "VirtusLab"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-
 lazy val commonSettings = Seq(
   scalafmtOnCompile := true,
   scalacOptions ++= Seq(
@@ -42,25 +41,23 @@ lazy val codecs = (projectMatrix in file("codecs"))
   .settings(libraryDependencies ++= borerDeps)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val pluginLibrary = (projectMatrix in file("plugin-library"))
-  .settings(name := "safer-serializer-library")
+lazy val checkerLibrary = (projectMatrix in file("checker-library"))
+  .settings(name := "akka-serializability-checker-library")
   .settings(commonSettings)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-
-lazy val plugin = (projectMatrix in file("plugin"))
-  .settings(name := "safer-serializer-plugin")
+lazy val checkerPlugin = (projectMatrix in file("checker-plugin"))
+  .settings(name := "akka-serializability-checker-plugin")
   .settings(commonSettings)
   .settings(libraryDependencies ++= {
-      virtualAxes.value
-        .collectFirst { case x: ScalaVersionAxis => x.value }
-        .map {
-            case "2.13" => scalaPluginDeps213
-            case "2.12" => scalaPluginDeps212
-        }
-        .getOrElse(Seq.empty)
+    virtualAxes.value
+      .collectFirst { case x: ScalaVersionAxis => x.value }
+      .map {
+        case "2.13" => scalaPluginDeps213
+        case "2.12" => scalaPluginDeps212
+      }
+      .getOrElse(Seq.empty)
   })
   .settings(libraryDependencies ++= Seq(akkaPersistence % Test, akkaProjections % Test))
-  .dependsOn(pluginLibrary)
+  .dependsOn(checkerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
-
