@@ -1,22 +1,31 @@
 package org.virtuslab.akkasaferserializer
 
 import sbt.Keys._
-import sbt._
+import sbt.{Def, _}
 
 object DumpSchemaPlugin extends AutoPlugin {
 
-  object autoImport extends DumpSchemaKeys {}
-  import autoImport._
+  object autoImport extends DumpSchemaKeys {
+    val baseDumpSchemaSettings: Seq[Def.Setting[_]] = DumpSchemaPlugin.baseDumpSchemaSettings
+  }
+  import autoImport.{baseDumpSchemaSettings => _, _}
 
-  override lazy val projectSettings: Seq[Def.Setting[_]] = dumpSchemaSettings
+  override def projectSettings: Seq[Def.Setting[_]] = additionalSettings ++ dumpSchemaSettings
+
+  override def globalSettings: Seq[Def.Setting[_]] = Nil
+
+  lazy val additionalSettings = Seq(
+    addCompilerPlugin("org.virtuslab" %% "sbt-dumpschema-plugin" % "0.1.0-SNAPSHOT"),
+    scalacOptions ++= Seq("-P:dump-schema-plugin:output_dir"))
 
   lazy val dumpSchemaSettings: Seq[Def.Setting[_]] = baseDumpSchemaSettings
 
   lazy val baseDumpSchemaSettings: Seq[Def.Setting[_]] = Seq(
-    dumpSchema := DumpSchema.assemblyTask(dumpSchema).value,
-    dumpSchemaOutputPath := { baseDirectory.value / (dumpSchemaFilename in dumpSchema).value },
-    dumpSchemaFilename in dumpSchema := (dumpSchemaFilename in dumpSchema)
-        .or(dumpSchemaDefaultFilename in dumpSchema)
+    DumpSchema.assemblyTask(dumpSchema),
+    dumpSchemaOutputPath := { baseDirectory.value / (dumpSchema / dumpSchemaFilename).value },
+    dumpSchema / dumpSchemaFilename := (dumpSchema / dumpSchemaFilename)
+        .or(dumpSchema / dumpSchemaDefaultFilename)
         .value,
-    dumpSchemaDefaultFilename in dumpSchema := { name.value + "-dumpschema-" + version.value + ".txt" })
+    dumpSchema / dumpSchemaDefaultFilename := { name.value + "-dumpschema-" + version.value + ".txt" })
+
 }

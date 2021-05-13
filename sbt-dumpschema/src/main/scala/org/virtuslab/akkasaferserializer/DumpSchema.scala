@@ -1,18 +1,18 @@
 package org.virtuslab.akkasaferserializer
 
-import org.virtuslab.akkasaferserializer.DumpSchemaPlugin.autoImport.{dumpSchemaFilename, dumpSchemaOutputPath}
-import sbt.Keys.{packageOptions, streams, test}
-import sbt.{Def, Task, TaskKey}
-
-import java.io.File
+import sbt._
 
 object DumpSchema {
+  import DumpSchemaPlugin.autoImport._
+
   def apply(filename: File): File = {
+    println("kurwa 2wf")
+    println(filename.toString)
     filename
   }
 
-  def assemblyTask(key: TaskKey[File]): Def.Initialize[Task[File]] =
-    Def.task {
-      DumpSchema((dumpSchemaOutputPath in key).value)
+  def assemblyTask(key: TaskKey[Unit]): Def.Setting[_] =
+    key := {
+      DumpSchema((key / dumpSchemaOutputPath).value)
     }
 }

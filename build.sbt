@@ -75,10 +75,21 @@ lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dumpschema"))
   .enablePlugins(SbtPlugin)
   .settings(name := "sbt-dumpschema")
   .settings(commonSettings)
-  .settings(pluginCrossBuild / sbtVersion :=
+  .settings(pluginCrossBuild / sbtVersion := "1.2.8")
+  .dependsOn(schemaDumpCompilerPlugin)
+  .jvmPlatform(scalaVersions = Seq(scalaVersion212))
+
+lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugin"))
+  .settings(name := "sbt-dumpschema-plugin")
+  .settings(commonSettings)
+  .settings(libraryDependencies ++= {
     virtualAxes.value
       .collectFirst { case x: ScalaVersionAxis => x.value }
-      .map { case "2.12" => "1.2.8" }
-      .getOrElse("1.5.2"))
+      .map {
+        case "2.13" => scalaPluginDeps213
+        case "2.12" => scalaPluginDeps212
+      }
+      .getOrElse(Seq.empty)
+  })
   .dependsOn(checkerLibrary)
-  .jvmPlatform(scalaVersions = Seq(scalaVersion212))
+  .jvmPlatform(scalaVersions = supportedScalaVersions)

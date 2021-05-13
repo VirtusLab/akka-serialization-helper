@@ -9,8 +9,8 @@ class AkkaSerializabilityCheckerPlugin(override val global: Global) extends Plug
     """checks whether a specified Akka serialization is applied to all messages, events and persistent state classes"""
   private val pluginOptions = new PluginOptions(verbose = false)
 
-  private val gatherTypes = new AkkaSerializabilityCheckerPluginComponent(pluginOptions, global)
-  override val components: List[PluginComponent] = List(gatherTypes)
+  override val components: List[PluginComponent] = List(
+    new AkkaSerializabilityCheckerPluginComponent(pluginOptions, global))
 
   override def init(options: List[String], error: String => Unit): Boolean = {
     pluginOptions.verbose = options.contains("verbose")
