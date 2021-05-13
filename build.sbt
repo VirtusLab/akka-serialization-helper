@@ -47,12 +47,7 @@ lazy val serializer = (projectMatrix in file("serializer"))
 lazy val codecs = (projectMatrix in file("codecs"))
   .settings(name := "borer-extra-codecs")
   .settings(commonSettings)
-  .settings(
-    libraryDependencies ++= Seq(
-        borerCore,
-        akkaTyped % Provided,
-        akkaStream % Provided,
-        borerDerivation % Test))
+  .settings(libraryDependencies ++= Seq(borerCore, akkaTyped % Provided, akkaStream % Provided, borerDerivation % Test))
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val checkerLibrary = (projectMatrix in file("checker-library"))
@@ -75,3 +70,15 @@ lazy val checkerPlugin = (projectMatrix in file("checker-plugin"))
   .settings(libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test))
   .dependsOn(checkerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
+
+lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dumpschema"))
+  .enablePlugins(SbtPlugin)
+  .settings(name := "sbt-dumpschema")
+  .settings(commonSettings)
+  .settings(pluginCrossBuild / sbtVersion :=
+    virtualAxes.value
+      .collectFirst { case x: ScalaVersionAxis => x.value }
+      .map { case "2.12" => "1.2.8" }
+      .getOrElse("1.5.2"))
+  .dependsOn(checkerLibrary)
+  .jvmPlatform(scalaVersions = Seq(scalaVersion212))
