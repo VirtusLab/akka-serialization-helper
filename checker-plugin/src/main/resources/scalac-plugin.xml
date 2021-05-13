@@ -1,4 +1,4 @@
 <plugin>
-    <name>safer-serializer-plugin</name>
-    <classname>org.virtuslab.akkasaferserializer.SaferSerializerPlugin</classname>
+    <name>akka-serializability-checker-plugin</name>
+    <classname>org.virtuslab.akkasaferserializer.AkkaSerializabilityCheckerPlugin</classname>
 </plugin>

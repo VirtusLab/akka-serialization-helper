@@ -1,6 +1,6 @@
 package org.virtuslab.akkasaferserializer.compiler
 
-import org.virtuslab.akkasaferserializer.SaferSerializerPlugin
+import org.virtuslab.akkasaferserializer.AkkaSerializabilityCheckerPlugin
 
 import java.io.{BufferedReader, PrintWriter, StringReader, StringWriter}
 import java.net.URLClassLoader
@@ -38,7 +38,7 @@ object TestCompiler {
     val compiler = new Global(settings, reporter) {
       override protected def computeInternalPhases(): Unit = {
         super.computeInternalPhases()
-        for (phase <- new SaferSerializerPlugin(this).components)
+        for (phase <- new AkkaSerializabilityCheckerPlugin(this).components)
           phasesSet += phase
       }
     }

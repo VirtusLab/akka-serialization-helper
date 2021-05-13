@@ -16,11 +16,11 @@ class StandardCodecsSpec extends AnyWordSpecLike with BorerSerializationTestKit 
   "Defined codes" should {
 
     "serialize FiniteDuration" in {
-      roundTrip(FiniteDuration(10, "s"))
+      verifyRoundTrip(FiniteDuration(10, "s"))
     }
 
     "serialize class with OffsetDateTime" in {
-      roundTrip[CodecsData](DateTimeClass(OffsetDateTime.now()))
+      verifyRoundTrip[CodecsData](DateTimeClass(OffsetDateTime.now()))
     }
   }
 }

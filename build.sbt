@@ -49,7 +49,7 @@ lazy val codecs = (projectMatrix in file("codecs"))
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
-        borerCore % Provided,
+        borerCore,
         akkaTyped % Provided,
         akkaStream % Provided,
         borerDerivation % Test))

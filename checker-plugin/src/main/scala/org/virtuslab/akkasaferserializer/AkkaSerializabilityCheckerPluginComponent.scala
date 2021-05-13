@@ -3,9 +3,10 @@ package org.virtuslab.akkasaferserializer
 import scala.tools.nsc.plugins.PluginComponent
 import scala.tools.nsc.{Global, Phase}
 
-class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val global: Global) extends PluginComponent {
+class AkkaSerializabilityCheckerPluginComponent(val pluginOptions: PluginOptions, val global: Global)
+    extends PluginComponent {
   import global._
-  override val phaseName: String = "akka-safer-serializer-gather"
+  override val phaseName: String = "akka-serializability-checker"
   override val runsAfter: List[String] = List("refchecks")
 
   var annotatedTraitsCache: List[Type] = List()
@@ -38,7 +39,7 @@ class SaferSerializerPluginComponent(val pluginOptions: PluginOptions, val globa
                   } else {
                     if (pluginOptions.verbose) {
                       reporter.echo(
-                        s"${classOf[SaferSerializerPlugin].getSimpleName}: Found new annotated trait: ${annotatedType.typeSymbol.fullName}")
+                        s"${classOf[AkkaSerializabilityCheckerPlugin].getSimpleName}: Found new annotated trait: ${annotatedType.typeSymbol.fullName}")
                     }
                     annotatedType :: annotatedTraits
                   }

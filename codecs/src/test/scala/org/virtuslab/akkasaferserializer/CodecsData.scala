@@ -1,7 +1,5 @@
 package org.virtuslab.akkasaferserializer
 
-import akka.stream.{SinkRef, SourceRef}
-
 import java.time.OffsetDateTime
 
 sealed trait CodecsData
