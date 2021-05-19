@@ -22,10 +22,9 @@ object DumpSchemaPlugin extends AutoPlugin {
 
   lazy val baseDumpSchemaSettings: Seq[Def.Setting[_]] = Seq(
     DumpSchema.assemblyTask(dumpSchema),
-    dumpSchemaOutputPath := { target.value / (dumpSchema / dumpSchemaFilename).value },
+    dumpSchema / dumpSchemaOutputPath := { target.value / (dumpSchema / dumpSchemaFilename).value },
     dumpSchema / dumpSchemaFilename := (dumpSchema / dumpSchemaFilename)
-        .or(dumpSchema / dumpSchemaDefaultFilename)
+        .or(Def.setting(s"${name.value}-dumpschema-${version.value}.txt"))
         .value,
-    dumpSchema / dumpSchemaDefaultFilename := { name.value + "-dumpschema-" + version.value + ".txt" },
     dumpSchema / dumpSchemaPlugin := "org.virtuslab" %% "sbt-dumpschema-plugin" % "0.1.0-SNAPSHOT")
 }

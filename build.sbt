@@ -60,16 +60,17 @@ lazy val checkerLibrary = (projectMatrix in file("checker-library"))
 lazy val checkerPlugin = (projectMatrix in file("checker-plugin"))
   .settings(name := "akka-serializability-checker-plugin")
   .settings(commonSettings)
-  .settings(libraryDependencies ++= {
-    virtualAxes.value
-      .collectFirst { case x: ScalaVersionAxis => x.value }
-      .map {
-        case "2.13" => scalaPluginDeps213
-        case "2.12" => scalaPluginDeps212
-      }
-      .getOrElse(Seq.empty)
-  })
-  .settings(libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test))
+  .settings(
+    libraryDependencies ++= {
+      virtualAxes.value
+        .collectFirst { case x: ScalaVersionAxis => x.value }
+        .map {
+          case "2.13" => scalaPluginDeps213
+          case "2.12" => scalaPluginDeps212
+        }
+        .getOrElse(Seq.empty)
+    },
+    libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test))
   .dependsOn(checkerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
@@ -84,14 +85,16 @@ lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dumpschema"))
 lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugin"))
   .settings(name := "sbt-dumpschema-plugin")
   .settings(commonSettings)
-  .settings(libraryDependencies ++= {
-    virtualAxes.value
-      .collectFirst { case x: ScalaVersionAxis => x.value }
-      .map {
-        case "2.13" => scalaPluginDeps213
-        case "2.12" => scalaPluginDeps212
-      }
-      .getOrElse(Seq.empty)
-  })
+  .settings(
+    libraryDependencies ++= {
+      virtualAxes.value
+        .collectFirst { case x: ScalaVersionAxis => x.value }
+        .map {
+          case "2.13" => scalaPluginDeps213
+          case "2.12" => scalaPluginDeps212
+        }
+        .getOrElse(Seq.empty)
+    },
+    libraryDependencies ++= Seq(borerCore, borerDerivation, betterFiles))
   .dependsOn(checkerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)

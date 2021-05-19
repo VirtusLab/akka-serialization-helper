@@ -10,6 +10,7 @@ object Dependencies {
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.30"
   val enumeratum = "com.beachape" %% "enumeratum" % "1.6.1"
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
+  val betterFiles = "com.github.pathikrit" %% "better-files" % "3.9.1"
 
   val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
   val akkaStream = "com.typesafe.akka" %% "akka-stream" % akkaVersion
