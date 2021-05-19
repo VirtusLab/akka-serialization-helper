@@ -28,6 +28,8 @@ lazy val commonSettings = Seq(
       "-unchecked"),
   libraryDependencies ++= commonDeps)
 
+publish / skip := true
+
 lazy val serializer = (projectMatrix in file("serializer"))
   .settings(name := "borer-akka-serializer")
   .settings(commonSettings)

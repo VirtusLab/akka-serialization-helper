@@ -6,7 +6,6 @@ object DumpSchema {
   import DumpSchemaPlugin.autoImport._
 
   def apply(filename: File): File = {
-    println("kurwa 2wf")
     println(filename.toString)
     filename
   }
