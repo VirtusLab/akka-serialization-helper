@@ -55,4 +55,9 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
   it should "be able to detect serializer trait in generics" in {
     testCode(getResourceAsString("GenericsTest.scala"))
   }
+
+  it should "detect lack of upper bounds in generics" in {
+    val code = getResourceAsString("GenericsTest2.scala")
+    TestCompiler.compileCode(List(serNoCode, code)) should include("error")
+  }
 }

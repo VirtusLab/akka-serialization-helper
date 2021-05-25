@@ -13,6 +13,8 @@ class AkkaSerializabilityCheckerPluginComponent(val pluginOptions: PluginOptions
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
+      private val serializabilityTraitType = typeOf[SerializabilityTrait]
+
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
         val reporter = CrossVersionReporter(global)
@@ -46,10 +48,10 @@ class AkkaSerializabilityCheckerPluginComponent(val pluginOptions: PluginOptions
                 case None =>
                   reporter.error(
                     next.typeSymbol.pos,
-                    s"""${next.toString()} is used as Akka message but does not extend a trait annotated with ${classOf[
-                      SerializabilityTrait].getName}.
-                      |Passing an object NOT extending ${classOf[SerializabilityTrait].getSimpleName} as a message may cause Akka to fall back to Java serialization during runtime.
-                      |Annotate this class or one of the traits/classes it extends with @${classOf[SerializabilityTrait].getName}.
+                    s"""${next
+                      .toString()} is used as Akka message but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
+                      |Passing an object NOT extending ${serializabilityTraitType.nameAndArgsString} as a message may cause Akka to fall back to Java serialization during runtime.
+                      |Annotate this class or one of the traits/classes it extends with @${serializabilityTraitType.toLongString}.
                       |
                       |""".stripMargin)
                   annotatedTraits
@@ -62,7 +64,7 @@ class AkkaSerializabilityCheckerPluginComponent(val pluginOptions: PluginOptions
       private def findSuperclassAnnotatedWithSerializabilityTrait(tp: Type): Option[Type] = {
         if (tp =:= typeTag[AnyRef].tpe || tp =:= typeTag[Any].tpe)
           None
-        else if (tp.typeSymbol.annotations.exists(_.atp =:= typeOf[SerializabilityTrait]))
+        else if (tp.typeSymbol.annotations.exists(_.atp =:= serializabilityTraitType))
           Some(tp)
         else if (tp.typeSymbol.isAbstractType)
           findSuperclassAnnotatedWithSerializabilityTrait(tp.upperBound)
