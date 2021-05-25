@@ -53,11 +53,19 @@ libraryDependencies += compilerPlugin(repo %% "akka-serializability-checker-plug
 
 ### 3. Dump Schema
 
-An sbt plugin that allows for dumping schema of events to a file. Can be used for detecting accidental changes of events.
+An sbt plugin that allows for dumping schema of events to a file. Can be used for detecting accidental changes of
+events.
 
-Unfortunately installing it from JitPack is not working for an unknown reason. The workaround involves cloning the repository and
-typing in console `sbt publishLocal`. This puts artefacts in a local repository, allowing for local use.
+Unfortunately installing it from JitPack is not working for an unknown reason. The workaround involves cloning the
+repository and typing in console `sbt publishLocal`. This puts artefacts in a local repository, allowing for local use.
 
 ## Comparison with other Akka Serializers
 
-TODO, waiting for research pdf source
+| Serializer | Jacson | Circe | Protobuf v3 | Avro | Borer |
+|:---|:---|:---|:---|:---|:---|
+| Data formats | Json Cbor | Json | binary Json | binary Json | Json Cbor |
+| Scala support | with `jackson-module-scala` <ul><li>lacks support of basic scala types like `Unit`</li><li>without explicit annotation doesn't work with generics extending `AnyVal`</ul> | perfect | with `ScalaPB` generates Scala ADTs based on protobuf definitions | with `Avro4` library generaters Avro schema based on Scala ADTs | perfect
+| Akka support | out of the box | requires custom serializer | requires custom serializer | requires custom serializer | out of the box |
+| Runtime safety | none <ul><li>uses reflection</li><li>errors appear only in runtime</li></ul> | encoders and decoders are checked during compile time | generates scala classes | standard for scala code | encoders and decoders are checked during compile time
+| Schema evolution | <ul><li>removing field</li><li>adding optional field</li></ul> with `JacksonMigration` <ul><li>adding mandatory field</li><li>renaming field</li><li>renaming class</li><li>support of forward versioning for rolling updates</li></ul>| <ul><li>adding optional field</li><li>removing optional field</li><li>adding required field with default value</li><li>removing required field</li><li>renaming class</li></ul> | <ul><li>switching between optional and repeated field</li><li>adding new fields</li><li>renaming fields</li></ul> | <ul><li>reordering fields</li><li>renaming fields</li><li>adding optional field</li><li>adding required field with default value</li><li>removing field with default value</li></ul> | any arbitrary transformation can be defined manualy with transcoders
+| Boilerplate | a lot: <ul><li>ADTs requires amount of annotation equal to or exceeding the actual type definitions</li><li>poor support for case object - needs sealed trait per case object and a custom deserializer</ul> | none, Circe can derive codecs from case class definitions | in case of custom types a second layer of models is needed | sometimes requires annotations | considerable: every top level sealed trait must have manually defined codec
