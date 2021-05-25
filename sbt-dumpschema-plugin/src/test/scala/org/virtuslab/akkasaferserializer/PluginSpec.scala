@@ -9,7 +9,7 @@ import java.io.{BufferedReader, InputStreamReader}
 import java.nio.charset.StandardCharsets
 import java.util.stream.Collectors
 
-class PluginSuit extends AnyWordSpecLike with should.Matchers {
+class PluginSpec extends AnyWordSpecLike with should.Matchers {
   private def getResourceAsString(name: String) =
     new BufferedReader(new InputStreamReader(getClass.getClassLoader.getResourceAsStream(name), StandardCharsets.UTF_8))
       .lines()
@@ -21,9 +21,9 @@ class PluginSuit extends AnyWordSpecLike with should.Matchers {
     "dump main constructor of relevant classes" in {
       File.usingTemporaryDirectory() { directory =>
         val out = DumpCompiler.compileCode(code, directory.toJava.getAbsolutePath)
-        println(out)
+        out should have size 0
+        directory.list.toList should have size 5
       }
-
     }
   }
 }

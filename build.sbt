@@ -18,7 +18,7 @@ lazy val commonSettings = Seq(
       "UTF-8",
       "-feature",
       "-language:_",
-      "-Xfatal-warnings",
+//      "-Xfatal-warnings",
       "-Xlog-reflective-calls",
       "-Xlint:_",
       "-Ybackend-parallelism",
@@ -95,6 +95,6 @@ lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugi
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(borerCore, borerDerivation, betterFiles))
+    libraryDependencies ++= Seq(borerCore, borerDerivation, betterFiles, akkaTyped % Test, akkaPersistence % Test))
   .dependsOn(checkerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
