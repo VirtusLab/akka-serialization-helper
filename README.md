@@ -39,7 +39,7 @@ A Scala compiler plugin that detects messages, events etc. and checks, whether t
 and error when it doesn't. This ensures that the specified serializer is used by Akka and protects against accidental use
 of Java serialization.
 
-To use, just annotate a base trait with `@SerializabilityTrait`:
+To use, just annotate a base trait with `@org.virtuslab.akkasaferserializer.SerializabilityTrait`:
 
 ```scala
 @SerializabilityTrait
@@ -70,9 +70,9 @@ addSbtPlugin("org.virtuslab" % "sbt-dumpschema" % "0.1.0-SNAPSHOT")
 
 | Serializer | Jackson | Circe | Protobuf v3 | Avro | Borer |
 |:---|:---|:---|:---|:---|:---|
-| Data formats | Json or Cbor | Json | binary or Json | binary or Json | Json or Cbor |
-| Scala support | with `jackson-module-scala` <ul><li>lacks support of basic scala types like `Unit`</li><li>without explicit annotation doesn't work with generics extending `AnyVal`</ul> | perfect | with `ScalaPB` generates Scala ADTs based on protobuf definitions | with `Avro4` library generaters Avro schema based on Scala ADTs | perfect
+| Data formats | JSON or CBOR | JSON | binary or JSON | binary or JSON | JSON or CBOR |
+| Scala support | with [`jackson-module-scala`](https://github.com/FasterXML/jackson-module-scala) <ul><li>lacks support of basic scala types like `Unit`</li><li>without explicit annotation doesn't work with generics extending `AnyVal`</ul> | perfect | with [`ScalaPB`](https://scalapb.github.io) generates Scala ADTs based on protobuf definitions | with [`Avro4s`](https://github.com/sksamuel/avro4s) library generaters Avro schema based on Scala ADTs | perfect
 | Akka support | out of the box | requires custom serializer | requires custom serializer | requires custom serializer | out of the box |
 | Runtime safety | none <ul><li>uses reflection</li><li>errors appear only in runtime</li></ul> | encoders and decoders are checked during compile time | generates scala classes | standard for scala code | encoders and decoders are checked during compile time
-| Schema evolution | <ul><li>removing field</li><li>adding optional field</li></ul> with `JacksonMigration` <ul><li>adding mandatory field</li><li>renaming field</li><li>renaming class</li><li>support of forward versioning for rolling updates</li></ul>| <ul><li>adding optional field</li><li>removing optional field</li><li>adding required field with default value</li><li>removing required field</li><li>renaming class</li></ul> | <ul><li>switching between optional and repeated field</li><li>adding new fields</li><li>renaming fields</li></ul> | <ul><li>reordering fields</li><li>renaming fields</li><li>adding optional field</li><li>adding required field with default value</li><li>removing field with default value</li></ul> | any arbitrary transformation can be defined manualy with transcoders
+| Schema evolution | <ul><li>removing field</li><li>adding optional field</li></ul> with [`JacksonMigration`](https://doc.akka.io/docs/akka/current/serialization-jackson.html#schema-evolution) <ul><li>adding mandatory field</li><li>renaming field</li><li>renaming class</li><li>support of forward versioning for rolling updates</li></ul>| <ul><li>adding optional field</li><li>removing optional field</li><li>adding required field with default value</li><li>removing required field</li><li>renaming class</li></ul> | <ul><li>switching between optional and repeated field</li><li>adding new fields</li><li>renaming fields</li></ul> | <ul><li>reordering fields</li><li>renaming fields</li><li>adding optional field</li><li>adding required field with default value</li><li>removing field with default value</li></ul> | any arbitrary transformation can be defined manualy with transcoders
 | Boilerplate | a lot: <ul><li>ADTs requires amount of annotation equal to or exceeding the actual type definitions</li><li>poor support for case object - needs sealed trait per case object and a custom deserializer</ul> | none, Circe can derive codecs from case class definitions | in case of custom types a second layer of models is needed | sometimes requires annotations | considerable: every top level sealed trait must have manually defined codec
