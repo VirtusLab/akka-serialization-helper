@@ -4,16 +4,11 @@ import better.files.File
 import io.bullet.borer.Json
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.virtuslab.akkasaferserializer.model.{Annotation, Codecs, Field, TypeDefinition}
+import org.virtuslab.akkasaferserializer.model.{ClassAnnotation, Codecs, Field, TypeDefinition}
 
 class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with Codecs {
   val testDef: TypeDefinition =
-    TypeDefinition(
-      isTrait = false,
-      "test",
-      Seq(Annotation("anno")),
-      Seq("one", "two"),
-      Seq(Field("a", "Int", Seq(Annotation("field_anno")))))
+    TypeDefinition(isTrait = false, "test", Seq(ClassAnnotation("anno")), Seq(Field("a", "Int")), Seq("one", "two"))
 
   "SchemaWriter" should {
 

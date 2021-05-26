@@ -1,5 +1,5 @@
 package org.virtuslab.akkasaferserializer
-import org.virtuslab.akkasaferserializer.model.{Field, TypeDefinition}
+import org.virtuslab.akkasaferserializer.model.{ClassAnnotation, Field, TypeDefinition}
 
 import scala.tools.nsc.{Global, Phase}
 import scala.tools.nsc.plugins.PluginComponent
@@ -40,10 +40,15 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
 
         def extractSchemaFromType(tpe: Type): TypeDefinition = {
           val symbol = tpe.typeSymbol
-          val fields = symbol.constrParamAccessors.map { x =>
-            Field(x.simpleName.toString(), x.tpe.nameAndArgsString, Seq())
-          }
-          TypeDefinition(symbol.isTrait, symbol.simpleName.toString(), Seq(), Seq(), fields) // TODO annotations
+          val annotations = symbol.annotations.map(x => ClassAnnotation(x.toString))
+          val fieldSymbols =
+            if (!symbol.isTraitOrInterface)
+              symbol.primaryConstructor.info.params
+            else
+              tpe.members.toSeq.filter(x => x.isVal && x.isAbstract)
+          val fields = fieldSymbols.map(x => Field(x.simpleName.toString(), x.tpe.nameAndArgsString))
+          val parents = symbol.parentSymbols.map(_.simpleName.toString())
+          TypeDefinition(symbol.isTraitOrInterface, symbol.simpleName.toString(), annotations, fields, parents)
         }
 
         (foundUpdates ::: foundUsedClasses).distinct

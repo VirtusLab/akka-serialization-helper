@@ -16,7 +16,7 @@ class SchemaWriter(outputDirectory: File) extends Codecs {
     outputDirectory
       .list(_.extension.contains(".json"))
       .flatMap { file =>
-        Json.decode(file.bytes.toArray).to[TypeDefinition].valueTry.toOption
+        Json.decode(file.byteArray).to[TypeDefinition].valueTry.toOption
       }
       .map(x => (x.name, x))
       .toMap
