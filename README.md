@@ -7,9 +7,9 @@ Serializer for Akka messages/events/persistent state that provides compile-time 
 To install the library use JitPack:
 
 ```scala
-resolvers += "jitpack" at "https://jitpack.io"
+resolvers += "jitpack".at("https://jitpack.io")
 val repo = "com.github.VirtusLab.akka-safer-serializer"
-val commit = /*name of branch or commit*/
+val commit = "master-SNAPSHOT" //name of a branch or commit
 ```
 
 Then, add one or more of the modules below:
@@ -35,13 +35,15 @@ libraryDependencies += repo %% "borer-extra-codecs" % commit
 
 ### 2. Checker Plugin
 
-A Scala compiler plugin that detects messages, events etc. and checks, whether they extend the base trait. Just annotate
-a base trait with `@SerializabilityTrait`:
+A Scala compiler plugin that detects messages, events etc. and checks, whether they extend the base trait and reports
+and error when it doesn't. This ensures that the specified serializer is used by Akka and protects against accidental use
+of Java serialization.
+
+To use, just annotate a base trait with `@SerializabilityTrait`:
 
 ```scala
 @SerializabilityTrait
 trait MySerializable
-
 ```
 
 Installation:
@@ -57,13 +59,18 @@ An sbt plugin that allows for dumping schema of events to a file. Can be used fo
 events.
 
 Unfortunately installing it from JitPack is not working for an unknown reason. The workaround involves cloning the
-repository and typing in console `sbt publishLocal`. This puts artefacts in a local repository, allowing for local use.
+repository and typing in console `sbt publishLocal`. This puts artefact to a local repository, allowing for local use.
+
+Next, you add the sbt plugin in `plugins.sbt` as if it was published normally:
+```scala
+addSbtPlugin("org.virtuslab" % "sbt-dumpschema" % "0.1.0-SNAPSHOT")
+```
 
 ## Comparison with other Akka Serializers
 
-| Serializer | Jacson | Circe | Protobuf v3 | Avro | Borer |
+| Serializer | Jackson | Circe | Protobuf v3 | Avro | Borer |
 |:---|:---|:---|:---|:---|:---|
-| Data formats | Json Cbor | Json | binary Json | binary Json | Json Cbor |
+| Data formats | Json or Cbor | Json | binary or Json | binary or Json | Json or Cbor |
 | Scala support | with `jackson-module-scala` <ul><li>lacks support of basic scala types like `Unit`</li><li>without explicit annotation doesn't work with generics extending `AnyVal`</ul> | perfect | with `ScalaPB` generates Scala ADTs based on protobuf definitions | with `Avro4` library generaters Avro schema based on Scala ADTs | perfect
 | Akka support | out of the box | requires custom serializer | requires custom serializer | requires custom serializer | out of the box |
 | Runtime safety | none <ul><li>uses reflection</li><li>errors appear only in runtime</li></ul> | encoders and decoders are checked during compile time | generates scala classes | standard for scala code | encoders and decoders are checked during compile time
