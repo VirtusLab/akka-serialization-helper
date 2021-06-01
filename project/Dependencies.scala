@@ -24,12 +24,11 @@ object Dependencies {
   val borerAkka = "io.bullet" %% "borer-compat-akka" % borerVersion
 
   val scalaCompiler = "org.scala-lang" % "scala-compiler"
-  val scalaLibrary = "org.scala-lang" % "scala-library"
   val scalaReflect = "org.scala-lang" % "scala-reflect"
 
   val commonDeps = Seq(scalaTest % Test, logger % Test)
 
-  private val scalaPluginDeps = Seq(scalaCompiler, scalaLibrary, scalaReflect)
-  val scalaPluginDeps213: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion213)
-  val scalaPluginDeps212: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion212)
+  private val scalaPluginDeps: Seq[String => ModuleID] = Seq(scalaCompiler % _, scalaReflect % _)
+  val scalaPluginDeps213: Seq[ModuleID] = scalaPluginDeps.map(_(scalaVersion213))
+  val scalaPluginDeps212: Seq[ModuleID] = scalaPluginDeps.map(_(scalaVersion212))
 }

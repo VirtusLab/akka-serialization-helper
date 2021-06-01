@@ -8,4 +8,5 @@ trait DumpSchemaKeys {
   lazy val dumpSchemaOutputPath = taskKey[File]("Output file to dump schema to")
   lazy val dumpSchemaFilename = settingKey[String]("Filename to dump schema to")
   lazy val dumpSchemaPlugin = settingKey[ModuleID]("ModuleId of dump schema plugin")
+  lazy val dumpSchemaPluginOutput = settingKey[File]("Output directory for intermediate results")
 }

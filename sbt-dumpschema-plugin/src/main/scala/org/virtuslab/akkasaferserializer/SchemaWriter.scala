@@ -14,6 +14,7 @@ class SchemaWriter(outputDirectory: File) extends Codecs {
 
   lazy val lastDump: Map[String, TypeDefinition] = {
     outputDirectory
+      .createDirectoryIfNotExists(createParents = true)
       .list(_.extension.contains(".json"))
       .flatMap { file =>
         Json.decode(file.byteArray).to[TypeDefinition].valueTry.toOption

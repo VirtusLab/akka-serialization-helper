@@ -78,11 +78,19 @@ lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dumpschema"))
   .enablePlugins(SbtPlugin)
   .settings(name := "sbt-dumpschema")
   .settings(commonSettings)
-  .settings(pluginCrossBuild / sbtVersion := "1.2.8")
+  .settings(
+    pluginCrossBuild / sbtVersion := "1.2.8",
+    scriptedLaunchOpts := {
+      scriptedLaunchOpts.value ++
+      Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
+    },
+    scriptedBufferLog := false,
+    libraryDependencies += betterFiles)
   .dependsOn(schemaDumpCompilerPlugin)
   .jvmPlatform(scalaVersions = Seq(scalaVersion212))
 
 lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugin"))
+  .enablePlugins(AssemblyPlugin)
   .settings(name := "sbt-dumpschema-plugin")
   .settings(commonSettings)
   .settings(
@@ -95,6 +103,38 @@ lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugi
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(borerCore, borerDerivation, betterFiles, akkaTyped % Test, akkaPersistence % Test))
+    libraryDependencies ++= Seq(borerCore, borerDerivation, betterFiles, akkaTyped % Test, akkaPersistence % Test),
+    assembly / assemblyMergeStrategy := {
+      case PathList("scala", "annotation", "nowarn.class" | "nowarn$.class") =>
+        MergeStrategy.first
+      case x =>
+        (assembly / assemblyMergeStrategy).value.apply(x)
+    },
+    publish / skip := true)
   .dependsOn(checkerLibrary)
+  .jvmPlatform(scalaVersions = supportedScalaVersions)
+
+val virtualAxesAssembly = taskKey[File]("Get assembly of with current scala version")
+
+lazy val pluginWithDependencies = projectMatrix
+  .settings(
+    name := "sbt-dumpschema-plugin",
+    virtualAxesAssembly := Def
+        .taskDyn[File] {
+          val tuple = schemaDumpCompilerPlugin.componentProjects match {
+            case Seq(a, b, _*) => (a, b)
+          }
+          val sorted =
+            if ((schemaDumpCompilerPlugin.componentProjects.head / scalaVersion).value.contains("2.13")) tuple
+            else tuple.swap
+          virtualAxes.value
+            .collectFirst { case x: ScalaVersionAxis => x.value }
+            .map {
+              case "2.13" => Def.task { (sorted._1 / Compile / assembly).value }
+              case "2.12" => Def.task { (sorted._2 / Compile / assembly).value }
+            }
+            .get
+        }
+        .value,
+    Compile / packageBin := virtualAxesAssembly.value)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
