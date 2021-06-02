@@ -24,7 +24,7 @@ object DumpSchemaPlugin extends AutoPlugin {
     DumpSchema.assemblyTask(dumpSchema),
     dumpSchema / dumpSchemaOutputPath := { target.value / (dumpSchema / dumpSchemaFilename).value },
     dumpSchema / dumpSchemaFilename := (dumpSchema / dumpSchemaFilename)
-        .or(Def.setting(s"${name.value}-dumpschema-${version.value}.txt"))
+        .or(Def.setting(s"${name.value}-dumpschema-${version.value}.json"))
         .value,
     dumpSchema / dumpSchemaPlugin := "org.virtuslab" %% "sbt-dumpschema-plugin" % "0.1.0-SNAPSHOT",
     dumpSchema / dumpSchemaPluginOutput := target.value / "dump")

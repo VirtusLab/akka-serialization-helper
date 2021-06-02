@@ -8,7 +8,7 @@ import org.virtuslab.akkasaferserializer.model.{ClassAnnotation, Codecs, Field, 
 
 class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with Codecs {
   val testDef: TypeDefinition =
-    TypeDefinition(isTrait = false, "test", Seq(ClassAnnotation("anno")), Seq(Field("a", "Int")), Seq("one", "two"))
+    TypeDefinition(isTrait = false, "test", Seq("anno"), Seq(Field("a", "Int")), Seq("one", "two"))
 
   "SchemaWriter" should {
 

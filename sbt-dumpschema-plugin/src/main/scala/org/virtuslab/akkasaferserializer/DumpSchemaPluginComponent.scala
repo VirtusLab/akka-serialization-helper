@@ -39,16 +39,18 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
         }
 
         def extractSchemaFromType(tpe: Type): TypeDefinition = {
+          def typeToString(tpe: Type) = s"${tpe.prefix.typeSymbol.fullName}.${tpe.nameAndArgsString}"
+
           val symbol = tpe.typeSymbol
-          val annotations = symbol.annotations.map(x => ClassAnnotation(x.toString))
+          val annotations = symbol.annotations.map(_.toString)
           val fieldSymbols =
             if (!symbol.isTraitOrInterface)
               symbol.primaryConstructor.info.params
             else
               tpe.members.toSeq.filter(x => x.isVal && x.isAbstract)
-          val fields = fieldSymbols.map(x => Field(x.simpleName.toString(), x.tpe.nameAndArgsString))
-          val parents = symbol.parentSymbols.map(_.simpleName.toString())
-          TypeDefinition(symbol.isTraitOrInterface, symbol.simpleName.toString(), annotations, fields, parents)
+          val fields = fieldSymbols.map(x => Field(x.simpleName.toString(), typeToString(x.tpe)))
+          val parents = symbol.parentSymbols.map(x => typeToString(x.tpe))
+          TypeDefinition(symbol.isTraitOrInterface, typeToString(tpe), annotations, fields, parents)
         }
 
         (foundUpdates ::: foundUsedClasses).distinct

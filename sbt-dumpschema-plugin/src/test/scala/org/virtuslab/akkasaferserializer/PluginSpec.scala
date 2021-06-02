@@ -16,18 +16,19 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
       .lines()
       .collect(Collectors.joining("\n"))
 
-  val code = List(getResourceAsString("MySerializable.scala"), getResourceAsString("Data.scala"))
+  private lazy val directory: List[TypeDefinition] = {
+    val code = List(getResourceAsString("MySerializable.scala"), getResourceAsString("Data.scala"))
+
+    var res = List[TypeDefinition]()
+    File.usingTemporaryDirectory() { directory =>
+      val out = DumpCompiler.compileCode(code, directory.toJava.getAbsolutePath)
+      out should have size 0
+      res = new SchemaWriter(directory).lastDump.values.toList
+    }
+    res
+  }
 
   "DumpCompilerPlugin" should {
-    lazy val directory: List[TypeDefinition] = {
-      var res = List[TypeDefinition]()
-      File.usingTemporaryDirectory() { directory =>
-        val out = DumpCompiler.compileCode(code, directory.toJava.getAbsolutePath)
-        out should have size 0
-        res = new SchemaWriter(directory).lastDump.values.toList
-      }
-      res
-    }
 
     "dump signature of all relevant classes" in {
       directory should have size 8
@@ -41,7 +42,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
     }
 
     "find class nested in two sealed traits" in {
-      directory.map(_.name) should contain("DeepestClass")
+      directory.map(_.name) should contain("org.random.project.Data.DeepestClass")
     }
 
     "dump class annotations" in {
