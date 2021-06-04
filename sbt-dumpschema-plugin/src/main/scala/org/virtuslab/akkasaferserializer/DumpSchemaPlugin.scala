@@ -7,14 +7,18 @@ class DumpSchemaPlugin(override val global: Global) extends Plugin {
   override val name: String = "dump-schema-plugin"
   override val description: String = ""
 
-  private val pluginOptions = new DumpSchemaOptions("/tmp")
+  private val pluginOptions = new DumpSchemaOptions("/tmp", false)
 
   override val components: List[PluginComponent] = List(new DumpSchemaPluginComponent(pluginOptions, global))
 
   override def init(options: List[String], error: String => Unit): Boolean = {
-    options.headOption match {
+    if (options.contains("-v"))
+      pluginOptions.verbose = true
+
+    val filename = options.find(_.startsWith("--file"))
+    filename match {
       case Some(value) =>
-        pluginOptions.outputDir = value
+        pluginOptions.outputDir = value.split(" ", 2)(1)
         true
       case None => false
     }

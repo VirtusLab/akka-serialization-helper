@@ -16,8 +16,8 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
 
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
-
-        val effectName = "akka.persistence.typed.scaladsl.Effect"
+        val reporter = CrossVersionReporter(global)
+        val effectNames = Seq("akka.persistence.typed.scaladsl.Effect", "akka.persistence.typed.scaladsl.ReplyEffect")
 
         def extractFromTypesSealed(tpe: Type): List[Type] = {
           val sym = tpe.typeSymbol
@@ -28,18 +28,19 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
           }
         }
 
-        val foundUsedClasses: List[Type] = body
-          .collect {
-            case x: TypeTree if effectName == x.tpe.typeSymbol.fullName => x.tpe.typeArgs.head
-          }
-          .flatMap(extractFromTypesSealed)
+        def typeToString(tpe: Type) = s"${tpe.prefix.typeSymbol.fullName}.${tpe.nameAndArgsString}"
 
-        val foundUpdates: List[Type] = body.collect {
-          case x: ClassDef if writer.lastDump.contains(x.symbol.fullName) => x.tpe
+        val foundUsedClasses: List[(Type, Position)] = body
+          .collect {
+            case x: TypeTree if effectNames.contains(x.tpe.typeSymbol.fullName) => (x.tpe.typeArgs.head, x.pos)
+          }
+          .flatMap(x => extractFromTypesSealed(x._1).map((_, x._2)))
+
+        val foundUpdates: List[(Type, Position)] = body.collect {
+          case x: ClassDef if writer.lastDump.contains(typeToString(x.symbol.tpe)) => (x.symbol.tpe, x.pos)
         }
 
         def extractSchemaFromType(tpe: Type): TypeDefinition = {
-          def typeToString(tpe: Type) = s"${tpe.prefix.typeSymbol.fullName}.${tpe.nameAndArgsString}"
 
           val symbol = tpe.typeSymbol
           val annotations = symbol.annotations.map(_.toString)
@@ -53,9 +54,22 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
           TypeDefinition(symbol.isTraitOrInterface, typeToString(tpe), annotations, fields, parents)
         }
 
-        (foundUpdates ::: foundUsedClasses).distinct
-          .filterNot(x => writer.isUpToDate(x.typeSymbol.fullName))
-          .foreach(x => writer.offerDump(extractSchemaFromType(x)))
+        val candidates = (foundUpdates ::: foundUsedClasses).distinct
+        if (options.verbose && candidates.nonEmpty) {
+          reporter.echo(body.pos, s"""Found candidates in this file: ${candidates.mkString("", ",", "")}""")
+        }
+        candidates
+          .filterNot(x => writer.isUpToDate(x._1.typeSymbol.fullName))
+          .foreach(x => {
+            if (options.verbose) {
+              reporter.echo(
+                x._2,
+                s"""Updating ${x._1.nameAndArgsString} in intermediate results of schema dump
+                   |Cause of update:
+                   |""".stripMargin)
+            }
+            writer.offerDump(extractSchemaFromType(x._1))
+          })
 
       }
     }

@@ -1,4 +1,4 @@
-import akka.persistence.typed.scaladsl.Effect
+
 
 sealed trait Data extends MySerializable
 
@@ -21,6 +21,4 @@ object Data {
   sealed trait DeepTrait extends Data
   sealed trait DeeperTrait extends Data
   case class DeepestClass(a: Int) extends DeeperTrait
-
-  def trigger: Effect[Data, Any] = ???
 }

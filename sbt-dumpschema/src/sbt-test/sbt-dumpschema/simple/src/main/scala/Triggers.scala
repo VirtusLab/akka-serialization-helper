@@ -1,4 +1,10 @@
+import akka.persistence.typed.scaladsl.Effect
+
 import scala.annotation.StaticAnnotation
+
+object EffectObj {
+  val trigger: Effect[Data, Any] = ???
+}
 
 trait MySerializable
 

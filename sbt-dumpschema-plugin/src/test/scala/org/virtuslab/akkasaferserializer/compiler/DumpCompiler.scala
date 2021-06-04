@@ -11,7 +11,7 @@ import scala.tools.nsc.util.ClassPath
 import scala.tools.nsc.{Global, Settings}
 
 object DumpCompiler {
-  def compileCode(code: List[String], path: String): String = {
+  def compileCode(code: List[String], options: List[String]): String = {
     val sources = code.zipWithIndex.map(x => new BatchSourceFile(s"test${x._2}.scala", x._1))
 
     val settings = new Settings()
@@ -40,7 +40,7 @@ object DumpCompiler {
         super.computeInternalPhases()
         val plugin = new DumpSchemaPlugin(this)
         phasesSet ++= plugin.components
-        plugin.init(List(path), _ => ())
+        plugin.init(options, _ => ())
       }
     }
 

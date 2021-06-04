@@ -21,7 +21,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
 
     var res = List[TypeDefinition]()
     File.usingTemporaryDirectory() { directory =>
-      val out = DumpCompiler.compileCode(code, directory.toJava.getAbsolutePath)
+      val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
       out should have size 0
       res = new SchemaWriter(directory).lastDump.values.toList
     }

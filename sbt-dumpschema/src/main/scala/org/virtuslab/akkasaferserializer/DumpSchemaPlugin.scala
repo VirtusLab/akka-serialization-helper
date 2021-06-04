@@ -14,9 +14,10 @@ object DumpSchemaPlugin extends AutoPlugin {
 
   override def globalSettings: Seq[Def.Setting[_]] = Nil
 
-  lazy val additionalSettings = Seq(
+  lazy val additionalSettings: Seq[Def.Setting[_]] = Seq(
     libraryDependencies += compilerPlugin((dumpSchema / dumpSchemaPlugin).value),
-    scalacOptions ++= Seq(s"-P:dump-schema-plugin:${(dumpSchema / dumpSchemaPluginOutput).value.toPath}"))
+    scalacOptions += s"-P:dump-schema-plugin:--file ${(dumpSchema / dumpSchemaPluginOutput).value.toPath}",
+    scalacOptions += (if ((dumpSchema / dumpSchemaPluginVerbose).value) "-P:dump-schema-plugin:-v" else ""))
 
   lazy val dumpSchemaSettings: Seq[Def.Setting[_]] = baseDumpSchemaSettings
 
@@ -27,5 +28,7 @@ object DumpSchemaPlugin extends AutoPlugin {
         .or(Def.setting(s"${name.value}-dumpschema-${version.value}.json"))
         .value,
     dumpSchema / dumpSchemaPlugin := "org.virtuslab" %% "sbt-dumpschema-plugin" % "0.1.0-SNAPSHOT",
-    dumpSchema / dumpSchemaPluginOutput := target.value / "dump")
+    dumpSchema / dumpSchemaPluginVerbose := false,
+    dumpSchema / dumpSchemaPluginOutput := target.value / "dump",
+    cleanFiles += (dumpSchema / dumpSchemaPluginOutput).value)
 }

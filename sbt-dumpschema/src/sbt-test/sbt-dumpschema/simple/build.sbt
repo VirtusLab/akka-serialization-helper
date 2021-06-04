@@ -6,3 +6,6 @@ lazy val root = (project in file(".")).settings(
   autoCompilerPlugins := true)
 
 enablePlugins(org.virtuslab.akkasaferserializer.DumpSchemaPlugin)
+
+dumpSchema / dumpSchemaPluginVerbose := true
+
