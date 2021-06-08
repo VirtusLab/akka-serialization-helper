@@ -4,7 +4,8 @@ import better.files.File
 import io.bullet.borer.Json
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.virtuslab.akkasaferserializer.model.{ClassAnnotation, Codecs, Field, TypeDefinition}
+import org.virtuslab.akkasaferserializer.writer.{Codecs, SchemaWriter}
+import org.virtuslab.akkasaferserializer.model.{ClassAnnotation, Field, TypeDefinition}
 
 class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with Codecs {
   val testDef: TypeDefinition =
@@ -29,7 +30,7 @@ class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with Codecs 
         val schemaWriter = new SchemaWriter(directory)
 
         schemaWriter.isUpToDate(testDef.name) should equal(false)
-        schemaWriter.offerDump(testDef)
+        schemaWriter.consumeTypeDefinition(testDef)
         schemaWriter.isUpToDate(testDef.name) should equal(true)
         Json.decode((directory / s"${testDef.name}.json").loadBytes).to[TypeDefinition].value should equal(testDef)
       }

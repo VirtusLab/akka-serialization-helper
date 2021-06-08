@@ -1,4 +1,5 @@
 package org.virtuslab.akkasaferserializer
+import org.virtuslab.akkasaferserializer.writer.SchemaWriter
 import org.virtuslab.akkasaferserializer.model.{ClassAnnotation, Field, TypeDefinition}
 
 import scala.tools.nsc.{Global, Phase}
@@ -68,7 +69,7 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
                    |Cause of update:
                    |""".stripMargin)
             }
-            writer.offerDump(extractSchemaFromType(x._1))
+            writer.consumeTypeDefinition(extractSchemaFromType(x._1))
           })
 
       }

@@ -72,7 +72,7 @@ lazy val checkerPlugin = (projectMatrix in file("checker-plugin"))
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test))
+    libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test, betterFiles % Test))
   .dependsOn(checkerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
@@ -117,7 +117,11 @@ lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugi
     },
     libraryDependencies ++= Seq(borerCore, borerDerivation, betterFiles, akkaTyped % Test, akkaPersistence % Test),
     assembly / assemblyMergeStrategy := {
-      case PathList("scala", "annotation", "nowarn.class" | "nowarn$.class") =>
+      case PathList(
+            "scala",
+            "annotation",
+            "nowarn.class" | "nowarn$.class"
+          ) => //scala-collection-compat duplicates no-warn.class, as it was added to scala 2.12 after it's release
         MergeStrategy.first
       case x =>
         (assembly / assemblyMergeStrategy).value.apply(x)
@@ -126,27 +130,30 @@ lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugi
   .dependsOn(checkerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-val virtualAxesAssembly = taskKey[File]("Get assembly of with current scala version")
-
+/**
+ * The purpose of the project below is to create a fat jar for the compiler plugin.
+ * Sbt doesn't provide compiler plugin dependencies properly, therefore publishing fat jar is the easiest workaround.
+ */
+val currentScalaVersionAssembly = taskKey[File]("Get assembly of sbt-dumpschema-plugin with current scala version")
 lazy val pluginWithDependencies = projectMatrix
   .settings(
     name := "sbt-dumpschema-plugin",
-    virtualAxesAssembly := Def
+    currentScalaVersionAssembly := Def
         .taskDyn[File] {
           val tuple = schemaDumpCompilerPlugin.componentProjects match {
             case Seq(a, b, _*) => (a, b)
           }
-          val sorted =
+          val (project213, project212) =
             if ((schemaDumpCompilerPlugin.componentProjects.head / scalaVersion).value.contains("2.13")) tuple
             else tuple.swap
           virtualAxes.value
             .collectFirst { case x: ScalaVersionAxis => x.value }
             .map {
-              case "2.13" => Def.task { (sorted._1 / Compile / assembly).value }
-              case "2.12" => Def.task { (sorted._2 / Compile / assembly).value }
+              case "2.13" => Def.task { (project213 / Compile / assembly).value }
+              case "2.12" => Def.task { (project212 / Compile / assembly).value }
             }
             .get
         }
         .value,
-    Compile / packageBin := virtualAxesAssembly.value)
+    Compile / packageBin := currentScalaVersionAssembly.value)
   .jvmPlatform(scalaVersions = supportedScalaVersions)

@@ -1,7 +1,8 @@
-package org.virtuslab.akkasaferserializer.model
+package org.virtuslab.akkasaferserializer.writer
 
 import io.bullet.borer.Codec
-import io.bullet.borer.derivation.MapBasedCodecs.{deriveAllCodecs, deriveCodec}
+import io.bullet.borer.derivation.MapBasedCodecs.deriveCodec
+import org.virtuslab.akkasaferserializer.model.{ClassAnnotation, Field, TypeDefinition}
 
 trait Codecs {
   implicit val annotationCodec: Codec[ClassAnnotation] = deriveCodec[ClassAnnotation]

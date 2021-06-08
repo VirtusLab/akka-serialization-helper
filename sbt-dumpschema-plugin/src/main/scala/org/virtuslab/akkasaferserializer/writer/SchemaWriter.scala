@@ -1,8 +1,9 @@
-package org.virtuslab.akkasaferserializer
+package org.virtuslab.akkasaferserializer.writer
 
 import better.files.File
 import io.bullet.borer.Json
-import org.virtuslab.akkasaferserializer.model.{Codecs, TypeDefinition}
+import org.virtuslab.akkasaferserializer.DumpSchemaOptions
+import org.virtuslab.akkasaferserializer.model.TypeDefinition
 
 import scala.collection.mutable
 
@@ -26,7 +27,7 @@ class SchemaWriter(outputDirectory: File) extends Codecs {
   private val dumped: mutable.Set[String] = mutable.Set()
 
   def isUpToDate(name: String): Boolean = dumped(name)
-  def offerDump(typeDefinition: TypeDefinition): Unit = {
+  def consumeTypeDefinition(typeDefinition: TypeDefinition): Unit = {
     if (lastDump.get(typeDefinition.name).fold(true)(_ != typeDefinition)) {
       dump(typeDefinition)
     }
