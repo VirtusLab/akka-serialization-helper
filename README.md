@@ -58,12 +58,15 @@ libraryDependencies += compilerPlugin(repo %% "akka-serializability-checker-plug
 An sbt plugin that allows for dumping schema of events to a file. Can be used for detecting accidental changes of
 events.
 
-Unfortunately installing it from JitPack is not working for an unknown reason. The workaround involves cloning the
-repository and typing in console `sbt publishLocal`. This puts artefact to a local repository, allowing for local use.
+Installation:
 
-Next, you add the sbt plugin in `plugins.sbt` as if it was published normally:
+Add to `plugins.sbt`:
 ```scala
-addSbtPlugin("org.virtuslab" % "sbt-dumpschema" % "0.1.0-SNAPSHOT")
+libraryDependencies += repo % "sbt-dumpschema" % commit
+```
+To enable the plugin for a specific project, use:
+```scala
+enablePlugins(DumpSchemaPlugin)
 ```
 
 ## Comparison with other Akka Serializers
