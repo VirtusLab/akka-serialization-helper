@@ -12,7 +12,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
     File(getClass.getClassLoader.getResource(name)).lines.reduce(_ + "\n" + _)
 
   private lazy val directory: List[TypeDefinition] = {
-    val code = List(getResourceAsString("MySerializable.scala"), getResourceAsString("Data.scala"))
+    val code = List(getResourceAsString("Trigger.scala"), getResourceAsString("Data.scala"))
 
     var res = List[TypeDefinition]()
     File.usingTemporaryDirectory() { directory =>
@@ -23,10 +23,12 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
     res
   }
 
-  "DumpCompilerPlugin" should {
+  private val dumpSize = 9
+
+  "DumpCompilerPlugin with correct Event[_,_]" should {
 
     "dump signature of all relevant classes" in {
-      directory should have size 8
+      directory should have size dumpSize
     }
 
     "include generic types" in {
@@ -41,7 +43,30 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
     }
 
     "dump class annotations" in {
-      directory.find(_.name.contains("Annotation")).get.annotation should have size 2
+      directory.find(_.name.contains("Annotation")).get.annotations should have size 2
+    }
+  }
+
+  "DumpCompilerPlugin" should {
+
+    "ignore generic Event[_,_]" in {
+      File.usingTemporaryDirectory() { directory =>
+        val code = List(getResourceAsString("GenericTrigger.scala"), getResourceAsString("Data.scala"))
+        val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+        out should have size 0
+        val res = new SchemaWriter(directory).lastDump.values.toList
+        res should have size 0
+      }
+    }
+
+    "dump superclasses of abstract type" in {
+      File.usingTemporaryDirectory() { directory =>
+        val code = List(getResourceAsString("AbstractTrigger.scala"), getResourceAsString("Data.scala"))
+        val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+        out should have size 0
+        val res = new SchemaWriter(directory).lastDump.values.toList
+        res should have size dumpSize
+      }
     }
   }
 }

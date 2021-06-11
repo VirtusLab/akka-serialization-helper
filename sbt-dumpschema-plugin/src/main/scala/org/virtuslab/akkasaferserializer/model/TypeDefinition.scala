@@ -1,8 +1,8 @@
 package org.virtuslab.akkasaferserializer.model
 
 final case class TypeDefinition(
-    isTrait: Boolean,
+    typeSymbol: TypeSymbol,
     name: String,
-    annotation: Seq[String],
+    annotations: Seq[String],
     fields: Seq[Field],
     parents: Seq[String])

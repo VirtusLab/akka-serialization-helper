@@ -28,8 +28,10 @@ class SchemaWriter(outputDirectory: File) extends Codecs {
 
   def isUpToDate(name: String): Boolean = dumped(name)
   def consumeTypeDefinition(typeDefinition: TypeDefinition): Unit = {
-    if (lastDump.get(typeDefinition.name).fold(true)(_ != typeDefinition)) {
-      dump(typeDefinition)
+    lastDump.get(typeDefinition.name) match {
+      case None                                   => dump(typeDefinition)
+      case Some(value) if value != typeDefinition => dump(typeDefinition)
+      case _                                      => ()
     }
     dumped += typeDefinition.name
   }

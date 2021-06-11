@@ -5,11 +5,11 @@ import io.bullet.borer.Json
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.virtuslab.akkasaferserializer.writer.{Codecs, SchemaWriter}
-import org.virtuslab.akkasaferserializer.model.{ClassAnnotation, Field, TypeDefinition}
+import org.virtuslab.akkasaferserializer.model.{Field, TypeDefinition, TypeSymbol}
 
 class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with Codecs {
   val testDef: TypeDefinition =
-    TypeDefinition(isTrait = false, "test", Seq("anno"), Seq(Field("a", "Int")), Seq("one", "two"))
+    TypeDefinition(TypeSymbol.Trait, "test", Seq("anno"), Seq(Field("a", "Int")), Seq("one", "two"))
 
   "SchemaWriter" should {
 
@@ -19,9 +19,14 @@ class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with Codecs 
         val schemaWriter = new SchemaWriter(directory)
         val loaded = schemaWriter.lastDump
 
+        (directory / "obj.json")
+          .createFile()
+          .writeByteArray(Json.encode(TypeSymbol.Class.asInstanceOf[TypeSymbol]).toByteArray)
+
         loaded should have size 1
         loaded.head._1 should equal(testDef.name)
         loaded.head._2 should equal(testDef)
+
       }
     }
 
