@@ -126,34 +126,13 @@ lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugi
       case x =>
         (assembly / assemblyMergeStrategy).value.apply(x)
     },
-    publish / skip := true)
-  .dependsOn(checkerLibrary)
-  .jvmPlatform(scalaVersions = supportedScalaVersions)
-
-/**
- * The purpose of the project below is to create a fat jar for the compiler plugin.
- * Sbt doesn't provide compiler plugin dependencies properly, therefore publishing fat jar is the easiest workaround.
- */
-val currentScalaVersionAssembly = taskKey[File]("Get assembly of sbt-dumpschema-plugin with current scala version")
-lazy val pluginWithDependencies = projectMatrix
-  .settings(
-    name := "sbt-dumpschema-plugin",
-    currentScalaVersionAssembly := Def
-        .taskDyn[File] {
-          val tuple = schemaDumpCompilerPlugin.componentProjects match {
-            case Seq(a, b, _*) => (a, b)
-          }
-          val (project213, project212) =
-            if ((schemaDumpCompilerPlugin.componentProjects.head / scalaVersion).value.contains("2.13")) tuple
-            else tuple.swap
-          virtualAxes.value
-            .collectFirst { case x: ScalaVersionAxis => x.value }
-            .map {
-              case "2.13" => Def.task { (project213 / Compile / assembly).value }
-              case "2.12" => Def.task { (project212 / Compile / assembly).value }
-            }
-            .get
-        }
-        .value,
-    Compile / packageBin := currentScalaVersionAssembly.value)
+    Compile / assembly / artifact := {
+      val art = (Compile / assembly / artifact).value
+      art.withClassifier(Some(""))
+    },
+    assembly / assemblyJarName := {
+      val newName = s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar"
+      newName
+    },
+    addArtifact(Compile / assembly / artifact, assembly))
   .jvmPlatform(scalaVersions = supportedScalaVersions)

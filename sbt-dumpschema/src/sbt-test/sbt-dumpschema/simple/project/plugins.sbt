@@ -5,8 +5,3 @@
 //}
 
 addSbtPlugin("org.virtuslab" % "sbt-dumpschema" % "0.1.0-SNAPSHOT")
-
-//resolvers += "jitpack".at("https://jitpack.io")
-//val repo = "com.github.VirtusLab.akka-safer-serializer"
-//val commit = ???
-//libraryDependencies += repo % "sbt-dumpschema" % commit
