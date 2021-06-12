@@ -5,11 +5,13 @@ import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.virtuslab.akkasaferserializer.compiler.DumpCompiler
 import org.virtuslab.akkasaferserializer.writer.SchemaWriter
-import org.virtuslab.akkasaferserializer.model.TypeDefinition
+import org.virtuslab.akkasaferserializer.model.{TypeDefinition, TypeSymbol}
+
+import scala.reflect.runtime.universe.typeOf
 
 class PluginSpec extends AnyWordSpecLike with should.Matchers {
   private def getResourceAsString(name: String) =
-    File(getClass.getClassLoader.getResource(name)).lines.reduce(_ + "\n" + _)
+    new String(File(getClass.getClassLoader.getResource(name)).loadBytes)
 
   private lazy val directory: List[TypeDefinition] = {
     val code = List(getResourceAsString("Trigger.scala"), getResourceAsString("Data.scala"))
@@ -17,7 +19,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
     var res = List[TypeDefinition]()
     File.usingTemporaryDirectory() { directory =>
       val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
-      out should have size 0
+      out should be("")
       res = new SchemaWriter(directory).lastDump.values.toList
     }
     res
@@ -53,7 +55,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
       File.usingTemporaryDirectory() { directory =>
         val code = List(getResourceAsString("GenericTrigger.scala"), getResourceAsString("Data.scala"))
         val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
-        out should have size 0
+        out should be("")
         val res = new SchemaWriter(directory).lastDump.values.toList
         res should have size 0
       }
@@ -63,9 +65,20 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
       File.usingTemporaryDirectory() { directory =>
         val code = List(getResourceAsString("AbstractTrigger.scala"), getResourceAsString("Data.scala"))
         val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
-        out should have size 0
+        out should be("")
         val res = new SchemaWriter(directory).lastDump.values.toList
         res should have size dumpSize
+      }
+    }
+
+    "dump case objects" in {
+      File.usingTemporaryDirectory() { directory =>
+        val code = List(getResourceAsString("DataEnum.scala"))
+        val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+        out should be("")
+        val res = new SchemaWriter(directory).lastDump.values.toList
+        res should have size 5
+        (res.map(_.typeSymbol) should contain).allOf(TypeSymbol.Object, TypeSymbol.Class, TypeSymbol.Trait)
       }
     }
   }

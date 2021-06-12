@@ -47,7 +47,10 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
 
         def extractSchemaFromType(tpe: Type): List[TypeDefinition] = {
           val symbol = tpe.typeSymbol
-          val typeSymbol = if (symbol.isTraitOrInterface) TypeSymbol.Trait else TypeSymbol.Class
+          val typeSymbol =
+            if (symbol.isTraitOrInterface) TypeSymbol.Trait
+            else if (symbol.isModuleClass) TypeSymbol.Object
+            else TypeSymbol.Class
           val annotations = symbol.annotations.map(_.toString)
           val fieldsSymbols =
             if (!symbol.isTraitOrInterface)
@@ -56,8 +59,12 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
               tpe.members.toSeq.filter(x => x.isVal && x.isAbstract)
           val fields = fieldsSymbols.map(x => Field(x.simpleName.toString(), typeToString(x.tpe)))
           val parents = symbol.parentSymbols.filterNot(shouldIgnoreSymbol).map(x => typeToString(x.tpe))
-          val fieldsDefinitions =
-            fieldsSymbols.map(_.tpe).filterNot(shouldIgnoreType).flatMap(extractSchemaFromType).toList
+          val fieldsDefinitions = fieldsSymbols
+            .map(_.tpe)
+            .filterNot(shouldIgnoreType)
+            .flatMap(extractFromTypesSealed)
+            .flatMap(extractSchemaFromType)
+            .toList
           TypeDefinition(typeSymbol, typeToString(tpe), annotations, fields, parents) :: fieldsDefinitions
         }
 
@@ -77,6 +84,7 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
           .filterNot(x => shouldIgnoreSymbol(x._1.typeSymbol))
           .filterNot(x => writer.isUpToDate(typeToString(x._1)))
           .flatMap(x => extractSchemaFromType(x._1).map(y => (y, x._2)))
+          .filterNot(x => writer.isUpToDate(x._1.name))
           .foreach { x =>
             if (options.verbose) {
               reporter.echo(x._2, s"""Updating ${x._1.name} in intermediate results of schema dump""")

@@ -7,7 +7,7 @@ import org.virtuslab.akkasaferserializer.compiler.TestCompiler
 
 class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
   private def getResourceAsString(name: String) =
-    File(getClass.getClassLoader.getResource(name)).lines.reduce(_ + "\n" + _)
+    new String(File(getClass.getClassLoader.getResource(name)).loadBytes)
 
   private val serYesCode = getResourceAsString("MySerializableYes.scala")
   private val serNoCode = getResourceAsString("MySerializableNo.scala")

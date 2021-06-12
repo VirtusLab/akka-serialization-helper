@@ -31,7 +31,7 @@ class SchemaWriter(outputDirectory: File) extends Codecs {
     lastDump.get(typeDefinition.name) match {
       case None                                   => dump(typeDefinition)
       case Some(value) if value != typeDefinition => dump(typeDefinition)
-      case _                                      => ()
+      case _                                      =>
     }
     dumped += typeDefinition.name
   }

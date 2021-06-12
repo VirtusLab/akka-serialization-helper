@@ -121,7 +121,7 @@ lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugi
             "scala",
             "annotation",
             "nowarn.class" | "nowarn$.class"
-          ) => //scala-collection-compat duplicates no-warn.class, as it was added to scala 2.12 after it's release
+          ) => //scala-collection-compat duplicates no-warn.class, as it was added to scala 2.12 after its release
         MergeStrategy.first
       case x =>
         (assembly / assemblyMergeStrategy).value.apply(x)
