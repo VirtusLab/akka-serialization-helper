@@ -84,14 +84,13 @@ lazy val LocalMavenResolverForSbtPlugins = {
   Resolver.file(name, location)(Patterns().withArtifactPatterns(Vector(pattern)))
 }
 
-lazy val schemaDumpPlugin = (project in file("sbt-dumpschema"))
+lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dumpschema"))
   .enablePlugins(SbtPlugin)
   .settings(name := "sbt-dumpschema")
   .settings(commonSettings)
   .settings(
-    scalaVersion := scalaVersion212,
     pluginCrossBuild / sbtVersion := "1.2.8",
-    libraryDependencies += betterFiles,
+    libraryDependencies ++= Seq(sprayJson, betterFiles),
     publishMavenStyle := true,
     resolvers += LocalMavenResolverForSbtPlugins,
     publishM2Configuration := publishM2Configuration.value.withResolverName(LocalMavenResolverForSbtPlugins.name),
@@ -100,6 +99,7 @@ lazy val schemaDumpPlugin = (project in file("sbt-dumpschema"))
       Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
     },
     scriptedBufferLog := false)
+  .jvmPlatform(scalaVersions = Seq(scalaVersion212))
 
 lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugin"))
   .enablePlugins(AssemblyPlugin)
@@ -115,7 +115,7 @@ lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugi
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(borerCore, borerDerivation, betterFiles, akkaTyped % Test, akkaPersistence % Test),
+    libraryDependencies ++= Seq(sprayJson, betterFiles, akkaTyped % Test, akkaPersistence % Test),
     assembly / assemblyMergeStrategy := {
       case PathList(
             "scala",

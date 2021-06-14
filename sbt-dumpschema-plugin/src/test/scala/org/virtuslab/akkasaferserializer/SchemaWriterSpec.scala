@@ -1,27 +1,23 @@
 package org.virtuslab.akkasaferserializer
 
 import better.files.File
-import io.bullet.borer.Json
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.virtuslab.akkasaferserializer.writer.{Codecs, SchemaWriter}
-import org.virtuslab.akkasaferserializer.model.{Field, TypeDefinition, TypeSymbol}
+import org.virtuslab.akkasaferserializer.writer.{DumpSchemaJsonProtocol, SchemaWriter}
+import org.virtuslab.akkasaferserializer.model.{Field, TypeDefinition}
+import spray.json._
 
-class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with Codecs {
+class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with DumpSchemaJsonProtocol {
   val testDef: TypeDefinition =
-    TypeDefinition(TypeSymbol.Trait, "test", Seq("anno"), Seq(Field("a", "Int")), Seq("one", "two"))
+    TypeDefinition("trait", "test", Seq("anno"), Seq(Field("a", "Int")), Seq("one", "two"))
 
   "SchemaWriter" should {
 
     "load previous dump" in {
       File.usingTemporaryDirectory() { directory =>
-        (directory / s"${testDef.name}.json").createFile().writeByteArray(Json.encode(testDef).toByteArray)
+        (directory / s"${testDef.name}.json").createFile().appendLine(testDef.toJson.compactPrint)
         val schemaWriter = new SchemaWriter(directory)
         val loaded = schemaWriter.lastDump
-
-        (directory / "obj.json")
-          .createFile()
-          .writeByteArray(Json.encode(TypeSymbol.Class.asInstanceOf[TypeSymbol]).toByteArray)
 
         loaded should have size 1
         loaded.head._1 should equal(testDef.name)
@@ -37,7 +33,8 @@ class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with Codecs 
         schemaWriter.isUpToDate(testDef.name) should equal(false)
         schemaWriter.consumeTypeDefinition(testDef)
         schemaWriter.isUpToDate(testDef.name) should equal(true)
-        Json.decode((directory / s"${testDef.name}.json").loadBytes).to[TypeDefinition].value should equal(testDef)
+        new String((directory / s"${testDef.name}.json").loadBytes).parseJson.convertTo[TypeDefinition] should equal(
+          testDef)
       }
     }
 

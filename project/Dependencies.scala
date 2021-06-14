@@ -11,6 +11,7 @@ object Dependencies {
   val enumeratum = "com.beachape" %% "enumeratum" % "1.6.1"
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
   val betterFiles = "com.github.pathikrit" %% "better-files" % "3.9.1"
+  val sprayJson = "io.spray" %%  "spray-json" % "1.3.6"
 
   val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
   val akkaStream = "com.typesafe.akka" %% "akka-stream" % akkaVersion

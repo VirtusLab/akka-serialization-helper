@@ -1,7 +1,7 @@
 package org.virtuslab.akkasaferserializer.model
 
 final case class TypeDefinition(
-    typeSymbol: TypeSymbol,
+    typeSymbol: String,
     name: String,
     annotations: Seq[String],
     fields: Seq[Field],

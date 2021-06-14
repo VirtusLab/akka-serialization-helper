@@ -3,43 +3,39 @@ package org.virtuslab.akkasaferserializer
 import sbt.{File => JFile, _}
 import sbt.Keys._
 import better.files._
+import spray.json._
+import DefaultJsonProtocol._
+import spray.json.PrettyPrinter.Indent
 
-import scala.util.parsing.json.{JSON, JSONArray, JSONFormat, JSONObject}
+import scala.language.postfixOps
 
-object DumpSchema {
+object DumpSchema extends DefaultJsonProtocol {
   import DumpSchemaPlugin.autoImport._
 
   def apply(outputFile: File, inputDirectory: File): Unit = {
     val jsons = for {
       file <- inputDirectory.list.toSeq.sorted(File.Order.byName)
-      line <- file.lineIterator
-      json <- JSON.parseRaw(line)
-    } yield json
+    } yield new String(file.loadBytes).parseJson.asJsObject
+
+    val filteredJsons = jsons.map { json =>
+      json.fields("annotations") match {
+        case JsArray(elements) if elements.isEmpty => JsObject(json.fields.filterNot(_._1 == "annotations"))
+        case _                                     => json
+      }
+    }
 
     for {
       writer <- outputFile.clear().newFileOutputStream().printWriter().autoClosed
-    } writer.print(format(JSONArray(jsons.toList)))
+    } writer.print(JsArray(filteredJsons.toVector).toString(SchemaPrinter))
   }
 
-  private def format(t: Any, i: Int = 0): String =
-    t match {
-      case o: JSONObject =>
-        o.obj
-          .map {
-            case (k, v) =>
-              "  " * (i + 1) + JSONFormat.defaultFormatter(k) + ": " + format(v, i + 1)
-          }
-          .mkString("{\n", ",\n", "\n" + "  " * i + "}")
-
-      case a: JSONArray =>
-        a.list
-          .map { e =>
-            "  " * (i + 1) + format(e, i + 1)
-          }
-          .mkString("[\n", ",\n", "\n" + "  " * i + "]")
-
-      case _ => JSONFormat.defaultFormatter(t)
+  object SchemaPrinter extends SortedPrinter {
+    private val order =
+      Seq("typeSymbol", "name", "annotations", "parents", "fields", "typeName").zip(1 until 10).toMap
+    protected override def organiseMembers(members: Map[String, JsValue]): Seq[(String, JsValue)] = {
+      members.toSeq.sortBy(x => order.getOrElse(x._1, 10))
     }
+  }
 
   def assemblyTask(key: TaskKey[Unit]): Def.Setting[_] =
     key := {

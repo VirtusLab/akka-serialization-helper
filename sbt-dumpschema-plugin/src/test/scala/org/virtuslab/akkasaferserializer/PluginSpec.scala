@@ -5,9 +5,7 @@ import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.virtuslab.akkasaferserializer.compiler.DumpCompiler
 import org.virtuslab.akkasaferserializer.writer.SchemaWriter
-import org.virtuslab.akkasaferserializer.model.{TypeDefinition, TypeSymbol}
-
-import scala.reflect.runtime.universe.typeOf
+import org.virtuslab.akkasaferserializer.model.{TypeDefinition}
 
 class PluginSpec extends AnyWordSpecLike with should.Matchers {
   private def getResourceAsString(name: String) =
@@ -78,7 +76,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
         out should be("")
         val res = new SchemaWriter(directory).lastDump.values.toList
         res should have size 5
-        (res.map(_.typeSymbol) should contain).allOf(TypeSymbol.Object, TypeSymbol.Class, TypeSymbol.Trait)
+        (res.map(_.typeSymbol) should contain).allOf("object", "class", "trait")
       }
     }
   }

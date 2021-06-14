@@ -1,6 +1,6 @@
 package org.virtuslab.akkasaferserializer
 import org.virtuslab.akkasaferserializer.writer.SchemaWriter
-import org.virtuslab.akkasaferserializer.model.{Field, TypeDefinition, TypeSymbol}
+import org.virtuslab.akkasaferserializer.model.{Field, TypeDefinition}
 
 import scala.tools.nsc.{Global, Phase}
 import scala.tools.nsc.plugins.PluginComponent
@@ -48,9 +48,9 @@ class DumpSchemaPluginComponent(val options: DumpSchemaOptions, val global: Glob
         def extractSchemaFromType(tpe: Type): List[TypeDefinition] = {
           val symbol = tpe.typeSymbol
           val typeSymbol =
-            if (symbol.isTraitOrInterface) TypeSymbol.Trait
-            else if (symbol.isModuleClass) TypeSymbol.Object
-            else TypeSymbol.Class
+            if (symbol.isTraitOrInterface) "trait"
+            else if (symbol.isModuleClass) "object"
+            else "class"
           val annotations = symbol.annotations.map(_.toString)
           val fieldsSymbols =
             if (!symbol.isTraitOrInterface)
