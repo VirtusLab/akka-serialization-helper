@@ -32,6 +32,7 @@ lazy val commonSettings = Seq(
 
 publish / skip := true
 
+
 lazy val serializer = (projectMatrix in file("serializer"))
   .settings(name := "borer-akka-serializer")
   .settings(commonSettings)
