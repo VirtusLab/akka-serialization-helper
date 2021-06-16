@@ -17,3 +17,6 @@ jobs:
       - run: sbt +compile
       - run: sbt +test:compile
       - run: sbt +test
+      - run:
+         name: Testing sbt plugin
+         command: sbt "dumpEventSchemaCompilerPlugin / publishLocal" scripted

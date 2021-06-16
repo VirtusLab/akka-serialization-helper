@@ -15,7 +15,7 @@ class DumpEventSchemaPluginComponent(val options: DumpEventSchemaOptions, val gl
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
 
-      private val effectNames =
+      private val genericsNames =
         Seq("akka.persistence.typed.scaladsl.Effect", "akka.persistence.typed.scaladsl.ReplyEffect")
       private val ignoredPackages = Seq("akka.", "scala.", "java.")
 
@@ -38,7 +38,7 @@ class DumpEventSchemaPluginComponent(val options: DumpEventSchemaOptions, val gl
         def shouldIgnoreType(tpe: Type) = shouldIgnoreSymbol(tpe.typeSymbol)
 
         val foundUsedClasses: List[(Type, Position)] = body.collect {
-          case x: TypeTree if effectNames.contains(x.tpe.dealias.typeSymbol.fullName) => (x.tpe.typeArgs.head, x.pos)
+          case x: TypeTree if genericsNames.contains(x.tpe.dealias.typeSymbol.fullName) => (x.tpe.typeArgs.head, x.pos)
         }
 
         val foundUpdates: List[(Type, Position)] = body.collect {

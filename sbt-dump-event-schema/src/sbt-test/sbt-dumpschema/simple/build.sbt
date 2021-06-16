@@ -4,4 +4,4 @@ scalaVersion := "2.13.5"
 libraryDependencies += "com.typesafe.akka" %% "akka-persistence-typed" % "2.6.13"
 
 enablePlugins(DumpEventSchemaPlugin)
-dumpEventSchema / dumpEventSchemaPluginVerbose := true
+dumpEventSchema / dumpEventSchemaOutputFile := new File("dump.json")

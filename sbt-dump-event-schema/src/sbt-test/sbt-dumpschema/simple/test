@@ -1,0 +1,2 @@
+> dumpEventSchema
+$ exists dump.json

@@ -9,7 +9,7 @@ class DumpEventSchemaPlugin(override val global: Global) extends Plugin {
   override val description: String = ""
 
   //Placeholder options
-  private val pluginOptions = new DumpEventSchemaOptions("/tmp", false)
+  private val pluginOptions = new DumpEventSchemaOptions("/tmp", verbose = false)
 
   override val components: List[PluginComponent] = List(new DumpEventSchemaPluginComponent(pluginOptions, global))
 
