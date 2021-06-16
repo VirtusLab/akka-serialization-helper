@@ -32,7 +32,7 @@ lazy val commonSettings = Seq(
 
 publish / skip := true
 
-lazy val serializer = (projectMatrix in file("serializer"))
+lazy val borerAkkaSerializer = (projectMatrix in file("borer-akka-serializer"))
   .settings(name := "borer-akka-serializer")
   .settings(commonSettings)
   .settings(
@@ -45,22 +45,22 @@ lazy val serializer = (projectMatrix in file("serializer"))
         akkaStream % Test,
         akkaStreamTestKit % Test,
         enumeratum % Test))
-  .dependsOn(codecs % Test)
+  .dependsOn(borerExtraCodecs % Test)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val codecs = (projectMatrix in file("codecs"))
+lazy val borerExtraCodecs = (projectMatrix in file("borer-extra-codecs"))
   .settings(name := "borer-extra-codecs")
   .settings(commonSettings)
   .settings(libraryDependencies ++= Seq(borerCore, akkaTyped % Provided, akkaStream % Provided, borerDerivation % Test))
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val checkerLibrary = (projectMatrix in file("checker-library"))
+lazy val akkaSerializabilityCheckerLibrary = (projectMatrix in file("akka-serializability-checker-library"))
   .settings(name := "akka-serializability-checker-library")
   .settings(commonSettings)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val checkerPlugin = (projectMatrix in file("checker-plugin"))
-  .settings(name := "akka-serializability-checker-plugin")
+lazy val akkaSerializabilityCheckerCompilerPlugin = (projectMatrix in file("akka-serializability-checker-compiler-plugin"))
+  .settings(name := "akka-serializability-checker-compiler-plugin")
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= {
@@ -73,7 +73,7 @@ lazy val checkerPlugin = (projectMatrix in file("checker-plugin"))
         .getOrElse(Seq.empty)
     },
     libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test, betterFiles % Test))
-  .dependsOn(checkerLibrary)
+  .dependsOn(akkaSerializabilityCheckerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val localMavenResolverForSbtPlugins = {
