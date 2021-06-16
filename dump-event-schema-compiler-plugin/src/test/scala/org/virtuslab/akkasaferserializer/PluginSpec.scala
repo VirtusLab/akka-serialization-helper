@@ -4,7 +4,7 @@ import better.files.File
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.virtuslab.akkasaferserializer.compiler.DumpCompiler
-import org.virtuslab.akkasaferserializer.writer.SchemaWriter
+import org.virtuslab.akkasaferserializer.writer.EventSchemaWriter
 import org.virtuslab.akkasaferserializer.model.TypeDefinition
 
 class PluginSpec extends AnyWordSpecLike with should.Matchers {
@@ -18,7 +18,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
     File.usingTemporaryDirectory() { directory =>
       val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
       out should be("")
-      res = new SchemaWriter(directory).lastDump.values.toList
+      res = new EventSchemaWriter(directory).lastDump.values.toList
     }
     res
   }
@@ -54,7 +54,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
         val code = List(getResourceAsString("GenericTrigger.scala"), getResourceAsString("Data.scala"))
         val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
         out should be("")
-        val res = new SchemaWriter(directory).lastDump.values.toList
+        val res = new EventSchemaWriter(directory).lastDump.values.toList
         res should have size 0
       }
     }
@@ -64,7 +64,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
         val code = List(getResourceAsString("AbstractTrigger.scala"), getResourceAsString("Data.scala"))
         val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
         out should be("")
-        val res = new SchemaWriter(directory).lastDump.values.toList
+        val res = new EventSchemaWriter(directory).lastDump.values.toList
         res should have size dumpSize
       }
     }
@@ -74,7 +74,7 @@ class PluginSpec extends AnyWordSpecLike with should.Matchers {
         val code = List(getResourceAsString("DataEnum.scala"))
         val out = DumpCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
         out should be("")
-        val res = new SchemaWriter(directory).lastDump.values.toList
+        val res = new EventSchemaWriter(directory).lastDump.values.toList
         res should have size 5
         (res.map(_.typeSymbol) should contain).allOf("object", "class", "trait")
       }

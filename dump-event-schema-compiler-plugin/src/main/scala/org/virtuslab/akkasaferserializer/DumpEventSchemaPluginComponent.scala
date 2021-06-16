@@ -1,5 +1,5 @@
 package org.virtuslab.akkasaferserializer
-import org.virtuslab.akkasaferserializer.writer.SchemaWriter
+import org.virtuslab.akkasaferserializer.writer.EventSchemaWriter
 import org.virtuslab.akkasaferserializer.model.{Field, TypeDefinition}
 
 import scala.tools.nsc.{Global, Phase}
@@ -10,7 +10,7 @@ class DumpEventSchemaPluginComponent(val options: DumpEventSchemaOptions, val gl
   override val phaseName: String = "dump-event-schema"
   override val runsAfter: List[String] = List("typer")
 
-  lazy val writer = new SchemaWriter(options)
+  lazy val writer = new EventSchemaWriter(options)
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {

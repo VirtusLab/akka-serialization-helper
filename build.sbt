@@ -84,12 +84,13 @@ lazy val localMavenResolverForSbtPlugins = {
   Resolver.file(name, location)(Patterns().withArtifactPatterns(Vector(pattern)))
 }
 
-lazy val dumpEventSchema = (projectMatrix in file("sbt-dump-event-schema"))
+lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
   .enablePlugins(SbtPlugin)
   .settings(name := "sbt-dump-event-schema")
   .settings(commonSettings)
   .settings(
     pluginCrossBuild / sbtVersion := "1.2.8",
+    scalaVersion := scalaVersion212,
     libraryDependencies ++= Seq(sprayJson, betterFiles),
     publishMavenStyle := true,
     resolvers += localMavenResolverForSbtPlugins,
@@ -99,7 +100,6 @@ lazy val dumpEventSchema = (projectMatrix in file("sbt-dump-event-schema"))
       Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
     },
     scriptedBufferLog := false)
-  .jvmPlatform(scalaVersions = Seq(scalaVersion212))
 
 lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-event-schema-compiler-plugin"))
   .enablePlugins(AssemblyPlugin)

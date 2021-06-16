@@ -3,11 +3,11 @@ package org.virtuslab.akkasaferserializer
 import better.files.File
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.virtuslab.akkasaferserializer.writer.{DumpSchemaJsonProtocol, SchemaWriter}
+import org.virtuslab.akkasaferserializer.writer.{DumpEventSchemaJsonProtocol, EventSchemaWriter}
 import org.virtuslab.akkasaferserializer.model.{Field, TypeDefinition}
 import spray.json._
 
-class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with DumpSchemaJsonProtocol {
+class EventSchemaWriterSpec extends AnyWordSpecLike with should.Matchers with DumpEventSchemaJsonProtocol {
   val testDef: TypeDefinition =
     TypeDefinition("trait", "test", Seq("anno"), Seq(Field("a", "Int")), Seq("one", "two"))
 
@@ -16,7 +16,7 @@ class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with DumpSch
     "load previous dump" in {
       File.usingTemporaryDirectory() { directory =>
         (directory / s"${testDef.name}.json").createFile().appendLine(testDef.toJson.compactPrint)
-        val schemaWriter = new SchemaWriter(directory)
+        val schemaWriter = new EventSchemaWriter(directory)
         val loaded = schemaWriter.lastDump
 
         loaded should have size 1
@@ -28,7 +28,7 @@ class SchemaWriterSpec extends AnyWordSpecLike with should.Matchers with DumpSch
 
     "safe new class to dump" in {
       File.usingTemporaryDirectory() { directory =>
-        val schemaWriter = new SchemaWriter(directory)
+        val schemaWriter = new EventSchemaWriter(directory)
 
         schemaWriter.isUpToDate(testDef.name) should equal(false)
         schemaWriter.consumeTypeDefinition(testDef)

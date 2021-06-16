@@ -7,10 +7,10 @@ import spray.json._
 
 import scala.collection.mutable
 
-class SchemaWriter(outputDirectory: File) extends DumpSchemaJsonProtocol {
+class EventSchemaWriter(outputDirectory: File) extends DumpEventSchemaJsonProtocol {
 
-  def this(dumpSchemaOptions: DumpEventSchemaOptions) = {
-    this(File(dumpSchemaOptions.outputDir))
+  def this(dumpEventSchemaOptions: DumpEventSchemaOptions) = {
+    this(File(dumpEventSchemaOptions.outputDir))
   }
 
   lazy val lastDump: Map[String, TypeDefinition] = {

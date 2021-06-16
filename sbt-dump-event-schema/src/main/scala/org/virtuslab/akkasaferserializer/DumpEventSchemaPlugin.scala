@@ -15,9 +15,11 @@ object DumpEventSchemaPlugin extends AutoPlugin {
   override def globalSettings: Seq[Def.Setting[_]] = Nil
 
   lazy val additionalSettings: Seq[Def.Setting[_]] = Seq(
-    libraryDependencies += compilerPlugin((dumpEventSchema / dumpEventSchemaPlugin).value),
-    scalacOptions += s"-P:dump-schema-plugin:--file ${(dumpEventSchema / dumpEventSchemaPluginOutput).value.toPath}",
-    scalacOptions += (if ((dumpEventSchema / dumpEventSchemaPluginVerbose).value) "-P:dump-schema-plugin:-v" else ""))
+    libraryDependencies += compilerPlugin((dumpEventSchema / dumpEventSchemaCompilerPlugin).value),
+    scalacOptions += s"-P:dump-event-schema-plugin:--file ${(dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile).value.toPath}",
+    scalacOptions += (if ((dumpEventSchema / dumpEventSchemaCompilerPluginVerbose).value)
+                        "-P:dump-event-schema-plugin:-v"
+                      else ""))
 
   lazy val dumpEventSchemaSettings: Seq[Def.Setting[_]] = baseDumpEventSchemaSettings
 
@@ -27,10 +29,10 @@ object DumpEventSchemaPlugin extends AutoPlugin {
       target.value / (dumpEventSchema / dumpEventSchemaOutputFilename).value
     },
     dumpEventSchema / dumpEventSchemaOutputFilename := (dumpEventSchema / dumpEventSchemaOutputFilename)
-        .or(Def.setting(s"${name.value}-dumpschema-${version.value}.json"))
+        .or(Def.setting(s"${name.value}-dump-event-schema-${version.value}.json"))
         .value,
-    dumpEventSchema / dumpEventSchemaPlugin := "org.virtuslab" %% "dump-event-schema-compiler-plugin" % "0.1.0-SNAPSHOT",
-    dumpEventSchema / dumpEventSchemaPluginVerbose := false,
-    dumpEventSchema / dumpEventSchemaPluginOutput := target.value / "dump",
-    cleanFiles += (dumpEventSchema / dumpEventSchemaPluginOutput).value)
+    dumpEventSchema / dumpEventSchemaCompilerPlugin := "org.virtuslab" %% "dump-event-schema-compiler-plugin" % "0.1.0-SNAPSHOT",
+    dumpEventSchema / dumpEventSchemaCompilerPluginVerbose := false,
+    dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile := target.value / "dump",
+    cleanFiles += (dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile).value)
 }

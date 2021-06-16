@@ -42,6 +42,6 @@ object DumpEventSchema extends DefaultJsonProtocol {
       c.readCompilations()
       DumpEventSchema(
         (key / dumpEventSchemaOutputFile).value.toScala,
-        (key / dumpEventSchemaPluginOutput).value.toScala)
+        (key / dumpEventSchemaCompilerPluginOutputFile).value.toScala)
     }
 }

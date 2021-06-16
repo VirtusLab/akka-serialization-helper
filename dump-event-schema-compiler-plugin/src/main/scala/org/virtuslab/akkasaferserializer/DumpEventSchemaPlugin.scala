@@ -5,7 +5,7 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.{Plugin, PluginComponent}
 
 class DumpEventSchemaPlugin(override val global: Global) extends Plugin {
-  override val name: String = "dump-schema-plugin"
+  override val name: String = "dump-event-schema-plugin"
   override val description: String = ""
 
   //Placeholder options
