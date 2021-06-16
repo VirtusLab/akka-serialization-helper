@@ -20,7 +20,7 @@ lazy val commonSettings = Seq(
       "UTF-8",
       "-feature",
       "-language:_",
-//      "-Xfatal-warnings",
+      "-Xfatal-warnings",
       "-Xlog-reflective-calls",
       "-Xlint:_",
       "-Ybackend-parallelism",
@@ -84,9 +84,9 @@ lazy val LocalMavenResolverForSbtPlugins = {
   Resolver.file(name, location)(Patterns().withArtifactPatterns(Vector(pattern)))
 }
 
-lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dumpschema"))
+lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dump-event-schema"))
   .enablePlugins(SbtPlugin)
-  .settings(name := "sbt-dumpschema")
+  .settings(name := "sbt-dump-event-schema")
   .settings(commonSettings)
   .settings(
     pluginCrossBuild / sbtVersion := "1.2.8",
@@ -101,9 +101,9 @@ lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dumpschema"))
     scriptedBufferLog := false)
   .jvmPlatform(scalaVersions = Seq(scalaVersion212))
 
-lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugin"))
+lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dump-event-schema-plugin"))
   .enablePlugins(AssemblyPlugin)
-  .settings(name := "sbt-dumpschema-plugin")
+  .settings(name := "sbt-dump-event-schema-plugin")
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= {

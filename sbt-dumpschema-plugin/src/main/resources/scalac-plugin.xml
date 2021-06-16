@@ -1,4 +1,0 @@
-<plugin>
-    <name>dump-schema-plugin</name>
-    <classname>org.virtuslab.akkasaferserializer.DumpSchemaPlugin</classname>
-</plugin>
