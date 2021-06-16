@@ -141,3 +141,15 @@ lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-event-sche
     },
     addArtifact(Compile / assembly / artifact, assembly))
   .jvmPlatform(scalaVersions = supportedScalaVersions)
+
+lazy val benchmark = (project in file("benchmark"))
+  .settings(name := "serializer-benchmarks")
+  .settings(commonSettings)
+  .settings(
+    libraryDependencies ++= Seq(
+        borerCore,
+        akkaTestKit,
+        borerDerivation,
+        akkaSerializationJackson,
+        jacksonScala,
+        kryo))

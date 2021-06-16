@@ -11,7 +11,9 @@ object Dependencies {
   val enumeratum = "com.beachape" %% "enumeratum" % "1.6.1"
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
   val betterFiles = "com.github.pathikrit" %% "better-files" % "3.9.1"
-  val sprayJson = "io.spray" %%  "spray-json" % "1.3.6"
+  val sprayJson = "io.spray" %% "spray-json" % "1.3.6"
+  val kryo = "io.altoo" %% "akka-kryo-serialization" % "2.1.0"
+  val jacksonScala = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.3"
 
   val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
   val akkaStream = "com.typesafe.akka" %% "akka-stream" % akkaVersion
@@ -19,6 +21,7 @@ object Dependencies {
   val akkaProjections = "com.lightbend.akka" %% "akka-projection-eventsourced" % "1.2.0"
   val akkaTestKit = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
   val akkaStreamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
+  val akkaSerializationJackson = "com.typesafe.akka" %% "akka-serialization-jackson" % akkaVersion
 
   val borerCore = "io.bullet" %% "borer-core" % borerVersion
   val borerDerivation = "io.bullet" %% "borer-derivation" % borerVersion
