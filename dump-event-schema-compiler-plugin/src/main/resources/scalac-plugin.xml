@@ -1,0 +1,4 @@
+<plugin>
+    <name>dump-event-schema-plugin</name>
+    <classname>org.virtuslab.akkasaferserializer.DumpEventSchemaPlugin</classname>
+</plugin>

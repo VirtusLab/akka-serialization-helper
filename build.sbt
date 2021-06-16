@@ -20,7 +20,7 @@ lazy val commonSettings = Seq(
       "UTF-8",
       "-feature",
       "-language:_",
-//      "-Xfatal-warnings",
+      "-Xfatal-warnings",
       "-Xlog-reflective-calls",
       "-Xlint:_",
       "-Ybackend-parallelism",
@@ -76,7 +76,7 @@ lazy val checkerPlugin = (projectMatrix in file("checker-plugin"))
   .dependsOn(checkerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val LocalMavenResolverForSbtPlugins = {
+lazy val localMavenResolverForSbtPlugins = {
   // remove scala and sbt versions from the path, as it does not work with jitpack
   val pattern = "[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]"
   val name = "local-maven-for-sbt-plugins"
@@ -84,16 +84,16 @@ lazy val LocalMavenResolverForSbtPlugins = {
   Resolver.file(name, location)(Patterns().withArtifactPatterns(Vector(pattern)))
 }
 
-lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dumpschema"))
+lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dump-event-schema"))
   .enablePlugins(SbtPlugin)
-  .settings(name := "sbt-dumpschema")
+  .settings(name := "sbt-dump-event-schema")
   .settings(commonSettings)
   .settings(
     pluginCrossBuild / sbtVersion := "1.2.8",
     libraryDependencies ++= Seq(sprayJson, betterFiles),
     publishMavenStyle := true,
-    resolvers += LocalMavenResolverForSbtPlugins,
-    publishM2Configuration := publishM2Configuration.value.withResolverName(LocalMavenResolverForSbtPlugins.name),
+    resolvers += localMavenResolverForSbtPlugins,
+    publishM2Configuration := publishM2Configuration.value.withResolverName(localMavenResolverForSbtPlugins.name),
     scriptedLaunchOpts := {
       scriptedLaunchOpts.value ++
       Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
@@ -101,9 +101,9 @@ lazy val schemaDumpPlugin = (projectMatrix in file("sbt-dumpschema"))
     scriptedBufferLog := false)
   .jvmPlatform(scalaVersions = Seq(scalaVersion212))
 
-lazy val schemaDumpCompilerPlugin = (projectMatrix in file("sbt-dumpschema-plugin"))
+lazy val schemaDumpCompilerPlugin = (projectMatrix in file("dump-event-schema-compiler-plugin"))
   .enablePlugins(AssemblyPlugin)
-  .settings(name := "sbt-dumpschema-plugin")
+  .settings(name := "dump-event-schema-compiler-plugin")
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= {
