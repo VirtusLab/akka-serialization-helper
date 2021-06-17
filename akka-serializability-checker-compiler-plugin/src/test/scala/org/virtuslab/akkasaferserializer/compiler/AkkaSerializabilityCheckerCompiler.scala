@@ -1,6 +1,6 @@
 package org.virtuslab.akkasaferserializer.compiler
 
-import org.virtuslab.akkasaferserializer.{DumpEventSchemaOptions, DumpEventSchemaPlugin}
+import org.virtuslab.akkasaferserializer.AkkaSerializabilityCheckerCompilerPlugin
 
 import java.io.{BufferedReader, PrintWriter, StringReader, StringWriter}
 import java.net.URLClassLoader
@@ -10,8 +10,8 @@ import scala.tools.nsc.reporters.ConsoleReporter
 import scala.tools.nsc.util.ClassPath
 import scala.tools.nsc.{Global, Settings}
 
-object DumpCompiler {
-  def compileCode(code: List[String], options: List[String]): String = {
+object AkkaSerializabilityCheckerCompiler {
+  def compileCode(code: List[String]): String = {
     val sources = code.zipWithIndex.map(x => new BatchSourceFile(s"test${x._2}.scala", x._1))
 
     val settings = new Settings()
@@ -29,21 +29,19 @@ object DumpCompiler {
         settings.usejavacp.value = true
     }
 
-    settings.outputDirs.setSingleOutput(new VirtualDirectory("out", maybeContainer = None))
+    settings.outputDirs.setSingleOutput(new VirtualDirectory("out", None))
 
     val in = new StringReader("")
     val out = new StringWriter()
     val reporter = new ConsoleReporter(settings, new BufferedReader(in), new PrintWriter(out))
 
-    val compiler: Global = new Global(settings, reporter) {
+    val compiler = new Global(settings, reporter) {
       override protected def computeInternalPhases(): Unit = {
         super.computeInternalPhases()
-        val plugin = new DumpEventSchemaPlugin(this)
-        phasesSet ++= plugin.components
-        plugin.init(options, _ => ())
+        for (phase <- new AkkaSerializabilityCheckerCompilerPlugin(this).components)
+          phasesSet += phase
       }
     }
-
     val run = new compiler.Run()
     run.compileSources(sources)
     out.toString

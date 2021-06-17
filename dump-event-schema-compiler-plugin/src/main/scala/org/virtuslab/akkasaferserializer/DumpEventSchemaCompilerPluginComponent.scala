@@ -5,7 +5,8 @@ import org.virtuslab.akkasaferserializer.model.{Field, TypeDefinition}
 import scala.tools.nsc.{Global, Phase}
 import scala.tools.nsc.plugins.PluginComponent
 
-class DumpEventSchemaPluginComponent(val options: DumpEventSchemaOptions, val global: Global) extends PluginComponent {
+class DumpEventSchemaCompilerPluginComponent(val options: DumpEventSchemaOptions, val global: Global)
+    extends PluginComponent {
   import global._
   override val phaseName: String = "dump-event-schema"
   override val runsAfter: List[String] = List("typer")

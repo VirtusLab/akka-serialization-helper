@@ -3,7 +3,9 @@ package org.virtuslab.akkasaferserializer
 import scala.tools.nsc.plugins.PluginComponent
 import scala.tools.nsc.{Global, Phase}
 
-class AkkaSerializabilityCheckerPluginComponent(val pluginOptions: PluginOptions, val global: Global)
+class AkkaSerializabilityCheckerCompilerPluginComponent(
+    val pluginOptions: AkkaSerializabilityCheckerOptions,
+    val global: Global)
     extends PluginComponent {
   import global._
   override val phaseName: String = "akka-serializability-checker"
@@ -41,7 +43,7 @@ class AkkaSerializabilityCheckerPluginComponent(val pluginOptions: PluginOptions
                   } else {
                     if (pluginOptions.verbose) {
                       reporter.echo(
-                        s"${classOf[AkkaSerializabilityCheckerPlugin].getSimpleName}: Found new annotated trait: ${annotatedType.typeSymbol.fullName}")
+                        s"${classOf[AkkaSerializabilityCheckerCompilerPlugin].getSimpleName}: Found new annotated trait: ${annotatedType.typeSymbol.fullName}")
                     }
                     annotatedType :: annotatedTraits
                   }

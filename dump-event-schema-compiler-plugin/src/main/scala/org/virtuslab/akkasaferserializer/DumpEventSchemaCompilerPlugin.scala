@@ -4,14 +4,15 @@ import java.io.{File, IOException}
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.{Plugin, PluginComponent}
 
-class DumpEventSchemaPlugin(override val global: Global) extends Plugin {
+class DumpEventSchemaCompilerPlugin(override val global: Global) extends Plugin {
   override val name: String = "dump-event-schema-plugin"
   override val description: String = ""
 
   //Placeholder options
   private val pluginOptions = new DumpEventSchemaOptions("/tmp", verbose = false)
 
-  override val components: List[PluginComponent] = List(new DumpEventSchemaPluginComponent(pluginOptions, global))
+  override val components: List[PluginComponent] = List(
+    new DumpEventSchemaCompilerPluginComponent(pluginOptions, global))
 
   override def init(options: List[String], error: String => Unit): Boolean = {
     if (options.contains("-v"))

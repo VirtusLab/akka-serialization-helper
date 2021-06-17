@@ -3,9 +3,9 @@ package org.virtuslab.akkasaferserializer
 import better.files.File
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should
-import org.virtuslab.akkasaferserializer.compiler.TestCompiler
+import org.virtuslab.akkasaferserializer.compiler.AkkaSerializabilityCheckerCompiler
 
-class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
+class AkkaSerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
   private def getResourceAsString(name: String) =
     new String(File(getClass.getClassLoader.getResource(name)).loadBytes)
 
@@ -13,18 +13,18 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
   private val serNoCode = getResourceAsString("MySerializableNo.scala")
 
   private def testCode(code: String) = {
-    TestCompiler.compileCode(List(serYesCode, code)) should have size 0
-    TestCompiler.compileCode(List(serNoCode, code)) should include("error")
+    AkkaSerializabilityCheckerCompiler.compileCode(List(serYesCode, code)) should have size 0
+    AkkaSerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should include("error")
   }
 
   private val singleBehavior = getResourceAsString("BehaviorTest.scala")
   "Plugin" should "correctly traverse from Behavior to serializer trait" in {
-    val out = TestCompiler.compileCode(List(serYesCode, singleBehavior))
+    val out = AkkaSerializabilityCheckerCompiler.compileCode(List(serYesCode, singleBehavior))
     out should have size 0
   }
 
   it should "detect lack of serializer trait with Behavior" in {
-    val out = TestCompiler.compileCode(List(serNoCode, singleBehavior))
+    val out = AkkaSerializabilityCheckerCompiler.compileCode(List(serNoCode, singleBehavior))
     out should include("error")
   }
 
@@ -39,7 +39,7 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
   it should "whitelist all akka types from checks" in {
     val akkaWhitelist = getResourceAsString("AkkaWhitelistTest.scala")
 
-    val out = TestCompiler.compileCode(List(serYesCode, akkaWhitelist))
+    val out = AkkaSerializabilityCheckerCompiler.compileCode(List(serYesCode, akkaWhitelist))
     out should have size 0
   }
 
@@ -53,6 +53,6 @@ class PluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
 
   it should "detect lack of upper bounds in generics" in {
     val code = getResourceAsString("GenericsTest2.scala")
-    TestCompiler.compileCode(List(serNoCode, code)) should include("error")
+    AkkaSerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should include("error")
   }
 }
