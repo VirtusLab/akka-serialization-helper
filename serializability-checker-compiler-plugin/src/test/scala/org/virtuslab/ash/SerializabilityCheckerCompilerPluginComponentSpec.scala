@@ -3,6 +3,7 @@ package org.virtuslab.ash
 import better.files.File
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should
+
 import org.virtuslab.ash.compiler.SerializabilityCheckerCompiler
 
 class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike with should.Matchers {

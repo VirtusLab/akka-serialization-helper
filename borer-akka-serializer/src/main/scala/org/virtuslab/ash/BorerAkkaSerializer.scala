@@ -1,10 +1,14 @@
 package org.virtuslab.ash
 
-import akka.serialization.Serializer
-import io.bullet.borer.{Cbor, Codec, Decoder, Encoder}
-
 import java.util.concurrent.atomic._
+
 import scala.reflect.ClassTag
+
+import akka.serialization.Serializer
+import io.bullet.borer.Cbor
+import io.bullet.borer.Codec
+import io.bullet.borer.Decoder
+import io.bullet.borer.Encoder
 
 trait BorerAkkaSerializer[Ser] extends Serializer {
 

@@ -12,6 +12,10 @@ ThisBuild / organization := "org.virtuslab"
 ThisBuild / organizationName := "VirtusLab"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+
 lazy val commonSettings = Seq(
   scalafmtOnCompile := true,
   scalacOptions ++= Seq(

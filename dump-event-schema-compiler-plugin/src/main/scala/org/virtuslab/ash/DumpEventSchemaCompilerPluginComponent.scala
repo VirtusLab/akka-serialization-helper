@@ -1,9 +1,11 @@
 package org.virtuslab.ash
-import org.virtuslab.ash.writer.EventSchemaWriter
-import org.virtuslab.ash.model.{Field, TypeDefinition}
-
-import scala.tools.nsc.{Global, Phase}
+import scala.tools.nsc.Global
+import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
+
+import org.virtuslab.ash.model.Field
+import org.virtuslab.ash.model.TypeDefinition
+import org.virtuslab.ash.writer.EventSchemaWriter
 
 class DumpEventSchemaCompilerPluginComponent(val options: DumpEventSchemaOptions, val global: Global)
     extends PluginComponent {

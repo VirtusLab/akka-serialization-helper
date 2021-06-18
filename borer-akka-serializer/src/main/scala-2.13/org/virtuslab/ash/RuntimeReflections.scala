@@ -1,8 +1,8 @@
 package org.virtuslab.ash
 
-import org.reflections8.Reflections
-
 import scala.jdk.CollectionConverters._
+
+import org.reflections8.Reflections
 
 object RuntimeReflections {
   def apply(prefix: String) = new RuntimeReflections(prefix)

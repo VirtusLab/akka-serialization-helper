@@ -1,7 +1,8 @@
 package org.virtuslab.ash
 
 import scala.tools.nsc.Global
-import scala.tools.nsc.plugins.{Plugin, PluginComponent}
+import scala.tools.nsc.plugins.Plugin
+import scala.tools.nsc.plugins.PluginComponent
 
 class SerializabilityCheckerCompilerPlugin(override val global: Global) extends Plugin {
   override val name: String = "serializability-checker-plugin"

@@ -2,7 +2,11 @@ package org.virtuslab.ash.serializer
 
 import io.bullet.borer.Codec
 import io.bullet.borer.derivation.MapBasedCodecs.deriveAllCodecs
-import org.virtuslab.ash.data.{AkkaData, Animal, Greeting, Zoo}
+
+import org.virtuslab.ash.data.AkkaData
+import org.virtuslab.ash.data.Animal
+import org.virtuslab.ash.data.Greeting
+import org.virtuslab.ash.data.Zoo
 
 object Codecs {
   import org.virtuslab.ash.StandardCodecs._

@@ -1,19 +1,28 @@
 package org.virtuslab.ash
 
+import scala.concurrent.Future
+
 import akka.NotUsed
-import akka.actor.testkit.typed.scaladsl.{ActorTestKit, SerializationTestKit}
+import akka.actor.testkit.typed.scaladsl.ActorTestKit
+import akka.actor.testkit.typed.scaladsl.SerializationTestKit
 import akka.actor.typed.ActorSystem
-import akka.stream.scaladsl.{Sink, Source, StreamRefs}
-import akka.stream.{Materializer, SinkRef, SourceRef}
+import akka.stream.Materializer
+import akka.stream.SinkRef
+import akka.stream.SourceRef
+import akka.stream.scaladsl.Sink
+import akka.stream.scaladsl.Source
+import akka.stream.scaladsl.StreamRefs
 import com.typesafe.config.ConfigFactory
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.virtuslab.ash.data.AkkaData.{SinkRefClass, SourceRefClass}
-import org.virtuslab.ash.data.Animal.{Lion, Tiger}
-import org.virtuslab.ash.data.Greeting
-import org.virtuslab.ash.data.Zoo.{GreetingZoo, NorthZoo}
 
-import scala.concurrent.Future
+import org.virtuslab.ash.data.AkkaData.SinkRefClass
+import org.virtuslab.ash.data.AkkaData.SourceRefClass
+import org.virtuslab.ash.data.Animal.Lion
+import org.virtuslab.ash.data.Animal.Tiger
+import org.virtuslab.ash.data.Greeting
+import org.virtuslab.ash.data.Zoo.GreetingZoo
+import org.virtuslab.ash.data.Zoo.NorthZoo
 
 class TestBorerAkkaSerializerSpec extends AnyWordSpecLike with Matchers {
 

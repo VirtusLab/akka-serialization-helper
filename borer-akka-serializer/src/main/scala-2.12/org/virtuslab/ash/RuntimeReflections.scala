@@ -1,8 +1,8 @@
 package org.virtuslab.ash
 
-import org.reflections8.Reflections
-
 import scala.collection.convert.ImplicitConversions.`iterable AsScalaIterable`
+
+import org.reflections8.Reflections
 
 object RuntimeReflections {
   def apply(prefix: String) = new RuntimeReflections(prefix)

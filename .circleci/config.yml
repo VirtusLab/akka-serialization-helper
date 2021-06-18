@@ -12,11 +12,24 @@ jobs:
 
       # -batch is necessary to make sure sbt doesn't stall waiting for user input in case of certain failures
       - run: echo '-batch' >> .sbtopts
-      - run: sbt update
-      - run: sbt +scalafmtCheckAll
-      - run: sbt +compile
-      - run: sbt +test:compile
-      - run: sbt +test
       - run:
-         name: Testing sbt plugin
-         command: sbt "dumpEventSchemaCompilerPlugin / publishLocal" scripted
+          name: Resolving dependencies
+          command: sbt update
+      - run:
+          name: Checking formating
+          command: sbt scalafmtCheckAll
+      - run:
+          name: Checking import order
+          command: sbt "scalafixAll --check"
+      - run:
+          name: Compiling production code
+          command: sbt compile
+      - run:
+          name: Compiling tests
+          command: sbt test:compile
+      - run:
+          name: Running unit tests
+          command: sbt test
+      - run:
+          name: Testing sbt plugin
+          command: sbt "dumpEventSchemaCompilerPlugin / publishLocal" scripted

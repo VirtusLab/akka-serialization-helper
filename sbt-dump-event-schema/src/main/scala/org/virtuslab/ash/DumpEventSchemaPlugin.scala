@@ -1,7 +1,8 @@
 package org.virtuslab.ash
 
+import sbt.Def
 import sbt.Keys._
-import sbt.{Def, _}
+import sbt._
 
 object DumpEventSchemaPlugin extends AutoPlugin {
 

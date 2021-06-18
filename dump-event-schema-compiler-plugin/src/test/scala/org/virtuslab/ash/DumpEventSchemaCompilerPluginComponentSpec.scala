@@ -3,9 +3,10 @@ package org.virtuslab.ash
 import better.files.File
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
+
 import org.virtuslab.ash.compiler.DumpEventSchemaCompiler
-import org.virtuslab.ash.writer.EventSchemaWriter
 import org.virtuslab.ash.model.TypeDefinition
+import org.virtuslab.ash.writer.EventSchemaWriter
 
 class DumpEventSchemaCompilerPluginComponentSpec extends AnyWordSpecLike with should.Matchers {
   private def getResourceAsString(name: String) =

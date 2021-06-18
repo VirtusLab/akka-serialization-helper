@@ -1,7 +1,9 @@
 package org.virtuslab.ash
 
+import sbt.File
 import sbt.librarymanagement.ModuleID
-import sbt.{File, settingKey, taskKey}
+import sbt.settingKey
+import sbt.taskKey
 
 trait DumpEventSchemaKeys {
   lazy val dumpEventSchema = taskKey[Unit]("Dump event schema")

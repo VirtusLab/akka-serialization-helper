@@ -1,7 +1,8 @@
 package org.virtuslab.ash
 
+import scala.tools.nsc.Global
+import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
-import scala.tools.nsc.{Global, Phase}
 
 class SerializabilityCheckerCompilerPluginComponent(
     val pluginOptions: SerializabilityCheckerOptions,

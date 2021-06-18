@@ -1,12 +1,12 @@
 package org.virtuslab.ash
 
-import sbt.{File => JFile, _}
-import sbt.Keys._
-import better.files._
-import spray.json._
-import DefaultJsonProtocol._
-
 import scala.language.postfixOps
+
+import better.files._
+import sbt.Keys._
+import sbt.{File => JFile, _}
+import spray.json.DefaultJsonProtocol._
+import spray.json._
 
 object DumpEventSchema extends DefaultJsonProtocol {
   import DumpEventSchemaPlugin.autoImport._

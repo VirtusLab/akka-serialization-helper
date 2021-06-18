@@ -1,8 +1,11 @@
 package org.virtuslab.ash
 
-import java.io.{File, IOException}
+import java.io.File
+import java.io.IOException
+
 import scala.tools.nsc.Global
-import scala.tools.nsc.plugins.{Plugin, PluginComponent}
+import scala.tools.nsc.plugins.Plugin
+import scala.tools.nsc.plugins.PluginComponent
 
 class DumpEventSchemaCompilerPlugin(override val global: Global) extends Plugin {
   override val name: String = "dump-event-schema-plugin"

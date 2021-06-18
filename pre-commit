@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# This can be symlinked from .git/hooks/pre-commit in the repo with:
+# ln -s ../../pre-commit .git/hooks/pre-commit
+# Make sure the file is executable.
+
+sbt "scalafmtCheckAll" "scalafixAll"
+

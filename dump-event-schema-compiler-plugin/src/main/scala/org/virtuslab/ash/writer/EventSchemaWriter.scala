@@ -1,11 +1,12 @@
 package org.virtuslab.ash.writer
 
+import scala.collection.mutable
+
 import better.files.File
-import org.virtuslab.ash.DumpEventSchemaOptions
-import org.virtuslab.ash.model.TypeDefinition
 import spray.json._
 
-import scala.collection.mutable
+import org.virtuslab.ash.DumpEventSchemaOptions
+import org.virtuslab.ash.model.TypeDefinition
 
 class EventSchemaWriter(outputDirectory: File) extends DumpEventSchemaJsonProtocol {
 

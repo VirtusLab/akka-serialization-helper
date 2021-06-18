@@ -1,6 +1,8 @@
 package org.virtuslab.ash
 
-import io.bullet.borer.{Cbor, Decoder, Encoder}
+import io.bullet.borer.Cbor
+import io.bullet.borer.Decoder
+import io.bullet.borer.Encoder
 import org.scalatest.Assertion
 import org.scalatest.matchers.should
 

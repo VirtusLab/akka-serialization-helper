@@ -3,9 +3,12 @@ package org.virtuslab.ash
 import better.files.File
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
-import org.virtuslab.ash.writer.{DumpEventSchemaJsonProtocol, EventSchemaWriter}
-import org.virtuslab.ash.model.{Field, TypeDefinition}
 import spray.json._
+
+import org.virtuslab.ash.model.Field
+import org.virtuslab.ash.model.TypeDefinition
+import org.virtuslab.ash.writer.DumpEventSchemaJsonProtocol
+import org.virtuslab.ash.writer.EventSchemaWriter
 
 class EventSchemaWriterSpec extends AnyWordSpecLike with should.Matchers with DumpEventSchemaJsonProtocol {
   val testDef: TypeDefinition =
