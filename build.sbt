@@ -54,13 +54,13 @@ lazy val borerExtraCodecs = (projectMatrix in file("borer-extra-codecs"))
   .settings(libraryDependencies ++= Seq(borerCore, akkaTyped % Provided, akkaStream % Provided, borerDerivation % Test))
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val akkaSerializabilityCheckerLibrary = (projectMatrix in file("akka-serializability-checker-library"))
-  .settings(name := "akka-serializability-checker-library")
+lazy val serializabilityCheckerLibrary = (projectMatrix in file("serializability-checker-library"))
+  .settings(name := "serializability-checker-library")
   .settings(commonSettings)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val akkaSerializabilityCheckerCompilerPlugin = (projectMatrix in file("akka-serializability-checker-compiler-plugin"))
-  .settings(name := "akka-serializability-checker-compiler-plugin")
+lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializability-checker-compiler-plugin"))
+  .settings(name := "serializability-checker-compiler-plugin")
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= {
@@ -73,7 +73,7 @@ lazy val akkaSerializabilityCheckerCompilerPlugin = (projectMatrix in file("akka
         .getOrElse(Seq.empty)
     },
     libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test, betterFiles % Test))
-  .dependsOn(akkaSerializabilityCheckerLibrary)
+  .dependsOn(serializabilityCheckerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val localMavenResolverForSbtPlugins = {

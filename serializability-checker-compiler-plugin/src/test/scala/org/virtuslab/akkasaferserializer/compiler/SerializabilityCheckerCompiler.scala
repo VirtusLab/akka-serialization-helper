@@ -1,6 +1,6 @@
 package org.virtuslab.akkasaferserializer.compiler
 
-import org.virtuslab.akkasaferserializer.AkkaSerializabilityCheckerCompilerPlugin
+import org.virtuslab.akkasaferserializer.SerializabilityCheckerCompilerPlugin
 
 import java.io.{BufferedReader, PrintWriter, StringReader, StringWriter}
 import java.net.URLClassLoader
@@ -10,7 +10,7 @@ import scala.tools.nsc.reporters.ConsoleReporter
 import scala.tools.nsc.util.ClassPath
 import scala.tools.nsc.{Global, Settings}
 
-object AkkaSerializabilityCheckerCompiler {
+object SerializabilityCheckerCompiler {
   def compileCode(code: List[String]): String = {
     val sources = code.zipWithIndex.map(x => new BatchSourceFile(s"test${x._2}.scala", x._1))
 
@@ -38,7 +38,7 @@ object AkkaSerializabilityCheckerCompiler {
     val compiler = new Global(settings, reporter) {
       override protected def computeInternalPhases(): Unit = {
         super.computeInternalPhases()
-        for (phase <- new AkkaSerializabilityCheckerCompilerPlugin(this).components)
+        for (phase <- new SerializabilityCheckerCompilerPlugin(this).components)
           phasesSet += phase
       }
     }

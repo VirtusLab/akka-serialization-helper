@@ -5,7 +5,7 @@ import scala.tools.nsc.reporters.Reporter
 
 /**
  * In update 2.12.12 -> 2.12.13 reporter was changed from method to value.
- * This code creates a reporter, regardless whether is a value of method
+ * This code creates a reporter, regardless whether it is a value or a method
  */
 object CrossVersionReporter {
   def apply(global: Global): Reporter = {
