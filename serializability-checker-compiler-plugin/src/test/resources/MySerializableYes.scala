@@ -1,6 +1,6 @@
 package org.random.project
 
-import org.virtuslab.akkaserializationhelper.SerializabilityTrait
+import org.virtuslab.ash.SerializabilityTrait
 
 @SerializabilityTrait
 trait MySerializable

@@ -1,7 +1,7 @@
 package org.random.project
 
 import akka.actor.typed.Behavior
-import org.virtuslab.akkaserializationhelper.SerializabilityTrait
+import org.virtuslab.ash.SerializabilityTrait
 
 object BehaviorTest {
   sealed trait Command extends MySerializable

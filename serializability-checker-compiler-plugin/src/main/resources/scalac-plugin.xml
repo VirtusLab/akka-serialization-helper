@@ -1,4 +1,4 @@
 <plugin>
     <name>akka-serializability-checker-plugin</name>
-    <classname>org.virtuslab.akkaserializationhelper.SerializabilityCheckerCompilerPlugin</classname>
+    <classname>org.virtuslab.ash.SerializabilityCheckerCompilerPlugin</classname>
 </plugin>
