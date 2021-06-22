@@ -1,6 +1,7 @@
 package org.virtuslab.ash
 
 import better.files.File
+import org.scalactic.StringNormalizations.lowerCased
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should
 
@@ -13,29 +14,26 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   private val serYesCode = getResourceAsString("MySerializableYes.scala")
   private val serNoCode = getResourceAsString("MySerializableNo.scala")
 
-  private def testCode(code: String) = {
-    SerializabilityCheckerCompiler.compileCode(List(serYesCode, code)) should have size 0
-    SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should include("error")
+  private def testCode(code: String, errorMessage: Seq[String] = Seq("message")): Unit = {
+    SerializabilityCheckerCompiler.compileCode(List(serYesCode, code)) should be("")
+    val noOut = SerializabilityCheckerCompiler.compileCode(List(serNoCode, code))
+    noOut should include("error")
+    val rgx = errorMessage.reduce(_ + "|" + _)
+    (noOut should include).regex(rgx)
   }
 
-  private val singleBehavior = getResourceAsString("BehaviorTest.scala")
   "Plugin" should "correctly traverse from Behavior to serializer trait" in {
-    val out = SerializabilityCheckerCompiler.compileCode(List(serYesCode, singleBehavior))
-    out should have size 0
+    testCode(getResourceAsString("BehaviorTest.scala"))
   }
 
-  it should "detect lack of serializer trait with Behavior" in {
-    val out = SerializabilityCheckerCompiler.compileCode(List(serNoCode, singleBehavior))
-    out should include("error")
-    out should include(ClassType.Message.name.toLowerCase)
-  }
+  private val replyClassTypes = Seq("event", "state")
 
   it should "correctly traverse from EventEnvelope to serializer trait" in {
     testCode(getResourceAsString("EventEnvelopeTest.scala"))
   }
 
   it should "correctly traverse from ReplyEffect to serializer trait" in {
-    testCode(getResourceAsString("ReplyEffectTest.scala"))
+    testCode(getResourceAsString("ReplyEffectTest.scala"), replyClassTypes)
   }
 
   it should "whitelist all akka types from checks" in {
@@ -59,6 +57,10 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   }
 
   it should "detect ask pattern" in {
-    testCode(getResourceAsString("AskTellTest.scala"))
+    testCode(getResourceAsString("AskTest.scala"))
+  }
+
+  it should "detect tell pattern" in {
+    testCode(getResourceAsString("TellTest.scala"))
   }
 }

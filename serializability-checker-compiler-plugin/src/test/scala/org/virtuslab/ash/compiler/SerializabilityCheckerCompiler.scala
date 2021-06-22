@@ -49,6 +49,7 @@ object SerializabilityCheckerCompiler {
     }
     val run = new compiler.Run()
     run.compileSources(sources)
+    reporter.errorCount
     out.toString
   }
 }
