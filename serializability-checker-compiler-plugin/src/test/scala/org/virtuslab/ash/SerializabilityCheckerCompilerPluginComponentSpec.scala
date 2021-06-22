@@ -27,6 +27,7 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   it should "detect lack of serializer trait with Behavior" in {
     val out = SerializabilityCheckerCompiler.compileCode(List(serNoCode, singleBehavior))
     out should include("error")
+    out should include(ClassType.Message.name.toLowerCase)
   }
 
   it should "correctly traverse from EventEnvelope to serializer trait" in {
@@ -55,5 +56,9 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   it should "detect lack of upper bounds in generics" in {
     val code = getResourceAsString("GenericsTest2.scala")
     SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should include("error")
+  }
+
+  it should "detect ask pattern" in {
+    testCode(getResourceAsString("AskTellTest.scala"))
   }
 }

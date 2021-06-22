@@ -22,22 +22,28 @@ class SerializabilityCheckerCompilerPluginComponent(
         val body = unit.body
         val reporter = CrossVersionReporter(global)
 
-        val genericsNames = Seq(
-          "akka.actor.typed.Behavior",
-          "akka.persistence.typed.scaladsl.ReplyEffect",
-          "akka.projection.eventsourced.EventEnvelope",
-          "akka.persistence.typed.scaladsl.Effect")
+        val genericsNamesWithTypes = Map(
+          ("akka.actor.typed.Behavior", Seq(ClassType.Message)),
+          ("akka.actor.typed.ActorRef", Seq(ClassType.Message)),
+          ("akka.actor.typed.RecipientRef", Seq(ClassType.Message)),
+          ("akka.persistence.typed.scaladsl.ReplyEffect", Seq(ClassType.Event, ClassType.State)),
+          ("akka.projection.eventsourced.EventEnvelope", Seq(ClassType.Event, ClassType.State)),
+          ("akka.persistence.typed.scaladsl.Effect", Seq(ClassType.Event)))
+
+        val genericsNames = genericsNamesWithTypes.keys.toSeq
 
         annotatedTraitsCache = body
           .collect {
-            case x: TypeTree if genericsNames.contains(x.tpe.typeSymbol.fullName) => x.tpe.typeArgs
+            case x: TypeTree if genericsNames.contains(x.tpe.typeSymbol.fullName) =>
+              x.tpe.typeArgs.zip(genericsNamesWithTypes(x.tpe.typeSymbol.fullName))
           }
           .flatten
           .foldRight(annotatedTraitsCache) { (next, annotatedTraits) =>
-            if (annotatedTraits.exists(next <:< _) || next.dealias.typeSymbol.fullName.startsWith("akka.")) {
+            val (tpe, classType) = next
+            if (annotatedTraits.exists(tpe <:< _) || tpe.dealias.typeSymbol.fullName.startsWith("akka.")) {
               annotatedTraits
             } else {
-              findSuperclassAnnotatedWithSerializabilityTrait(next) match {
+              findSuperclassAnnotatedWithSerializabilityTrait(tpe) match {
                 case Some(annotatedType) =>
                   if (annotatedTraits.contains(annotatedType)) {
                     annotatedTraits
@@ -50,9 +56,9 @@ class SerializabilityCheckerCompilerPluginComponent(
                   }
                 case None =>
                   reporter.error(
-                    next.typeSymbol.pos,
-                    s"""${next
-                      .toString()} is used as Akka message but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
+                    tpe.typeSymbol.pos,
+                    s"""${tpe
+                      .toString()} is used as Akka ${classType.name.toLowerCase} but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
                       |Passing an object NOT extending ${serializabilityTraitType.nameAndArgsString} as a message may cause Akka to fall back to Java serialization during runtime.
                       |Annotate this class or one of the traits/classes it extends with @${serializabilityTraitType.toLongString}.
                       |
