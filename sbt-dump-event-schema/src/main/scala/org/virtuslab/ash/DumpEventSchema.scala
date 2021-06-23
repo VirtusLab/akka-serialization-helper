@@ -24,7 +24,8 @@ object DumpEventSchema extends DefaultJsonProtocol {
     }
 
     for {
-      writer <- outputFile.clear().newFileOutputStream().printWriter().autoClosed
+      writer <-
+        outputFile.createIfNotExists(createParents = true).clear().newFileOutputStream().printWriter().autoClosed
     } writer.print(JsArray(filteredJsons.toVector).toString(SchemaPrinter))
   }
 

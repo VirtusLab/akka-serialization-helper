@@ -20,20 +20,19 @@ object DumpEventSchemaPlugin extends AutoPlugin {
     scalacOptions += s"-P:dump-event-schema-plugin:--file ${(dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile).value.toPath}",
     scalacOptions += (if ((dumpEventSchema / dumpEventSchemaCompilerPluginVerbose).value)
                         "-P:dump-event-schema-plugin:-v"
-                      else ""))
+                      else ""),
+    cleanFiles += (dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile).value)
 
   lazy val dumpEventSchemaSettings: Seq[Def.Setting[_]] = baseDumpEventSchemaSettings
 
   lazy val baseDumpEventSchemaSettings: Seq[Def.Setting[_]] = Seq(
     DumpEventSchema.dumpEventSchemaTask(dumpEventSchema),
-    dumpEventSchema / dumpEventSchemaOutputFile := {
-      target.value / (dumpEventSchema / dumpEventSchemaOutputFilename).value
-    },
-    dumpEventSchema / dumpEventSchemaOutputFilename := (dumpEventSchema / dumpEventSchemaOutputFilename)
-        .or(Def.setting(s"${name.value}-dump-event-schema-${version.value}.json"))
-        .value,
+    dumpEventSchema / dumpEventSchemaOutputFile :=
+      new File(
+        (dumpEventSchema / dumpEventSchemaOutputDirectoryPath).value) / (dumpEventSchema / dumpEventSchemaOutputFilename).value,
+    dumpEventSchema / dumpEventSchemaOutputFilename := s"${name.value}-dump-event-schema-${version.value}.json",
+    dumpEventSchema / dumpEventSchemaOutputDirectoryPath := target.value.getPath,
     dumpEventSchema / dumpEventSchemaCompilerPlugin := "org.virtuslab" %% "dump-event-schema-compiler-plugin" % "0.1.0-SNAPSHOT",
     dumpEventSchema / dumpEventSchemaCompilerPluginVerbose := false,
-    dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile := target.value / "dump",
-    cleanFiles += (dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile).value)
+    dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile := target.value / "dump")
 }
