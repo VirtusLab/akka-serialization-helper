@@ -16,7 +16,7 @@ import scala.tools.nsc.util.ClassPath
 import org.virtuslab.ash.SerializabilityCheckerCompilerPlugin
 
 object SerializabilityCheckerCompiler {
-  def compileCode(code: List[String]): String = {
+  def compileCode(code: List[String], args: List[String] = List.empty): String = {
     val sources = code.zipWithIndex.map(x => new BatchSourceFile(s"test${x._2}.scala", x._1))
 
     val settings = new Settings()
@@ -43,8 +43,10 @@ object SerializabilityCheckerCompiler {
     val compiler = new Global(settings, reporter) {
       override protected def computeInternalPhases(): Unit = {
         super.computeInternalPhases()
-        for (phase <- new SerializabilityCheckerCompilerPlugin(this).components)
+        val plugin = new SerializabilityCheckerCompilerPlugin(this)
+        for (phase <- plugin.components)
           phasesSet += phase
+        plugin.init(args, _ => ())
       }
     }
     val run = new compiler.Run()

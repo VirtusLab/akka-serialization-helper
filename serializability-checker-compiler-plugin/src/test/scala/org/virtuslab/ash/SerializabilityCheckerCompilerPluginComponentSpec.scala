@@ -14,26 +14,31 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   private val serYesCode = getResourceAsString("MySerializableYes.scala")
   private val serNoCode = getResourceAsString("MySerializableNo.scala")
 
-  private def testCode(code: String, errorMessage: Seq[String] = Seq("message")): Unit = {
-    SerializabilityCheckerCompiler.compileCode(List(serYesCode, code)) should be("")
-    val noOut = SerializabilityCheckerCompiler.compileCode(List(serNoCode, code))
+  private def testCode(resourceName: String, errorTypes: ClassType = ClassType.Message, detectionType: Int = 0) = {
+    val disableFlags =
+      List("--disable-detection-generics", "--disable-detection-generic-methods", "--disable-detection-methods")
+    val pluginArgs = disableFlags.filter(_ != disableFlags(detectionType))
+    val code = getResourceAsString(resourceName)
+    SerializabilityCheckerCompiler.compileCode(List(serYesCode, code), pluginArgs) should be("")
+    val noOut = SerializabilityCheckerCompiler.compileCode(List(serNoCode, code), pluginArgs)
     noOut should include("error")
-    val rgx = errorMessage.reduce(_ + "|" + _)
-    (noOut should include).regex(rgx)
+    noOut should include(errorTypes.name)
   }
 
   "Plugin" should "correctly traverse from Behavior to serializer trait" in {
-    testCode(getResourceAsString("BehaviorTest.scala"))
+    testCode("BehaviorTest.scala")
   }
-
-  private val replyClassTypes = Seq("event", "state")
 
   it should "correctly traverse from EventEnvelope to serializer trait" in {
-    testCode(getResourceAsString("EventEnvelopeTest.scala"))
+    testCode("EventEnvelopeTest.scala")
   }
 
-  it should "correctly traverse from ReplyEffect to serializer trait" in {
-    testCode(getResourceAsString("ReplyEffectTest.scala"), replyClassTypes)
+  it should "correctly traverse from Persistent State in ReplyEffect to serializer trait" in {
+    testCode("ReplyEffectTestState.scala", ClassType.PersistentState)
+  }
+
+  it should "correctly traverse from Persistent Event in ReplyEffect to serializer trait" in {
+    testCode("ReplyEffectTestEvent.scala", ClassType.PersistentEvent)
   }
 
   it should "whitelist all akka types from checks" in {
@@ -44,11 +49,11 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   }
 
   it should "correctly traverse from Effect to serializer trait" in {
-    testCode(getResourceAsString("EffectTest.scala"))
+    testCode("EffectTest.scala")
   }
 
   it should "be able to detect serializer trait in generics" in {
-    testCode(getResourceAsString("GenericsTest.scala"))
+    testCode("GenericsTest.scala")
   }
 
   it should "detect lack of upper bounds in generics" in {
@@ -57,10 +62,18 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   }
 
   it should "detect ask pattern" in {
-    testCode(getResourceAsString("AskTest.scala"))
+    testCode("AskTest.scala", detectionType = 1)
   }
 
   it should "detect tell pattern" in {
-    testCode(getResourceAsString("TellTest.scala"))
+    testCode("TellTest.scala", detectionType = 2)
+  }
+
+  it should "detect ask patten with sign" in {
+    testCode("AskSignTest.scala", detectionType = 1)
+  }
+
+  it should "detect tell patten with sign" in {
+    testCode("TellSignTest.scala", detectionType = 2)
   }
 }

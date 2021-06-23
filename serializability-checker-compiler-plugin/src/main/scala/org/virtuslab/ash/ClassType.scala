@@ -6,12 +6,12 @@ sealed trait ClassType {
 
 object ClassType {
   case object Message extends ClassType {
-    val name = "Message"
+    val name = "message"
   }
-  case object Event extends ClassType {
-    val name = "Event"
+  case object PersistentEvent extends ClassType {
+    val name = "persistent event"
   }
-  case object State extends ClassType {
-    val name = "State"
+  case object PersistentState extends ClassType {
+    val name = "persistent state"
   }
 }

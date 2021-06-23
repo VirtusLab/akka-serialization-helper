@@ -8,7 +8,9 @@ class SerializabilityCheckerCompilerPluginComponent(
     val pluginOptions: SerializabilityCheckerOptions,
     val global: Global)
     extends PluginComponent {
+
   import global._
+
   override val phaseName: String = "akka-serializability-checker"
   override val runsAfter: List[String] = List("refchecks")
 
@@ -18,45 +20,55 @@ class SerializabilityCheckerCompilerPluginComponent(
     new StdPhase(prev) {
       private val serializabilityTraitType = typeOf[SerializabilityTrait]
 
+      private val genericsNamesWithTypes = Map(
+        ("akka.actor.typed.Behavior", Seq(ClassType.Message)),
+        ("akka.actor.typed.ActorRef", Seq(ClassType.Message)),
+        ("akka.actor.typed.RecipientRef", Seq(ClassType.Message)),
+        ("akka.persistence.typed.scaladsl.ReplyEffect", Seq(ClassType.PersistentEvent, ClassType.PersistentState)),
+        ("akka.projection.eventsourced.EventEnvelope", Seq(ClassType.PersistentEvent, ClassType.PersistentState)),
+        ("akka.persistence.typed.scaladsl.Effect", Seq(ClassType.PersistentEvent)))
+
+      private val genericMethodsWithTypes = Map(
+        ("akka.actor.typed.scaladsl.ActorContext.ask", Seq(ClassType.Message, ClassType.Message)),
+        ("akka.actor.typed.scaladsl.AskPattern.Askable.$qmark", Seq(ClassType.Message)))
+
+      private val concreteMethodsWithTypes = Map(
+        ("akka.actor.typed.RecipientRef.tell", Seq(ClassType.Message)),
+        ("akka.actor.typed.ActorRef.tell", Seq(ClassType.Message)),
+        ("akka.actor.typed.ActorRef.ActorRefOps.$bang", Seq(ClassType.Message)))
+
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
         val reporter = CrossVersionReporter(global)
 
-        val genericsNamesWithTypes = Map(
-          ("akka.actor.typed.Behavior", Seq(ClassType.Message)),
-          ("akka.actor.typed.ActorRef", Seq(ClassType.Message)),
-          ("akka.actor.typed.RecipientRef", Seq(ClassType.Message)),
-          ("akka.persistence.typed.scaladsl.ReplyEffect", Seq(ClassType.Event, ClassType.State)),
-          ("akka.projection.eventsourced.EventEnvelope", Seq(ClassType.Event, ClassType.State)),
-          ("akka.persistence.typed.scaladsl.Effect", Seq(ClassType.Event)))
+        val genericsNames = genericsNamesWithTypes.keySet
+        val genericMethods = genericMethodsWithTypes.keySet
+        val concreteMethods = concreteMethodsWithTypes.keySet
 
-        val genericsNames = genericsNamesWithTypes.keys.toSeq
-
-        val typesFromGenerics = body.collect {
+        val typesFromGenerics = if (pluginOptions.detectionFromGenerics) body.collect {
           case x: TypeTree if genericsNames.contains(x.tpe.typeSymbol.fullName) =>
             x.tpe.typeArgs.zip(genericsNamesWithTypes(x.tpe.typeSymbol.fullName))
         }
+        else Nil
 
-        val genericMethodsWithTypes = Map(
-          ("akka.actor.typed.scaladsl.ActorContext.ask", Seq(ClassType.Message, ClassType.Message)))
-
-        val genericMethods = genericMethodsWithTypes.keySet
-
-        val typesFromGenericMethods = body.collect {
+        val typesFromGenericMethods = if (pluginOptions.detectionFromGenericMethods) body.collect {
           case x: TypeApply if genericMethods.contains(x.symbol.fullName) =>
             x.args.map(_.tpe).zip(genericMethodsWithTypes(x.symbol.fullName))
         }
+        else Nil
 
-        val concreteMethodsWithTypes = Map(
-          ("akka.actor.typed.RecipientRef.tell", Seq(ClassType.Message)),
-          ("akka.actor.typed.ActorRef.tell", Seq(ClassType.Message)))
-
-        val concreteMethods = concreteMethodsWithTypes.keySet
-
-        val typesFromConcreteMethods = body.collect {
-          case x: GenericApply if concreteMethods.contains(x.symbol.fullName) =>
+        val typesFromConcreteMethods = if (pluginOptions.detectionFromMethods) body.collect {
+          case x: Apply if concreteMethods.contains(x.symbol.fullName) =>
             x.args.map(_.tpe).zip(concreteMethodsWithTypes(x.symbol.fullName))
         }
+        else Nil
+
+        val t = body.collect {
+          case x: GenericApply if x.symbol.fullName.contains("akka") => x
+        }
+
+        val ta = (typesFromGenerics ::: typesFromGenericMethods ::: typesFromConcreteMethods).flatten.distinct
+          .filter(_._1.typeSymbol.fullName.contains("akka"))
 
         annotatedTraitsCache =
           (typesFromGenerics ::: typesFromGenericMethods ::: typesFromConcreteMethods).flatten.distinct
@@ -80,11 +92,11 @@ class SerializabilityCheckerCompilerPluginComponent(
                     reporter.error(
                       tpe.typeSymbol.pos,
                       s"""${tpe
-                        .toString()} is used as Akka ${classType.name.toLowerCase} but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
-                      |Passing an object NOT extending ${serializabilityTraitType.nameAndArgsString} as a message may cause Akka to fall back to Java serialization during runtime.
-                      |Annotate this class or one of the traits/classes it extends with @${serializabilityTraitType.toLongString}.
-                      |
-                      |""".stripMargin)
+                        .toString()} is used as Akka ${classType.name} but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
+                         |Passing an object NOT extending ${serializabilityTraitType.nameAndArgsString} as a message may cause Akka to fall back to Java serialization during runtime.
+                         |Annotate this class or one of the traits/classes it extends with @${serializabilityTraitType.toLongString}.
+                         |
+                         |""".stripMargin)
                     annotatedTraits
                 }
               }
@@ -92,6 +104,7 @@ class SerializabilityCheckerCompilerPluginComponent(
             }
 
       }
+
       private def findSuperclassAnnotatedWithSerializabilityTrait(tp: Type): Option[Type] = {
         if (tp =:= typeTag[AnyRef].tpe || tp =:= typeTag[Any].tpe)
           None
