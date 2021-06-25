@@ -18,9 +18,9 @@ jobs:
       - run:
           name: Checking formating
           command: sbt scalafmtCheckAll
-      - run:
-          name: Checking import order
-          command: sbt "scalafixAll --check"
+#      - run: TODO: uncomment when #24 is done
+#          name: Checking import order
+#          command: sbt "scalafixAll --check"
       - run:
           name: Compiling production code
           command: sbt compile
