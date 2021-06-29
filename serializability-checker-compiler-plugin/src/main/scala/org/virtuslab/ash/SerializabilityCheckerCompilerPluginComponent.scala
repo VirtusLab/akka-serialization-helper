@@ -63,45 +63,46 @@ class SerializabilityCheckerCompilerPluginComponent(
         }
         else Nil
 
-        val t = body.collect {
-          case x: GenericApply if x.symbol.fullName.contains("akka") => x
+        val foundTypes =
+          (typesFromGenerics ::: typesFromGenericMethods ::: typesFromConcreteMethods).flatten
+            .groupBy(_._1)
+            .map(_._2.head)
+
+        if (pluginOptions.verbose && foundTypes.nonEmpty) {
+          val fqcns = foundTypes.map(_._1.typeSymbol.fullName)
+          reporter.echo(body.pos, s"Found serializable types: ${fqcns.mkString(", ")}")
         }
 
-        val ta = (typesFromGenerics ::: typesFromGenericMethods ::: typesFromConcreteMethods).flatten.distinct
-          .filter(_._1.typeSymbol.fullName.contains("akka"))
-
-        annotatedTraitsCache =
-          (typesFromGenerics ::: typesFromGenericMethods ::: typesFromConcreteMethods).flatten.distinct
-            .foldRight(annotatedTraitsCache) { (next, annotatedTraits) =>
-              val (tpe, classType) = next
-              if (annotatedTraits.exists(tpe <:< _) || tpe.dealias.typeSymbol.fullName.startsWith("akka.")) {
-                annotatedTraits
-              } else {
-                findSuperclassAnnotatedWithSerializabilityTrait(tpe) match {
-                  case Some(annotatedType) =>
-                    if (annotatedTraits.contains(annotatedType)) {
-                      annotatedTraits
-                    } else {
-                      if (pluginOptions.verbose) {
-                        reporter.echo(
-                          s"${classOf[SerializabilityCheckerCompilerPlugin].getSimpleName}: Found new annotated trait: ${annotatedType.typeSymbol.fullName}")
-                      }
-                      annotatedType :: annotatedTraits
-                    }
-                  case None =>
-                    reporter.error(
-                      tpe.typeSymbol.pos,
-                      s"""${tpe
-                        .toString()} is used as Akka ${classType.name} but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
-                         |Passing an object NOT extending ${serializabilityTraitType.nameAndArgsString} as a message may cause Akka to fall back to Java serialization during runtime.
-                         |Annotate this class or one of the traits/classes it extends with @${serializabilityTraitType.toLongString}.
-                         |
-                         |""".stripMargin)
-                    annotatedTraits
+        annotatedTraitsCache = foundTypes.foldRight(annotatedTraitsCache) { (next, annotatedTraits) =>
+          val (tpe, classType) = next
+          if (annotatedTraits.exists(tpe <:< _) || tpe.dealias.typeSymbol.fullName.startsWith("akka.")) {
+            annotatedTraits
+          } else {
+            findSuperclassAnnotatedWithSerializabilityTrait(tpe) match {
+              case Some(annotatedType) =>
+                if (annotatedTraits.contains(annotatedType)) {
+                  annotatedTraits
+                } else {
+                  if (pluginOptions.verbose) {
+                    reporter.echo(
+                      s"${classOf[SerializabilityCheckerCompilerPlugin].getSimpleName}: Found new annotated trait: ${annotatedType.typeSymbol.fullName}")
+                  }
+                  annotatedType :: annotatedTraits
                 }
-              }
-
+              case None =>
+                reporter.error(
+                  tpe.typeSymbol.pos,
+                  s"""${tpe
+                    .toString()} is used as Akka ${classType.name} but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
+                       |Passing an object NOT extending ${serializabilityTraitType.nameAndArgsString} as a message may cause Akka to fall back to Java serialization during runtime.
+                       |Annotate this class or one of the traits/classes it extends with @${serializabilityTraitType.toLongString}.
+                       |
+                       |""".stripMargin)
+                annotatedTraits
             }
+          }
+
+        }
 
       }
 

@@ -29,5 +29,8 @@ class SerializabilityCheckerCompilerPlugin(override val global: Global) extends 
 
   override val optionsHelp: Option[String] = Some("""
       |--verbose - print additional info about detected serializability traits and serializable classes
+      |--disable-detection-generics - disables detection of classes using list of generic types
+      |--disable-detection-generic-methods - disables detection of classes using list of methods with generic arguments
+      |--disable-detection-methods - disables detection of classes using list of methods with types
       |""".stripMargin)
 }
