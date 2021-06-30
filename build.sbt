@@ -142,7 +142,7 @@ lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-event-sche
     addArtifact(Compile / assembly / artifact, assembly))
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val benchmark = (project in file("benchmark"))
+lazy val benchmark = (projectMatrix in file("benchmark"))
   .settings(name := "serializer-benchmarks")
   .settings(commonSettings)
   .settings(
@@ -153,3 +153,5 @@ lazy val benchmark = (project in file("benchmark"))
         akkaSerializationJackson,
         jacksonScala,
         kryo))
+  .dependsOn(serializer)
+  .jvmPlatform(scalaVersions = Seq(scalaVersion213))
