@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# taken from https://github.com/VirtusLab/git-machete-intellij-plugin/blob/a1742b857e3e232fda9ec8193b1ee132d3118ea5/scripts/enforce-issue-number-for-todos
+
+# Negative lookahead (?!...), requires Perl syntax (-P): find fixmes/todos NOT followed by issue number
+if git grep -PIin '(\*|//|#|<!--)\s*(fixme|todo)(?! \([[:alnum:]/-]*#[0-9]+\): )'; then
+  die "Use 'TODO|FIXME (<other-repo-name-or-empty>#<issue-number>): <short-description>' format for the above TODOs and FIXMEs"
+fi

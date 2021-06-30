@@ -88,7 +88,7 @@ lazy val localMavenResolverForSbtPlugins = {
   Resolver.file(name, location)(Patterns().withArtifactPatterns(Vector(pattern)))
 }
 
-lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
+lazy val dumpEventSchema = (project in file("sbt-dump-event-schema")) //TODO test
   .enablePlugins(SbtPlugin)
   .settings(name := "sbt-dump-event-schema")
   .settings(commonSettings)
