@@ -21,21 +21,22 @@ class SerializabilityCheckerCompilerPluginComponent(
       private val serializabilityTraitType = typeOf[SerializabilityTrait]
 
       private val genericsNamesWithTypes = Map(
-        ("akka.actor.typed.Behavior", Seq(ClassType.Message)),
         ("akka.actor.typed.ActorRef", Seq(ClassType.Message)),
+        ("akka.actor.typed.Behavior", Seq(ClassType.Message)),
         ("akka.actor.typed.RecipientRef", Seq(ClassType.Message)),
         ("akka.persistence.typed.scaladsl.ReplyEffect", Seq(ClassType.PersistentEvent, ClassType.PersistentState)),
-        ("akka.projection.eventsourced.EventEnvelope", Seq(ClassType.PersistentEvent, ClassType.PersistentState)),
-        ("akka.persistence.typed.scaladsl.Effect", Seq(ClassType.PersistentEvent)))
+        ("akka.persistence.typed.scaladsl.Effect", Seq(ClassType.PersistentEvent)),
+        ("akka.projection.eventsourced.EventEnvelope", Seq(ClassType.PersistentEvent, ClassType.PersistentState)))
 
       private val genericMethodsWithTypes = Map(
         ("akka.actor.typed.scaladsl.ActorContext.ask", Seq(ClassType.Message, ClassType.Message)),
-        ("akka.actor.typed.scaladsl.AskPattern.Askable.$qmark", Seq(ClassType.Message)))
+        ("akka.actor.typed.scaladsl.AskPattern.Askable.$qmark", Seq(ClassType.Message)),
+        ("akka.pattern.PipeToSupport.pipe", Seq(ClassType.Message)))
 
       private val concreteMethodsWithTypes = Map(
-        ("akka.actor.typed.RecipientRef.tell", Seq(ClassType.Message)),
+        ("akka.actor.typed.ActorRef.ActorRefOps.$bang", Seq(ClassType.Message)),
         ("akka.actor.typed.ActorRef.tell", Seq(ClassType.Message)),
-        ("akka.actor.typed.ActorRef.ActorRefOps.$bang", Seq(ClassType.Message)))
+        ("akka.actor.typed.RecipientRef.tell", Seq(ClassType.Message)))
 
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
@@ -94,10 +95,10 @@ class SerializabilityCheckerCompilerPluginComponent(
                   tpe.typeSymbol.pos,
                   s"""${tpe
                     .toString()} is used as Akka ${classType.name} but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
-                       |Passing an object NOT extending ${serializabilityTraitType.nameAndArgsString} as a message may cause Akka to fall back to Java serialization during runtime.
-                       |Annotate this class or one of the traits/classes it extends with @${serializabilityTraitType.toLongString}.
-                       |
-                       |""".stripMargin)
+                     |Passing an object NOT extending ${serializabilityTraitType.nameAndArgsString} as a message may cause Akka to fall back to Java serialization during runtime.
+                     |Annotate this class or one of the traits/classes it extends with @${serializabilityTraitType.toLongString}.
+                     |
+                     |""".stripMargin)
                 annotatedTraits
             }
           }

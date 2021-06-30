@@ -19,8 +19,8 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
       List("--disable-detection-generics", "--disable-detection-generic-methods", "--disable-detection-methods")
     val pluginArgs = disableFlags.filter(_ != disableFlags(detectionType))
     val code = getResourceAsString(resourceName)
-    SerializabilityCheckerCompiler.compileCode(List(serYesCode, code), pluginArgs) should be("")
-    val noOut = SerializabilityCheckerCompiler.compileCode(List(serNoCode, code), pluginArgs)
+    SerializabilityCheckerCompiler.compileCode(List(code, serYesCode), pluginArgs) should be("")
+    val noOut = SerializabilityCheckerCompiler.compileCode(List(code, serNoCode), pluginArgs)
     noOut should include("error")
     noOut should include(errorTypes.name)
   }
@@ -75,5 +75,9 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
 
   it should "detect tell patten with sign" in {
     testCode("TellSignTest.scala", detectionType = 2)
+  }
+
+  it should "detect pipe pattern" in {
+    testCode("PipeTest.scala", detectionType = 1)
   }
 }
