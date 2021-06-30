@@ -11,60 +11,35 @@ object Benchmark {
 
   private final val warmupIterations = 20_000
 
-  private final val testIterations = 10_000_000
+  private final val testIterationsStandard = 10_000_000
 
-  def benchmark(configName: String, includeCommon: Boolean, output: String): Unit = {
+  private final val testIterationsSmall = 1_000_000
+
+  def benchmark(configName: String, includeCommon: Boolean, output: String, assertEquality: Boolean = true): Unit = {
+    val testKit = init(configName, includeCommon)
     new PrintWriter(output) {
-      write(primitive(configName, includeCommon).toString)
+      write(execute(testKit, Primitive(), assertEquality).toString)
       write("\n")
-      write(adt(configName, includeCommon).toString)
+      write(execute(testKit, Adt(), assertEquality).toString)
       write("\n")
-      write(sequence(configName, includeCommon).toString)
+      write(execute(testKit, Sequence(), assertEquality, testIterations = testIterationsSmall).toString)
       write("\n")
       close()
     }
   }
 
-  private def primitive(configName: String, includeCommon: Boolean): Long = {
-    val testKit = init(configName, includeCommon)
-    val obj = Primitive()
+  private def execute(
+      testKit: SerializationTestKit,
+      obj: Any,
+      assertEquality: Boolean,
+      testIterations: Int = testIterationsStandard): Long = {
     for (_ <- 1 to warmupIterations) {
-      testKit.verifySerialization(obj)
+      testKit.verifySerialization(obj, assertEquality = assertEquality)
     }
 
     val startTime = System.currentTimeMillis()
     for (_ <- 1 to testIterations) {
-      testKit.verifySerialization(obj)
-    }
-
-    System.currentTimeMillis() - startTime
-  }
-
-  private def adt(configName: String, includeCommon: Boolean): Long = {
-    val testKit = init(configName, includeCommon)
-    val obj = Adt()
-    for (_ <- 1 to warmupIterations) {
-      testKit.verifySerialization(obj, assertEquality = false)
-    }
-
-    val startTime = System.currentTimeMillis()
-    for (_ <- 1 to testIterations) {
-      testKit.verifySerialization(obj, assertEquality = false)
-    }
-
-    System.currentTimeMillis() - startTime
-  }
-
-  private def sequence(configName: String, includeCommon: Boolean): Long = {
-    val testKit = init(configName, includeCommon)
-    val obj = Sequence()
-    for (_ <- 1 to warmupIterations) {
-      testKit.verifySerialization(obj)
-    }
-
-    val startTime = System.currentTimeMillis()
-    for (_ <- 1 to 1_000_000) {
-      testKit.verifySerialization(obj)
+      testKit.verifySerialization(obj, assertEquality = assertEquality)
     }
 
     System.currentTimeMillis() - startTime

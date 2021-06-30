@@ -10,7 +10,7 @@ object JavaSerialization {
 
 object JacksonJson {
   def main(args: Array[String]): Unit = {
-    Benchmark.benchmark("application-jackson.conf", includeCommon = false, "json/jackson.txt")
+    Benchmark.benchmark("application-jackson.conf", includeCommon = false, "json/jackson.txt", assertEquality = false)
     System.exit(0)
   }
 }
@@ -24,7 +24,11 @@ object BorerJson {
 
 object JacksonCbor {
   def main(args: Array[String]): Unit = {
-    Benchmark.benchmark("application-jackson-cbor.conf", includeCommon = false, "cbor/jackson.txt")
+    Benchmark.benchmark(
+      "application-jackson-cbor.conf",
+      includeCommon = false,
+      "cbor/jackson.txt",
+      assertEquality = false)
     System.exit(0)
   }
 }
