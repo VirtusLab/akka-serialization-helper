@@ -7,7 +7,7 @@ package org.virtuslab.ash
  * This means internal state of plugin must change, and this is happening here.
  */
 class SerializabilityCheckerOptions(
-    var verbose: Boolean,
-    var detectionFromGenerics: Boolean,
-    var detectionFromGenericMethods: Boolean,
-    var detectionFromMethods: Boolean)
+    var verbose: Boolean = false,
+    var detectFromGenerics: Boolean = true,
+    var detectFromGenericMethods: Boolean = true,
+    var detectFromMethods: Boolean = true)

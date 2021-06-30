@@ -30,7 +30,7 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   }
 
   it should "correctly traverse from EventEnvelope to serializer trait" in {
-    testCode("EventEnvelopeTest.scala")
+    testCode("EventEnvelopeTest.scala", ClassType.PersistentEvent)
   }
 
   it should "correctly traverse from Persistent State in ReplyEffect to serializer trait" in {
@@ -49,7 +49,7 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   }
 
   it should "correctly traverse from Effect to serializer trait" in {
-    testCode("EffectTest.scala")
+    testCode("EffectTest.scala", ClassType.PersistentEvent)
   }
 
   it should "be able to detect serializer trait in generics" in {
@@ -69,15 +69,19 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
     testCode("TellTest.scala", detectionType = 2)
   }
 
-  it should "detect ask patten with sign" in {
+  it should "detect ask pattern with sign" in {
     testCode("AskSignTest.scala", detectionType = 1)
   }
 
-  it should "detect tell patten with sign" in {
+  it should "detect tell pattern with sign" in {
     testCode("TellSignTest.scala", detectionType = 2)
   }
 
   it should "detect pipe pattern" in {
     testCode("PipeTest.scala", detectionType = 1)
+  }
+
+  it should "ignore Any and Nothing" in {
+    testCode("AnyNothingTest.scala")
   }
 }

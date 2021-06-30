@@ -7,9 +7,13 @@ import akka.projection.eventsourced.scaladsl.EventSourcedProvider
 import akka.projection.scaladsl.SourceProvider
 import akka.persistence.typed.scaladsl.Effect
 import akka.actor.typed.Behavior
+import org.virtuslab.ash.SerializabilityTrait
 
 object EffectTest {
+
+  @SerializabilityTrait
+  trait NoTest
   trait Command extends MySerializable
 
-  def test: Effect[Command, Command] = ???
+  def test: Effect[Command, NoTest] = ???
 }

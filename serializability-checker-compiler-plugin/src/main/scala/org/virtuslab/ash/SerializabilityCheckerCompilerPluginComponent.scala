@@ -11,7 +11,7 @@ class SerializabilityCheckerCompilerPluginComponent(
 
   import global._
 
-  override val phaseName: String = "akka-serializability-checker"
+  override val phaseName: String = "serializability-checker"
   override val runsAfter: List[String] = List("refchecks")
 
   var annotatedTraitsCache: List[Type] = List()
@@ -20,12 +20,14 @@ class SerializabilityCheckerCompilerPluginComponent(
     new StdPhase(prev) {
       private val serializabilityTraitType = typeOf[SerializabilityTrait]
 
-      private val genericsNamesWithTypes = Map(
+      private val genericsWithTypes = Map(
+        ("akka.actor.typed.ActorSystem", Seq(ClassType.Message)),
         ("akka.actor.typed.ActorRef", Seq(ClassType.Message)),
         ("akka.actor.typed.Behavior", Seq(ClassType.Message)),
         ("akka.actor.typed.RecipientRef", Seq(ClassType.Message)),
         ("akka.persistence.typed.scaladsl.ReplyEffect", Seq(ClassType.PersistentEvent, ClassType.PersistentState)),
         ("akka.persistence.typed.scaladsl.Effect", Seq(ClassType.PersistentEvent)),
+        ("akka.persistence.typed.scaladsl.EffectBuilder", Seq(ClassType.PersistentEvent)),
         ("akka.projection.eventsourced.EventEnvelope", Seq(ClassType.PersistentEvent, ClassType.PersistentState)))
 
       private val genericMethodsWithTypes = Map(
@@ -38,29 +40,31 @@ class SerializabilityCheckerCompilerPluginComponent(
         ("akka.actor.typed.ActorRef.tell", Seq(ClassType.Message)),
         ("akka.actor.typed.RecipientRef.tell", Seq(ClassType.Message)))
 
+      private val ignoredTypePrefixes = List("akka.", "scala.Any", "scala.Nothing")
+
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
         val reporter = CrossVersionReporter(global)
 
-        val genericsNames = genericsNamesWithTypes.keySet
+        val genericsNames = genericsWithTypes.keySet
         val genericMethods = genericMethodsWithTypes.keySet
         val concreteMethods = concreteMethodsWithTypes.keySet
 
-        val typesFromGenerics = if (pluginOptions.detectionFromGenerics) body.collect {
+        val typesFromGenerics = if (pluginOptions.detectFromGenerics) body.collect {
           case x: TypeTree if genericsNames.contains(x.tpe.typeSymbol.fullName) =>
-            x.tpe.typeArgs.zip(genericsNamesWithTypes(x.tpe.typeSymbol.fullName))
+            x.tpe.typeArgs.zip(genericsWithTypes(x.tpe.typeSymbol.fullName)).map(y => (y._1, y._2, x.pos))
         }
         else Nil
 
-        val typesFromGenericMethods = if (pluginOptions.detectionFromGenericMethods) body.collect {
+        val typesFromGenericMethods = if (pluginOptions.detectFromGenericMethods) body.collect {
           case x: TypeApply if genericMethods.contains(x.symbol.fullName) =>
-            x.args.map(_.tpe).zip(genericMethodsWithTypes(x.symbol.fullName))
+            x.args.map(_.tpe).zip(genericMethodsWithTypes(x.symbol.fullName)).map(y => (y._1, y._2, x.pos))
         }
         else Nil
 
-        val typesFromConcreteMethods = if (pluginOptions.detectionFromMethods) body.collect {
+        val typesFromConcreteMethods = if (pluginOptions.detectFromMethods) body.collect {
           case x: Apply if concreteMethods.contains(x.symbol.fullName) =>
-            x.args.map(_.tpe).zip(concreteMethodsWithTypes(x.symbol.fullName))
+            x.args.map(_.tpe).zip(concreteMethodsWithTypes(x.symbol.fullName)).map(y => (y._1, y._2, x.pos))
         }
         else Nil
 
@@ -75,8 +79,12 @@ class SerializabilityCheckerCompilerPluginComponent(
         }
 
         annotatedTraitsCache = foundTypes.foldRight(annotatedTraitsCache) { (next, annotatedTraits) =>
-          val (tpe, classType) = next
-          if (annotatedTraits.exists(tpe <:< _) || tpe.dealias.typeSymbol.fullName.startsWith("akka.")) {
+          val (tpe, classType, detectedPosition) = next
+          val ignore = {
+            val fullName = tpe.dealias.typeSymbol.fullName
+            ignoredTypePrefixes.exists(fullName.startsWith)
+          }
+          if (annotatedTraits.exists(tpe <:< _) || ignore) {
             annotatedTraits
           } else {
             findSuperclassAnnotatedWithSerializabilityTrait(tpe) match {
@@ -92,13 +100,15 @@ class SerializabilityCheckerCompilerPluginComponent(
                 }
               case None =>
                 reporter.error(
-                  tpe.typeSymbol.pos,
+                  detectedPosition,
                   s"""${tpe
                     .toString()} is used as Akka ${classType.name} but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
-                     |Passing an object NOT extending ${serializabilityTraitType.nameAndArgsString} as a message may cause Akka to fall back to Java serialization during runtime.
-                     |Annotate this class or one of the traits/classes it extends with @${serializabilityTraitType.toLongString}.
+                     |Passing an object of class NOT extending ${serializabilityTraitType.nameAndArgsString} as a ${classType.name} may cause Akka to fall back to Java serialization during runtime.
                      |
                      |""".stripMargin)
+                reporter.error(
+                  tpe.typeSymbol.pos,
+                  s"""Make sure this type is itself annotated, or extends a type annotated with  @${serializabilityTraitType.toLongString}.""")
                 annotatedTraits
             }
           }

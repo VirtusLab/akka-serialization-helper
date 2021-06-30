@@ -10,27 +10,23 @@ class SerializabilityCheckerCompilerPlugin(override val global: Global) extends 
     """checks whether a specified Akka serialization is applied to all messages, events and persistent state classes"""
 
   //Placeholder options
-  private val pluginOptions = new SerializabilityCheckerOptions(
-    verbose = false,
-    detectionFromGenerics = true,
-    detectionFromGenericMethods = true,
-    detectionFromMethods = true)
+  private val pluginOptions = new SerializabilityCheckerOptions()
 
   override val components: List[PluginComponent] = List(
     new SerializabilityCheckerCompilerPluginComponent(pluginOptions, global))
 
   override def init(options: List[String], error: String => Unit): Boolean = {
     pluginOptions.verbose = options.contains("--verbose")
-    pluginOptions.detectionFromGenerics = !options.contains("--disable-detection-generics")
-    pluginOptions.detectionFromGenericMethods = !options.contains("--disable-detection-generic-methods")
-    pluginOptions.detectionFromMethods = !options.contains("--disable-detection-methods")
+    pluginOptions.detectFromGenerics = !options.contains("--disable-detection-generics")
+    pluginOptions.detectFromGenericMethods = !options.contains("--disable-detection-generic-methods")
+    pluginOptions.detectFromMethods = !options.contains("--disable-detection-methods")
     true
   }
 
   override val optionsHelp: Option[String] = Some("""
       |--verbose - print additional info about detected serializability traits and serializable classes
-      |--disable-detection-generics - disables detection of classes using list of generic types
-      |--disable-detection-generic-methods - disables detection of classes using list of methods with generic arguments
-      |--disable-detection-methods - disables detection of classes using list of methods with types
+      |--disable-detection-generics - disables detection of messages/events/state based on their usage as a type param of certain classes, e.g. akka.actor.typed.Behavior or akka.persistence.typed.scaladsl.Effect
+      |--disable-detection-generic-methods - disables detection of messages/events/state based on their usage as generic argument to a method, e.g. akka.actor.typed.scaladsl.ActorContext.ask
+      |--disable-detection-methods - disables detection of messages/events/state based on type of arguments to a method, e.g. akka.actor.typed.ActorRef.tell
       |""".stripMargin)
 }
