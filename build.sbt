@@ -19,19 +19,19 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 lazy val commonSettings = Seq(
   scalafmtOnCompile := true,
   scalacOptions ++= Seq(
-    "-deprecation",
-    "-encoding",
-    "UTF-8",
-    "-feature",
-    "-language:_",
-    "-Xfatal-warnings",
-    "-Xlog-reflective-calls",
-    "-Xlint:_",
-    "-Ybackend-parallelism",
-    "8",
-    "-Ywarn-dead-code",
-    "-Ywarn-unused:-imports,_",
-    "-unchecked"),
+      "-deprecation",
+      "-encoding",
+      "UTF-8",
+      "-feature",
+      "-language:_",
+      "-Xfatal-warnings",
+      "-Xlog-reflective-calls",
+      "-Xlint:_",
+      "-Ybackend-parallelism",
+      "8",
+      "-Ywarn-dead-code",
+      "-Ywarn-unused:-imports,_",
+      "-unchecked"),
   libraryDependencies ++= commonDeps)
 
 publish / skip := true
@@ -41,14 +41,14 @@ lazy val borerAkkaSerializer = (projectMatrix in file("borer-akka-serializer"))
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
-      borerCore,
-      akkaTyped % Provided,
-      reflections,
-      borerDerivation % Test,
-      akkaTestKit % Test,
-      akkaStream % Test,
-      akkaStreamTestKit % Test,
-      enumeratum % Test))
+        borerCore,
+        akkaTyped % Provided,
+        reflections,
+        borerDerivation % Test,
+        akkaTestKit % Test,
+        akkaStream % Test,
+        akkaStreamTestKit % Test,
+        enumeratum % Test))
   .dependsOn(borerExtraCodecs % Test)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
@@ -101,7 +101,7 @@ lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
     publishM2Configuration := publishM2Configuration.value.withResolverName(localMavenResolverForSbtPlugins.name),
     scriptedLaunchOpts := {
       scriptedLaunchOpts.value ++
-        Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
+      Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
     },
     scriptedBufferLog := false)
 
@@ -123,10 +123,10 @@ lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-event-sche
     libraryDependencies ++= Seq(sprayJson, betterFiles, akkaTyped % Test, akkaPersistence % Test),
     assembly / assemblyMergeStrategy := {
       case PathList(
-      "scala",
-      "annotation",
-      "nowarn.class" | "nowarn$.class"
-      ) => //scala-collection-compat duplicates no-warn.class, as it was added to scala 2.12 after its release
+            "scala",
+            "annotation",
+            "nowarn.class" | "nowarn$.class"
+          ) => //scala-collection-compat duplicates no-warn.class, as it was added to scala 2.12 after its release
         MergeStrategy.first
       case x =>
         (assembly / assemblyMergeStrategy).value.apply(x)
@@ -146,12 +146,6 @@ lazy val benchmark = (projectMatrix in file("benchmark"))
   .settings(name := "serializer-benchmarks")
   .settings(commonSettings)
   .settings(
-    libraryDependencies ++= Seq(
-        borerCore,
-        akkaTestKit,
-        borerDerivation,
-        akkaSerializationJackson,
-        jacksonScala,
-        kryo))
-  .dependsOn(serializer)
+    libraryDependencies ++= Seq(borerCore, akkaTestKit, borerDerivation, akkaSerializationJackson, jacksonScala, kryo))
+  .dependsOn(borerAkkaSerializer)
   .jvmPlatform(scalaVersions = Seq(scalaVersion213))
