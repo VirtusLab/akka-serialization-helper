@@ -74,18 +74,13 @@ dumpEventSchema / dumpEventSchemaCompilerPlugin := "com.github.VirtusLab.akka-se
 
 ### 3. Serializer
 
-Simple [borer-based](https://github.com/sirthias/borer) Akka serializer. It uses codecs, provided by Borer, that are
+[Circe-based](https://circe.github.io/circe/) Akka serializer. It uses codecs, derived using Magnolia, that are
 generated during compile time (so serializer won't crash during runtime like reflection-based serializers may do).
 
 ```scala
-libraryDependencies += "com.github.VirtusLab.akka-serialization-helper" %% "borer-akka-serializer" % commit
+libraryDependencies += "com.github.VirtusLab.akka-serialization-helper" %% "circe-akka-serializer" % commit
 ```
 
-It may also be worth including additional codecs for common types that are missing in Borer standard library:
-
-```scala
-libraryDependencies += "com.github.VirtusLab.akka-serialization-helper" %% "borer-extra-codecs" % commit
-```
 
 ## Comparison of available Akka Serializers
 
