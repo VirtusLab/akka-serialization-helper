@@ -33,3 +33,7 @@ jobs:
       - run:
           name: Testing sbt plugin
           command: sbt scripted
+      - run:
+          name: Running examples
+          working_directory: examples/event-migration
+          command: sbt -batch test
