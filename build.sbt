@@ -103,9 +103,17 @@ lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
       scriptedLaunchOpts.value ++
       Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
     },
+    scriptedDependencies := { // publishing compiler plugin locally for testing
+      scriptedDependencies.value
+      (dumpEventSchemaCompilerPlugin
+        .filterProjects(Seq(ScalaVersionAxis(scalaVersion212, "2.12")))
+        .head / publishLocal).value
+      (dumpEventSchemaCompilerPlugin
+        .filterProjects(Seq(ScalaVersionAxis(scalaVersion213, "2.13")))
+        .head / publishLocal).value
+    },
     scriptedBufferLog := false)
 
-//Warning: when publishing artefacts two times, without clean in between, sometimes instead of jar tar, plugin is published as normal jar
 lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-event-schema-compiler-plugin"))
   .enablePlugins(AssemblyPlugin)
   .settings(name := "dump-event-schema-compiler-plugin")
@@ -121,6 +129,8 @@ lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-event-sche
         .getOrElse(Seq.empty)
     },
     libraryDependencies ++= Seq(sprayJson, betterFiles, akkaTyped % Test, akkaPersistence % Test),
+    packageBin / publishArtifact := false, //we want to publish fat jar
+    Compile / packageBin / artifactPath := crossTarget.value / "packageBinPlaceholder.jar", //this ensures that normal jar doesn't override fat jar
     assembly / assemblyMergeStrategy := {
       case PathList(
             "scala",
@@ -133,11 +143,8 @@ lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-event-sche
     },
     Compile / assembly / artifact := {
       val art = (Compile / assembly / artifact).value
-      art.withClassifier(Some(""))
+      art.withClassifier(Some("assembly"))
     },
-    assembly / assemblyJarName := {
-      val newName = s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar"
-      newName
-    },
+    assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar", //Warning: this is a default name for packageBin artefact. Without explicit rename of packageBin will result in race condition
     addArtifact(Compile / assembly / artifact, assembly))
   .jvmPlatform(scalaVersions = supportedScalaVersions)

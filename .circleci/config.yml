@@ -32,4 +32,4 @@ jobs:
           command: sbt test
       - run:
           name: Testing sbt plugin
-          command: sbt clean "dumpEventSchemaCompilerPlugin / publishLocal" scripted
+          command: sbt scripted
