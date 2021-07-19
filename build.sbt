@@ -143,7 +143,7 @@ lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-event-sche
     },
     Compile / assembly / artifact := {
       val art = (Compile / assembly / artifact).value
-      art.withClassifier(Some("assembly"))
+      art.withClassifier(None)
     },
     assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar", //Warning: this is a default name for packageBin artefact. Without explicit rename of packageBin will result in race condition
     addArtifact(Compile / assembly / artifact, assembly))
