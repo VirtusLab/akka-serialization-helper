@@ -98,6 +98,23 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
   .dependsOn(serializabilityCheckerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
+lazy val registrationCheckerCompilerPlugin = (projectMatrix in file("registration-checker-compiler-plugin"))
+  .settings(name := "registration-checker-compiler-plugin")
+  .settings(commonSettings)
+  .settings(
+    libraryDependencies ++= {
+      virtualAxes.value
+        .collectFirst { case x: ScalaVersionAxis => x.value }
+        .map {
+          case "2.13" => scalaPluginDeps213
+          case "2.12" => scalaPluginDeps212
+        }
+        .getOrElse(Seq.empty)
+    },
+    libraryDependencies ++= Seq(betterFiles % Test))
+  .dependsOn(serializabilityCheckerLibrary)
+  .jvmPlatform(scalaVersions = supportedScalaVersions)
+
 lazy val localMavenResolverForSbtPlugins = {
   // remove scala and sbt versions from the path, as it does not work with jitpack
   val pattern = "[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]"
