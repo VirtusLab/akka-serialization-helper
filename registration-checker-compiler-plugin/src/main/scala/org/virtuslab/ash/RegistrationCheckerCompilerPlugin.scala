@@ -20,6 +20,9 @@ class RegistrationCheckerCompilerPlugin(override val global: Global) extends Plu
   override val components: List[PluginComponent] = List(classSweep, serializerCheck)
 
   override def init(options: List[String], error: String => Unit): Boolean = {
+    if (options.contains("--disable"))
+      return false
+
     options.filterNot(_.startsWith("-")).headOption match {
       case Some(path) =>
         try {
@@ -51,7 +54,10 @@ class RegistrationCheckerCompilerPlugin(override val global: Global) extends Plu
         false
     }
   }
-  override val optionsHelp: Option[String] = Some("directory where cache file will be saved")
+  override val optionsHelp: Option[String] = Some("""
+      |. - directory where cache file will be saved, required
+      |--disable - disables the plugin
+      |""".stripMargin)
 }
 
 object RegistrationCheckerCompilerPlugin {
