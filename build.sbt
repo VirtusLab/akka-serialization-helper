@@ -1,15 +1,22 @@
 import Dependencies._
 import org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile
+import sbt.Keys.{semanticdbEnabled, semanticdbVersion}
 import sbt.VirtualAxis.ScalaVersionAxis
-import sbt.io.Path.userHome
-import sbt.librarymanagement.Patterns
 
 lazy val supportedScalaVersions = List(scalaVersion213, scalaVersion212)
 
 ThisBuild / scalaVersion := supportedScalaVersions.head
-ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "org.virtuslab"
 ThisBuild / organizationName := "VirtusLab"
+ThisBuild / versionScheme := Some("early-semver")
+ThisBuild / homepage := Some(url("https://github.com/VirtusLab/akka-serialization-helper"))
+ThisBuild / licenses := List(
+  "MIT License" -> url("https://github.com/VirtusLab/akka-serialization-helper/blob/main/LICENSE"))
+ThisBuild / developers := List(
+  Developer("MarconZet", "Marcin Złakowski", "mzlakowski@virtuslab.com", url("https://github.com/MarconZet")),
+  Developer("HubertBalcerzak", "Hubert Balcerzak", "hubertbalc@gmail.com", url("https://github.com/HubertBalcerzak")),
+  Developer("PawelLipski", "Paweł Lipski", "plipski@virtuslab.com", url("https://github.com/PawelLipski")))
+
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 //ThisBuild / semanticdbEnabled := true
@@ -115,14 +122,6 @@ lazy val registrationCheckerCompilerPlugin = (projectMatrix in file("registratio
   .dependsOn(serializabilityCheckerLibrary)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val localMavenResolverForSbtPlugins = {
-  // remove scala and sbt versions from the path, as it does not work with jitpack
-  val pattern = "[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]"
-  val name = "local-maven-for-sbt-plugins"
-  val location = userHome / ".m2" / "repository"
-  Resolver.file(name, location)(Patterns().withArtifactPatterns(Vector(pattern)))
-}
-
 lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
   .enablePlugins(SbtPlugin)
   .settings(name := "sbt-dump-event-schema")
@@ -131,12 +130,12 @@ lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
     pluginCrossBuild / sbtVersion := "1.2.8",
     scalaVersion := scalaVersion212,
     libraryDependencies ++= Seq(sprayJson, betterFiles),
-    publishMavenStyle := true,
-    resolvers += localMavenResolverForSbtPlugins,
-    publishM2Configuration := publishM2Configuration.value.withResolverName(localMavenResolverForSbtPlugins.name),
     scriptedLaunchOpts := {
       scriptedLaunchOpts.value ++
-      Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
+      Seq(
+        "-Xmx1024M",
+        "-Dplugin.version=" + version.value,
+        "-Dcompiler-plugin.version=" + (dumpEventSchemaCompilerPlugin.componentProjects.head / version).value)
     },
     scriptedDependencies := { // publishing compiler plugin locally for testing
       scriptedDependencies.value
