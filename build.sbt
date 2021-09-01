@@ -1,6 +1,6 @@
 import Dependencies._
 import org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile
-import sbt.Keys.{semanticdbEnabled, semanticdbVersion}
+import sbt.Keys.{semanticdbEnabled, semanticdbVersion, versionScheme}
 import sbt.VirtualAxis.ScalaVersionAxis
 
 lazy val supportedScalaVersions = List(scalaVersion213, scalaVersion212)
@@ -19,9 +19,9 @@ ThisBuild / developers := List(
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-//ThisBuild / semanticdbEnabled := true
-//ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
-//ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
 lazy val commonSettings = Seq(
   scalafmtOnCompile := true,

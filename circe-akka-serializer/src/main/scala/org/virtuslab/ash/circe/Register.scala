@@ -1,8 +1,9 @@
 package org.virtuslab.ash.circe
 
-import io.circe.{Decoder, Encoder}
-
 import scala.reflect.runtime.{universe => ru}
+
+import io.circe.Decoder
+import io.circe.Encoder
 
 object Register {
   type Registration[T] = (ru.TypeTag[T], (Encoder[T], Decoder[T]))

@@ -1,7 +1,7 @@
 package org.virtuslab.ash
 
-import better.files.File
 import better.files.Dsl.SymbolicOperations
+import better.files.File
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
 

@@ -2,8 +2,10 @@ package org.virtuslab.ash.circe
 
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.adapter._
-import akka.serialization.{SerializationExtension, Serializers}
-import MigrationTestKit.SerializationData
+import akka.serialization.SerializationExtension
+import akka.serialization.Serializers
+
+import org.virtuslab.ash.circe.MigrationTestKit.SerializationData
 
 /**
  * Utilities to test serialization migration.

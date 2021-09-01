@@ -1,10 +1,15 @@
 package org.virtuslab.ash
 
-import java.io.{BufferedReader, PrintWriter, StringReader, StringWriter}
+import java.io.BufferedReader
+import java.io.PrintWriter
+import java.io.StringReader
+import java.io.StringWriter
 import java.net.URLClassLoader
+
 import scala.collection.mutable
 import scala.reflect.internal.util.BatchSourceFile
-import scala.tools.nsc.{Global, Settings}
+import scala.tools.nsc.Global
+import scala.tools.nsc.Settings
 import scala.tools.nsc.io.VirtualDirectory
 import scala.tools.nsc.reporters.ConsoleReporter
 import scala.tools.nsc.util.ClassPath

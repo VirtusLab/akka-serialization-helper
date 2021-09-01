@@ -1,13 +1,15 @@
 package org.virtuslab.ash.circe
 
-import akka.actor.testkit.typed.scaladsl.{ActorTestKit, SerializationTestKit}
+import akka.actor.testkit.typed.scaladsl.ActorTestKit
+import akka.actor.testkit.typed.scaladsl.SerializationTestKit
 import akka.actor.typed.ActorSystem
 import com.typesafe.config.ConfigFactory
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
-import MigrationTestKit.SerializationData
-import org.virtuslab.ash.circe.data._
+
+import org.virtuslab.ash.circe.MigrationTestKit.SerializationData
 import org.virtuslab.ash.circe.data.Tree.Node._
+import org.virtuslab.ash.circe.data._
 
 class CirceAkkaSerializerSpec extends AnyWordSpecLike with should.Matchers {
   "CirceAkkaSerializer" should {

@@ -1,14 +1,19 @@
 package org.virtuslab.ash
 
-import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.{classSweepPhaseName, serializerCheckPhaseName}
-
-import java.io.{BufferedWriter, FileWriter}
+import java.io.BufferedWriter
+import java.io.FileWriter
+import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.StandardOpenOption._
-import java.nio.file.{Files, Path}
+
 import scala.annotation.tailrec
 import scala.collection.mutable
-import scala.tools.nsc.{Global, Phase}
+import scala.tools.nsc.Global
+import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
+
+import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.classSweepPhaseName
+import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.serializerCheckPhaseName
 
 class SerializerCheckCompilerPluginComponent(
     classSweep: ClassSweepCompilerPluginComponent,

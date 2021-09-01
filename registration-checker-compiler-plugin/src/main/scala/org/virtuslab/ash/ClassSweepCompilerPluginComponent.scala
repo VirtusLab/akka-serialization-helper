@@ -1,10 +1,11 @@
 package org.virtuslab.ash
 
-import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.classSweepPhaseName
-
 import scala.collection.mutable
-import scala.tools.nsc.{Global, Phase}
+import scala.tools.nsc.Global
+import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
+
+import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.classSweepPhaseName
 
 class ClassSweepCompilerPluginComponent(options: RegistrationCheckerOptions, override val global: Global)
     extends PluginComponent {

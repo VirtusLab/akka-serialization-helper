@@ -1,18 +1,20 @@
 package org.virtuslab.ash.circe
 
-import akka.actor.ExtendedActorSystem
-import akka.event.Logging
-import akka.serialization.SerializerWithStringManifest
-import io.circe.jawn.JawnParser
-import io.circe._
-import org.reflections8.Reflections
-
 import java.io.NotSerializableException
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.NoSuchElementException
+
 import scala.jdk.CollectionConverters._
+import scala.reflect.ClassTag
+import scala.reflect.classTag
 import scala.reflect.runtime.{universe => ru}
-import scala.reflect.{ClassTag, classTag}
+
+import akka.actor.ExtendedActorSystem
+import akka.event.Logging
+import akka.serialization.SerializerWithStringManifest
+import io.circe._
+import io.circe.jawn.JawnParser
+import org.reflections8.Reflections
 
 abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActorSystem)
     extends SerializerWithStringManifest

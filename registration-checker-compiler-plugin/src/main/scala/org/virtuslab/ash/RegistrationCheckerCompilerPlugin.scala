@@ -1,13 +1,18 @@
 package org.virtuslab.ash
 
-import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.cacheFileName
-
-import java.io.{BufferedReader, File, FileReader, IOException}
+import java.io.BufferedReader
+import java.io.File
 import java.io.FileNotFoundException
+import java.io.FileReader
+import java.io.IOException
 import java.util.function.Consumer
+
 import scala.collection.mutable
 import scala.tools.nsc.Global
-import scala.tools.nsc.plugins.{Plugin, PluginComponent}
+import scala.tools.nsc.plugins.Plugin
+import scala.tools.nsc.plugins.PluginComponent
+
+import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.cacheFileName
 
 class RegistrationCheckerCompilerPlugin(override val global: Global) extends Plugin {
   override val name: String = "registration-checker-plugin"

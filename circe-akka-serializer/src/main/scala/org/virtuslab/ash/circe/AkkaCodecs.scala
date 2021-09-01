@@ -1,10 +1,16 @@
 package org.virtuslab.ash.circe
 
 import akka.actor
-import akka.actor.typed.{ActorRef, ActorRefResolver, ActorSystem}
+import akka.actor.typed.ActorRef
+import akka.actor.typed.ActorRefResolver
+import akka.actor.typed.ActorSystem
 import akka.serialization.Serialization
-import akka.stream.{SinkRef, SourceRef, StreamRefResolver}
-import io.circe.{Codec, Decoder, Encoder}
+import akka.stream.SinkRef
+import akka.stream.SourceRef
+import akka.stream.StreamRefResolver
+import io.circe.Codec
+import io.circe.Decoder
+import io.circe.Encoder
 
 trait AkkaCodecs {
   private def serializationSystem: actor.ActorSystem = Serialization.getCurrentTransportInformation().system
