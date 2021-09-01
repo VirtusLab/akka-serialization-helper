@@ -1,0 +1,22 @@
+{
+  "annotations": [],
+  "fields": [
+    {
+      "name": "a",
+      "typeName": "java.lang.String"
+    },
+    {
+      "name": "b",
+      "typeName": "scala.Int"
+    },
+    {
+      "name": "c",
+      "typeName": "scala.Double"
+    }
+  ],
+  "name": "org.random.project.Data.ClassTest",
+  "parents": [
+    "org.random.project.Data"
+  ],
+  "typeSymbol": "class"
+}

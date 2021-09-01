@@ -1,0 +1,9 @@
+{
+  "annotations": [],
+  "fields": [],
+  "name": "org.random.project.Data.DeepTrait",
+  "parents": [
+    "org.random.project.Data"
+  ],
+  "typeSymbol": "trait"
+}

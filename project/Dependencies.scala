@@ -31,6 +31,7 @@ object Dependencies {
   val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
   val circeGenericExtras = "io.circe" %% "circe-generic-extras" % circeVersion
   val circeParser = "io.circe" %% "circe-parser" % circeVersion
+  val circeYaml = "io.circe" %% "circe-yaml" % circeVersion
 
   val scalaCompiler = "org.scala-lang" % "scala-compiler"
   val scalaReflect = "org.scala-lang" % "scala-reflect"

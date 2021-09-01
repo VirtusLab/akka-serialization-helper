@@ -1,37 +1,31 @@
 package org.virtuslab.ash
 
 import better.files._
+import io.circe.generic.auto._
+import io.circe.syntax._
+import io.circe.yaml._
 import sbt.Keys._
 import sbt.{File => _, _}
 import spray.json._
 
-object DumpEventSchema extends DefaultJsonProtocol {
+import org.virtuslab.ash.model._
+
+object DumpEventSchema {
+  import DumpEventSchemaJsonProtocol._
   import DumpEventSchemaPlugin.autoImport._
 
   def apply(outputFile: File, inputDirectory: File): Unit = {
-    val jsons = for {
-      file <- inputDirectory.list.toSeq.sorted(File.Order.byName)
-    } yield new String(file.loadBytes).parseJson.asJsObject
+    val typeDefinitions = for {
+      file <- inputDirectory.list.filterNot(_.isDirectory)
+    } yield new String(file.loadBytes).parseJson.convertTo[TypeDefinition]
 
-    val filteredJsons = jsons.map { json =>
-      json.fields("annotations") match {
-        case JsArray(elements) if elements.isEmpty => JsObject(json.fields.filterNot(_._1 == "annotations"))
-        case _                                     => json
-      }
-    }
+    val json = typeDefinitions.toSeq.sortBy(_.name).asJson.mapArray(_.map(_.dropEmptyValues))
+    val yamlPrinter = Printer(preserveOrder = true, dropNullKeys = true)
 
     for {
       writer <-
         outputFile.createIfNotExists(createParents = true).clear().newFileOutputStream().printWriter().autoClosed
-    } writer.print(JsArray(filteredJsons.toVector).toString(SchemaPrinter))
-  }
-
-  object SchemaPrinter extends SortedPrinter {
-    private val order =
-      Seq("typeSymbol", "name", "annotations", "parents", "fields", "typeName").zip(1 until 10).toMap
-    protected override def organiseMembers(members: Map[String, JsValue]): Seq[(String, JsValue)] = {
-      members.toSeq.sortBy(x => order.getOrElse(x._1, 10))
-    }
+    } writer.print(yamlPrinter.pretty(json))
   }
 
   def dumpEventSchemaTask(key: TaskKey[Unit]): Def.Setting[_] =

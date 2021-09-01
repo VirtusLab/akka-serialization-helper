@@ -129,7 +129,7 @@ lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
   .settings(
     pluginCrossBuild / sbtVersion := "1.2.8",
     scalaVersion := scalaVersion212,
-    libraryDependencies ++= Seq(sprayJson, betterFiles),
+    libraryDependencies ++= Seq(sprayJson, circeCore, circeGeneric, circeYaml, betterFiles),
     scriptedLaunchOpts := {
       scriptedLaunchOpts.value ++
       Seq(
