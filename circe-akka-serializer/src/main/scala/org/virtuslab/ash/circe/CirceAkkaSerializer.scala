@@ -19,13 +19,18 @@ import org.reflections8.Reflections
 abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActorSystem)
     extends SerializerWithStringManifest
     with AkkaCodecs {
-  private val log = Logging(system, getClass)
-  private val conf = system.settings.config.getConfig("org.virtuslab.ash")
-  private val isDebugEnabled = conf.getBoolean("verbose-debug-logging") && log.isDebugEnabled
-
   val codecs: Seq[(ru.TypeTag[_ <: Ser], (Encoder[_ <: Ser], Decoder[_ <: Ser]))]
   val manifestMigrations: Seq[(String, String)]
   val packagePrefix: String
+
+  private val assertionMessage = " must be declared as a def or a lazy val to work correctly"
+  assert(codecs != null, "codecs" + assertionMessage)
+  assert(manifestMigrations != null, "manifestMigrations" + assertionMessage)
+  assert(packagePrefix != null, "packagePrefix" + assertionMessage)
+
+  private val log = Logging(system, getClass)
+  private val conf = system.settings.config.getConfig("org.virtuslab.ash")
+  private val isDebugEnabled = conf.getBoolean("verbose-debug-logging") && log.isDebugEnabled
 
   private val mirror = ru.runtimeMirror(getClass.getClassLoader)
   private val parents = codecs.flatMap { x =>
@@ -114,27 +119,30 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
     }
   }
 
-  private def scanForSerializables(packagePrefix: String): Unit = {
+  private def checkSerializableTypesForMissingCodec(packagePrefix: String): Unit = {
     val reflections = new Reflections(packagePrefix)
     val foundSerializables = reflections.getSubTypesOf(classTag[Ser].runtimeClass).asScala.filterNot(_.isInterface)
     foundSerializables.foreach { clazz =>
       try {
-        val codec = codecsMap(parents(clazz.getName))
-        assert(codec._1 != null)
-        assert(codec._2 != null)
+        codecsMap(parents(clazz.getName))
       } catch {
-        case e @ (_: NoSuchElementException | _: NotSerializableException) =>
+        case _: NoSuchElementException =>
           log.error(
-            e,
-            s"No codec found for [{}] class. Call Register[A] for this class or its supertype and append result to codecs.",
-            clazz.getName)
-        case e: AssertionError =>
-          log.error(
-            e,
-            "Codec for [{}] is null. If this codec is custom defined, use def or lazy val instead of val.",
+            s"No codec found for [{}] class. Call Register[A] for this class or its supertype and append the result to codecs.",
             clazz.getName)
       }
     }
   }
-  scanForSerializables(packagePrefix)
+
+  private def checkCodecsForNull(): Unit = {
+    codecs.foreach { registration =>
+      val (tag, (encoder, decoder)) = registration
+      if (encoder == null || decoder == null)
+        throw new AssertionError(
+          s"Codec for [${tag.tpe.typeSymbol.fullName}] is null. If this codec is custom defined, declare it as a def or lazy val instead of val.")
+    }
+  }
+
+  checkSerializableTypesForMissingCodec(packagePrefix)
+  checkCodecsForNull()
 }
