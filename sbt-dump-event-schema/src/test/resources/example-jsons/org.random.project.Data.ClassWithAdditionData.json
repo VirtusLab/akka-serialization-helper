@@ -1,0 +1,14 @@
+{
+  "annotations": [],
+  "fields": [
+    {
+      "name": "ad",
+      "typeName": "org.random.project.Data.AdditionalData"
+    }
+  ],
+  "name": "org.random.project.Data.ClassWithAdditionData",
+  "parents": [
+    "org.random.project.Data"
+  ],
+  "typeSymbol": "class"
+}

@@ -1,0 +1,14 @@
+{
+  "annotations": [],
+  "fields": [
+    {
+      "name": "a",
+      "typeName": "scala.Int"
+    }
+  ],
+  "name": "org.random.project.Data.DeepestClass",
+  "parents": [
+    "org.random.project.Data.DeeperTrait"
+  ],
+  "typeSymbol": "class"
+}

@@ -1,0 +1,12 @@
+{
+  "annotations": [],
+  "fields": [
+    {
+      "name": "a",
+      "typeName": "scala.Int"
+    }
+  ],
+  "name": "org.random.project.Data.AdditionalData",
+  "parents": [],
+  "typeSymbol": "class"
+}

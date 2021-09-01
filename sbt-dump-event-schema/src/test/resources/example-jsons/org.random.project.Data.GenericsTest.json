@@ -1,0 +1,22 @@
+{
+  "annotations": [],
+  "fields": [
+    {
+      "name": "a",
+      "typeName": "scala.collection.immutable.Map[String,Int]"
+    },
+    {
+      "name": "b",
+      "typeName": "scala.Option[Int]"
+    },
+    {
+      "name": "c",
+      "typeName": "scala.Tuple3[Int,Int,Int]"
+    }
+  ],
+  "name": "org.random.project.Data.GenericsTest",
+  "parents": [
+    "org.random.project.Data"
+  ],
+  "typeSymbol": "class"
+}

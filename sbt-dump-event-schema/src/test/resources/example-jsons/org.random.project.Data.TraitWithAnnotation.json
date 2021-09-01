@@ -1,0 +1,25 @@
+{
+  "annotations": [
+    "org.random.project.Data.TestAnn(1, 2)",
+    "org.random.project.Data.TestAnn(1, Data.this.TestAnn.<init>$default$2)"
+  ],
+  "fields": [
+    {
+      "name": "c",
+      "typeName": "org.random.project.Data.AdditionalData"
+    },
+    {
+      "name": "b",
+      "typeName": "java.lang.String"
+    },
+    {
+      "name": "a",
+      "typeName": "scala.Long"
+    }
+  ],
+  "name": "org.random.project.Data.TraitWithAnnotation",
+  "parents": [
+    "org.random.project.Data"
+  ],
+  "typeSymbol": "trait"
+}

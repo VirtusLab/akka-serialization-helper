@@ -1,0 +1,65 @@
+- name: org.random.project.Data
+  typeSymbol: trait
+- name: org.random.project.Data.AdditionalData
+  typeSymbol: class
+  fields:
+  - name: a
+    typeName: scala.Int
+- name: org.random.project.Data.ClassTest
+  typeSymbol: class
+  fields:
+  - name: a
+    typeName: java.lang.String
+  - name: b
+    typeName: scala.Int
+  - name: c
+    typeName: scala.Double
+  parents:
+  - org.random.project.Data
+- name: org.random.project.Data.ClassWithAdditionData
+  typeSymbol: class
+  fields:
+  - name: ad
+    typeName: org.random.project.Data.AdditionalData
+  parents:
+  - org.random.project.Data
+- name: org.random.project.Data.DeepTrait
+  typeSymbol: trait
+  parents:
+  - org.random.project.Data
+- name: org.random.project.Data.DeeperTrait
+  typeSymbol: trait
+  parents:
+  - org.random.project.Data
+- name: org.random.project.Data.DeepestClass
+  typeSymbol: class
+  fields:
+  - name: a
+    typeName: scala.Int
+  parents:
+  - org.random.project.Data.DeeperTrait
+- name: org.random.project.Data.GenericsTest
+  typeSymbol: class
+  fields:
+  - name: a
+    typeName: scala.collection.immutable.Map[String,Int]
+  - name: b
+    typeName: scala.Option[Int]
+  - name: c
+    typeName: scala.Tuple3[Int,Int,Int]
+  parents:
+  - org.random.project.Data
+- name: org.random.project.Data.TraitWithAnnotation
+  typeSymbol: trait
+  annotations:
+  - org.random.project.Data.TestAnn(1, 2)
+  - org.random.project.Data.TestAnn(1, Data.this.TestAnn.<init>$default$2)
+  fields:
+  - name: c
+    typeName: org.random.project.Data.AdditionalData
+  - name: b
+    typeName: java.lang.String
+  - name: a
+    typeName: scala.Long
+  parents:
+  - org.random.project.Data
