@@ -3,10 +3,9 @@ package org.random.project
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.util.Timeout
+import org.virtuslab.ash.annotation.SerializabilityTrait
 
 import scala.concurrent.duration.DurationInt
-import org.virtuslab.ash.SerializabilityTrait
-
 import scala.util.{Failure, Success}
 
 object AskTest {

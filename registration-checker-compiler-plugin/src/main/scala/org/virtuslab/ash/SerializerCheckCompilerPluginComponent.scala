@@ -2,15 +2,20 @@ package org.virtuslab.ash
 
 import java.io.BufferedWriter
 import java.io.FileWriter
+import java.util.regex.PatternSyntaxException
 
 import scala.annotation.tailrec
 import scala.collection.mutable
+import scala.reflect.ClassTag
+import scala.reflect.classTag
 import scala.tools.nsc.Global
 import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
 
 import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.classSweepPhaseName
 import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.serializerCheckPhaseName
+import org.virtuslab.ash.annotation.SerializabilityTrait
+import org.virtuslab.ash.annotation.Serializer
 
 class SerializerCheckCompilerPluginComponent(
     classSweep: ClassSweepCompilerPluginComponent,
@@ -55,51 +60,93 @@ class SerializerCheckCompilerPluginComponent(
           }
           .map(x => (x._1, x._2.filter(_.tpe =:= serializerType)))
           .filter(_._2.nonEmpty)
-          .foreach(x => processSerializerClass(x._1, x._2))
+          .foreach { x =>
+            val (classDef, annotations) = x
+            if (annotations.size > 1) {
+              reporter.warning(
+                x._2.head.pos,
+                s"Class can only have one @Serializer annotation. Currently it has ${annotations.size}. Using the one found first.")
+            }
+            processSerializerClass(classDef, annotations.head)
+          }
       }
 
-      private def processSerializerClass(serializerClassDef: ClassDef, annotations: List[AnnotationInfo]): Unit = {
-        val foundTypes = serializerClassDef.collect {
-          case x: Tree if x.tpe != null => x.tpe
-        }.toSet
+      private def processSerializerClass(serializerClassDef: ClassDef, serializerAnnotation: AnnotationInfo): Unit = {
+        val (fqcn, filterRegex) = serializerAnnotation.args match {
+          case List(clazzTree, regexTree) =>
+            val fqcn = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
+              if (tpe.typeSymbol.annotations.map(_.tpe).contains(serializabilityTraitType))
+                Some(tpe.typeSymbol.fullName)
+              else {
+                reporter.error(
+                  serializerAnnotation.pos,
+                  s"Type given in annotation argument must be annotated with ${serializabilityTraitType.typeSymbol.fullName}")
+                None
+              }
+            }
+
+            val filterRegex = extractValueOfLiteralConstantFromTree[String](regexTree)
+
+            (fqcn, filterRegex) match {
+              case (Some(tpe), Some(regex)) => (tpe, regex)
+              case _                        => return
+            }
+
+          case _ => throw new IllegalStateException()
+        }
+
+        val foundTypes =
+          try {
+            serializerClassDef
+              .collect {
+                case x: Tree if x.tpe != null => x.tpe
+              }
+              .groupBy(_.toString())
+              .filter(_._1.matches(filterRegex))
+              .map(_._2.head)
+          } catch {
+            case e: PatternSyntaxException =>
+              reporter.error(serializerClassDef.pos, "Exception throw during the use of filter regex: " + e.getMessage)
+              return
+          }
 
         @tailrec
-        def typeArgsBfs(prev: Set[Type]): Set[Type] = {
-          val next = prev.flatMap(_.typeArgs) | prev
-          if (next.size == prev.size)
-            next
+        def typeArgsBfs(current: Set[Type], prev: Set[Type] = Set.empty): Set[Type] = {
+          val next = current.flatMap(_.typeArgs)
+          val acc = prev | current
+          if ((next &~ acc).isEmpty)
+            acc
           else
-            typeArgsBfs(next)
+            typeArgsBfs(next, acc)
         }
-        val foundInSerializerTypesFqcns = typeArgsBfs(foundTypes).map(_.typeSymbol.fullName)
+        val foundInSerializerTypesFqcns = typeArgsBfs(foundTypes.toSet).map(_.typeSymbol.fullName)
 
-        val serializabilityTraitsFqcns = annotations.map(_.args.head).flatMap {
+        typesToCheck(fqcn).map(_._2).foreach { fqcn =>
+          if (!foundInSerializerTypesFqcns(fqcn))
+            reporter.error(
+              serializerClassDef.pos,
+              s"""$fqcn not registered in a class annotated with @org.virtuslab.ash.annotation.Serializer. This will lead to a missing codec for Akka serialization in the runtime. 
+                 |Current filtering regex: $filterRegex""".stripMargin)
+        }
+      }
+
+      private def extractValueOfLiteralConstantFromTree[A: ClassTag](tree: Tree): Option[A] = {
+        tree match {
           case literal @ Literal(Constant(value)) =>
             value match {
-              case tpe: Type =>
-                if (tpe.typeSymbol.annotations.map(_.tpe).contains(serializabilityTraitType))
-                  Some(tpe.typeSymbol.fullName)
-                else {
-                  reporter.error(
-                    literal.pos,
-                    s"Type given in annotation argument must be annotated with ${serializabilityTraitType.typeSymbol.fullName}")
-                  None
-                }
+              case res: A => Some(res)
               case other =>
                 reporter.error(
                   literal.pos,
-                  s"Annotation argument must have a type during compilation of [${classOf[
-                    Type].toString}]. Current type is [${other.getClass.toString}]")
+                  s"Annotation argument must have a type during compilation of [${classTag[
+                    A].runtimeClass.toString}]. Current type is [${other.getClass.toString}]")
                 None
             }
           case other =>
-            reporter
-              .error(other.pos, s"Annotation argument must be a literal constant. Currently: ${other.summaryString}")
+            reporter.error(
+              other.pos,
+              s"Annotation argument must be a literal constant. Currently: ${other.summaryString}")
             None
-        }
-        serializabilityTraitsFqcns.flatMap(typesToCheck).map(_._2).foreach { fqcn =>
-          if (!foundInSerializerTypesFqcns(fqcn))
-            reporter.error(serializerClassDef.pos, s"$fqcn not referenced in marked serializer")
         }
       }
     }

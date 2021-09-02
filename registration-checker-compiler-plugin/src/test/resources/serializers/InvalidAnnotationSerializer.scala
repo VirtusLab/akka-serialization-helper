@@ -1,6 +1,6 @@
 package org.random.project
 
-import org.virtuslab.ash.Serializer
+import org.virtuslab.ash.annotation.Serializer
 
 @Serializer(InvalidAnnotationSerializer.clazz)
 class InvalidAnnotationSerializer {}

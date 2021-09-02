@@ -2,8 +2,7 @@ package org.random.project
 
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.Behaviors
-
-import org.virtuslab.ash.SerializabilityTrait
+import org.virtuslab.ash.annotation.SerializabilityTrait
 
 object TellTest {
   @SerializabilityTrait

@@ -4,10 +4,9 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
 import akka.util.Timeout
 import akka.actor.typed.scaladsl.AskPattern._
+import org.virtuslab.ash.annotation.SerializabilityTrait
 
 import scala.concurrent.duration.DurationInt
-import org.virtuslab.ash.SerializabilityTrait
-
 import scala.util.{Failure, Success}
 
 object AskSignTest {

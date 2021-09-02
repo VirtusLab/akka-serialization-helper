@@ -7,7 +7,7 @@ import akka.projection.eventsourced.scaladsl.EventSourcedProvider
 import akka.projection.scaladsl.SourceProvider
 import akka.persistence.typed.scaladsl.ReplyEffect
 import akka.actor.typed.Behavior
-import org.virtuslab.ash.SerializabilityTrait
+import org.virtuslab.ash.annotation.SerializabilityTrait
 
 object ReplyEffectTestState {
   @SerializabilityTrait

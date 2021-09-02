@@ -4,6 +4,8 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
 
+import org.virtuslab.ash.annotation.SerializabilityTrait
+
 class SerializabilityCheckerCompilerPluginComponent(
     val pluginOptions: SerializabilityCheckerOptions,
     val global: Global)

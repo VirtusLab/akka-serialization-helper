@@ -30,17 +30,21 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
     }
 
     "raise an error" when {
-      "types are missing in serializer definition" in {
+      "types don't match filter regex" in {
         File.usingTemporaryDirectory() { directory =>
-          val outEmpty = RegistrationCheckerCompiler.compileCode(
+          val out = RegistrationCheckerCompiler.compileCode(
             serializersCode(1) :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}"))
-          outEmpty should include("error")
+          out should include("error")
+        }
+      }
 
-          val outIncomplete = RegistrationCheckerCompiler.compileCode(
+      "types are missing in serializer definition" in {
+        File.usingTemporaryDirectory() { directory =>
+          val out = RegistrationCheckerCompiler.compileCode(
             serializersCode(2) :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}"))
-          outIncomplete should include("error")
+          out should include("error")
         }
       }
 

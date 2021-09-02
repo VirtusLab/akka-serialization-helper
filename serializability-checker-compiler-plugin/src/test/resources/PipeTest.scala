@@ -4,11 +4,10 @@ import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import akka.pattern.pipe
 import akka.util.Timeout
+import org.virtuslab.ash.annotation.SerializabilityTrait
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
-
-import org.virtuslab.ash.SerializabilityTrait
 
 object PipeTest {
   @SerializabilityTrait
