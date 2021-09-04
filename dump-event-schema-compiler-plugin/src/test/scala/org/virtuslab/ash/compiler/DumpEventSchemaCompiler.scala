@@ -14,7 +14,6 @@ import scala.tools.nsc.reporters.ConsoleReporter
 import scala.tools.nsc.util.ClassPath
 
 import org.virtuslab.ash.DumpEventSchemaCompilerPlugin
-import org.virtuslab.ash.DumpEventSchemaOptions
 
 object DumpEventSchemaCompiler {
   def compileCode(code: List[String], options: List[String]): String = {

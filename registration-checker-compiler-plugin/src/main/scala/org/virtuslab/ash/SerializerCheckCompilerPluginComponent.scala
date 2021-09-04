@@ -2,9 +2,6 @@ package org.virtuslab.ash
 
 import java.io.BufferedWriter
 import java.io.FileWriter
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption._
 
 import scala.annotation.tailrec
 import scala.collection.mutable

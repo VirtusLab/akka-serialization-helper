@@ -3,7 +3,6 @@ package org.virtuslab.ash.circe.data
 import io.circe.Decoder
 import io.circe.Encoder
 import io.circe.HCursor
-import io.circe.JsonNumber
 import io.circe.generic.auto._
 
 case class ModifiedCodec(str: String) extends CirceSerializabilityTrait

@@ -36,7 +36,7 @@ lazy val commonSettings = Seq(
       "-Ybackend-parallelism",
       "8",
       "-Ywarn-dead-code",
-      "-Ywarn-unused:-imports,_",
+      "-Ywarn-unused",
       "-unchecked",
       if (sys.env.getOrElse("CI", "false") == "true") "-Xfatal-warnings" else ""),
   libraryDependencies ++= commonDeps)

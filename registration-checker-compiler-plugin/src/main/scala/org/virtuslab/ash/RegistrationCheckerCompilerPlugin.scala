@@ -5,7 +5,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileReader
 import java.io.IOException
-import java.util.function.Consumer
 
 import scala.collection.mutable
 import scala.tools.nsc.Global
