@@ -1,7 +1,6 @@
 package org.virtuslab.ash
 
 import better.files.File
-import org.scalactic.StringNormalizations.lowerCased
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should
 

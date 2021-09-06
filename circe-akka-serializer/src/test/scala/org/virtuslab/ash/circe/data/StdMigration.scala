@@ -2,8 +2,6 @@ package org.virtuslab.ash.circe.data
 
 import io.circe.generic.extras.Configuration
 import io.circe.generic.extras.ConfiguredJsonCodec
-
-import org.virtuslab.ash.circe.data.StdMigration.config
 @ConfiguredJsonCodec sealed trait StdMigration extends CirceSerializabilityTrait
 
 object StdMigration {
