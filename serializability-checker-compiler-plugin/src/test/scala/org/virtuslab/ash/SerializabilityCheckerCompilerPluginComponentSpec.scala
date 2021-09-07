@@ -83,4 +83,9 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   it should "ignore Any and Nothing" in {
     testCode("AnyNothingTest.scala")
   }
+
+  it should "respect akka serializers" in {
+    val code = getResourceAsString("AkkaSerializabilityTraitsTest.scala")
+    SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should be("")
+  }
 }

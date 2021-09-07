@@ -20,6 +20,29 @@ class SerializabilityCheckerCompilerPluginComponent(
     new StdPhase(prev) {
       private val serializabilityTraitType = typeOf[SerializabilityTrait]
 
+      private val akkaSerializabilityTraits = Seq(
+        "com.google.protobuf.GeneratedMessage",
+        "com.google.protobuf.GeneratedMessageV3",
+        "com.typesafe.config.Config",
+        "com.typesafe.config.impl.SimpleConfig",
+        "java.lang.Throwable",
+        "java.util.Optional",
+        "java.util.concurrent.TimeoutException",
+        "scala.Option")
+
+      private val ignoredTypes = Seq(
+        "java.lang.Boolean",
+        "java.lang.Integer",
+        "java.lang.Long",
+        "java.lang.String",
+        "scala.Any",
+        "scala.Boolean",
+        "scala.Int",
+        "scala.Long",
+        "scala.Nothing")
+
+      private val ignoredTypePrefixes = List("akka.")
+
       private val genericsWithTypes = Map(
         ("akka.actor.typed.ActorSystem", Seq(ClassType.Message)),
         ("akka.actor.typed.ActorRef", Seq(ClassType.Message)),
@@ -39,8 +62,6 @@ class SerializabilityCheckerCompilerPluginComponent(
         ("akka.actor.typed.ActorRef.ActorRefOps.$bang", Seq(ClassType.Message)),
         ("akka.actor.typed.ActorRef.tell", Seq(ClassType.Message)),
         ("akka.actor.typed.RecipientRef.tell", Seq(ClassType.Message)))
-
-      private val ignoredTypePrefixes = List("akka.", "scala.Any", "scala.Nothing")
 
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
@@ -82,9 +103,9 @@ class SerializabilityCheckerCompilerPluginComponent(
           val (tpe, classType, detectedPosition) = next
           val ignore = {
             val fullName = tpe.dealias.typeSymbol.fullName
-            ignoredTypePrefixes.exists(fullName.startsWith)
+            ignoredTypes.contains(fullName) || ignoredTypePrefixes.exists(fullName.startsWith)
           }
-          if (annotatedTraits.exists(tpe <:< _) || ignore) {
+          if (ignore || annotatedTraits.exists(tpe <:< _)) {
             annotatedTraits
           } else {
             findSuperclassAnnotatedWithSerializabilityTrait(tpe) match {
@@ -121,6 +142,8 @@ class SerializabilityCheckerCompilerPluginComponent(
         if (tp =:= typeTag[AnyRef].tpe || tp =:= typeTag[Any].tpe)
           None
         else if (tp.typeSymbol.annotations.exists(_.atp =:= serializabilityTraitType))
+          Some(tp)
+        else if (akkaSerializabilityTraits.contains(tp.typeSymbol.fullName))
           Some(tp)
         else if (tp.typeSymbol.isAbstractType)
           findSuperclassAnnotatedWithSerializabilityTrait(tp.upperBound)
