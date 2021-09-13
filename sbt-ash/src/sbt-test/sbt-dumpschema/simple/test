@@ -1,0 +1,3 @@
+> +ashDumpPersistenceSchema
+$ exists target/scala-2.12/dump.yaml
+$ exists target/scala-2.13/dump.yaml

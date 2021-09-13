@@ -45,7 +45,7 @@ object DumpPersistenceSchemaCompiler {
         super.computeInternalPhases()
         val plugin = new DumpPersistenceSchemaCompilerPlugin(this)
         phasesSet ++= plugin.components
-        plugin.init(options, _ => ())
+        plugin.init(options, out.write)
       }
     }
 

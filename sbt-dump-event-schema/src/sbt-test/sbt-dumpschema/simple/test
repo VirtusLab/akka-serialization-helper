@@ -1,3 +1,0 @@
-> +dumpEventSchema
-$ exists /target/scala-2.12/dump.json
-$ exists /target/scala-2.13/dump.json

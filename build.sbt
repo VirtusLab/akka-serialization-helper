@@ -83,8 +83,8 @@ lazy val circeAkkaSerializer = (projectMatrix in file("circe-akka-serializer"))
       }.get)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val serializabilityCheckerLibrary = (projectMatrix in file("serializability-checker-library"))
-  .settings(name := "serializability-checker-library")
+lazy val ashAnnotation = (projectMatrix in file("ash-annotation"))
+  .settings(name := "ash-annotation")
   .settings(commonSettings)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
@@ -102,7 +102,7 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
         .getOrElse(Seq.empty)
     },
     libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test, betterFiles % Test))
-  .dependsOn(serializabilityCheckerLibrary)
+  .dependsOn(ashAnnotation)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val registrationCheckerCompilerPlugin = (projectMatrix in file("registration-checker-compiler-plugin"))
@@ -119,12 +119,12 @@ lazy val registrationCheckerCompilerPlugin = (projectMatrix in file("registratio
         .getOrElse(Seq.empty)
     },
     libraryDependencies ++= Seq(betterFiles % Test))
-  .dependsOn(serializabilityCheckerLibrary)
+  .dependsOn(ashAnnotation)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
+lazy val sbtAsh = (project in file("sbt-ash"))
   .enablePlugins(SbtPlugin)
-  .settings(name := "sbt-dump-event-schema")
+  .settings(name := "sbt-ash")
   .settings(commonSettings)
   .settings(
     pluginCrossBuild / sbtVersion := "1.2.8",
@@ -135,20 +135,23 @@ lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
       Seq(
         "-Xmx1024M",
         "-Dplugin.version=" + version.value,
-        "-Dcompiler-plugin.version=" + (dumpEventSchemaCompilerPlugin.componentProjects.head / version).value)
+        "-Dcompiler-plugin.version=" + (dumpPersistenceSchemaCompilerPlugin.componentProjects.head / version).value)
     },
     scriptedDependencies := { // publishing compiler plugin locally for testing
       scriptedDependencies.value
-      (dumpEventSchemaCompilerPlugin
-        .filterProjects(Seq(ScalaVersionAxis(scalaVersion212, "2.12")))
-        .head / publishLocal).value
-      (dumpEventSchemaCompilerPlugin
-        .filterProjects(Seq(ScalaVersionAxis(scalaVersion213, "2.13")))
-        .head / publishLocal).value
+      // this can't be abstracted to function because of the limitation of sbt macro expansion
+      (dumpPersistenceSchemaCompilerPlugin.projectRefs.head / publishLocal).value
+      (dumpPersistenceSchemaCompilerPlugin.projectRefs.tail.head / publishLocal).value // both head and tail.head must be published because they are separate projects, one for scala 2.13, one for 2.12
+      (registrationCheckerCompilerPlugin.projectRefs.head / publishLocal).value
+      (registrationCheckerCompilerPlugin.projectRefs.tail.head / publishLocal).value
+      (serializabilityCheckerCompilerPlugin.projectRefs.head / publishLocal).value
+      (serializabilityCheckerCompilerPlugin.projectRefs.tail.head / publishLocal).value
+      (ashAnnotation.projectRefs.head / publishLocal).value
+      (ashAnnotation.projectRefs.tail.head / publishLocal).value
     },
     scriptedBufferLog := false)
 
-lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-persistence-schema-compiler-plugin"))
+lazy val dumpPersistenceSchemaCompilerPlugin = (projectMatrix in file("dump-persistence-schema-compiler-plugin"))
   .enablePlugins(AssemblyPlugin)
   .settings(name := "dump-persistence-schema-compiler-plugin")
   .settings(commonSettings)

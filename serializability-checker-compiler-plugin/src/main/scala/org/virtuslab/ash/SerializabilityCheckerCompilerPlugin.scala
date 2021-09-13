@@ -16,6 +16,9 @@ class SerializabilityCheckerCompilerPlugin(override val global: Global) extends 
     new SerializabilityCheckerCompilerPluginComponent(pluginOptions, global))
 
   override def init(options: List[String], error: String => Unit): Boolean = {
+    if (options.contains("--disable"))
+      return false
+
     pluginOptions.verbose = options.contains("--verbose")
     pluginOptions.detectFromGenerics = !options.contains("--disable-detection-generics")
     pluginOptions.detectFromGenericMethods = !options.contains("--disable-detection-generic-methods")

@@ -19,7 +19,7 @@ class DumpPersistenceSchemaCompilerPluginComponentSpec extends AnyWordSpecLike w
 
     var res = List[TypeDefinition]()
     File.usingTemporaryDirectory() { directory =>
-      val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+      val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"${directory.toJava.getAbsolutePath}"))
       out should be("")
       res = new PersistenceSchemaWriter(directory).lastDump.values.toList
     }
@@ -59,7 +59,7 @@ class DumpPersistenceSchemaCompilerPluginComponentSpec extends AnyWordSpecLike w
     "ignore generic Event[_,_]" in {
       File.usingTemporaryDirectory() { directory =>
         val code = getCode(List("GenericTrigger", "Data"))
-        val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+        val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
         val res = new PersistenceSchemaWriter(directory).lastDump.values.toList
         res should have size 0
@@ -69,7 +69,7 @@ class DumpPersistenceSchemaCompilerPluginComponentSpec extends AnyWordSpecLike w
     "dump superclasses of abstract type" in {
       File.usingTemporaryDirectory() { directory =>
         val code = getCode(List("Trigger", "Data", "StateData"))
-        val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+        val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
         val res = new PersistenceSchemaWriter(directory).lastDump.values.toList
         res should have size dumpSize
@@ -79,7 +79,7 @@ class DumpPersistenceSchemaCompilerPluginComponentSpec extends AnyWordSpecLike w
     "dump case objects" in {
       File.usingTemporaryDirectory() { directory =>
         val code = getCode(List("DataEnum"))
-        val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+        val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
         val res = new PersistenceSchemaWriter(directory).lastDump.values.toList
         res should have size 5

@@ -67,5 +67,5 @@ class RegistrationCheckerCompilerPlugin(override val global: Global) extends Plu
 object RegistrationCheckerCompilerPlugin {
   val classSweepPhaseName = "registration-class-sweep"
   val serializerCheckPhaseName = "registration-serializer-check"
-  val cacheFileName = "registration_checker_plugin_cache.csv"
+  val cacheFileName = "registration-checker-plugin-cache.csv"
 }

@@ -11,14 +11,14 @@ import org.virtuslab.ash.model.TypeDefinition
 class PersistenceSchemaWriter(outputDirectory: File) extends DumpPersistenceSchemaJsonProtocol {
 
   def this(dumpPersistenceSchemaOptions: DumpPersistenceSchemaOptions) = {
-    this(File(dumpPersistenceSchemaOptions.outputDir))
+    this(File(dumpPersistenceSchemaOptions.outputDir) / "dump-persistence-schema-cache")
   }
 
   lazy val lastDump: Map[String, TypeDefinition] = {
     outputDirectory
       .createDirectoryIfNotExists(createParents = true)
       .list(_.extension.contains(".json"))
-      .map(file => new String(file.loadBytes).parseJson.convertTo[TypeDefinition])
+      .map(_.contentAsString.parseJson.convertTo[TypeDefinition])
       .map(x => (x.name, x))
       .toMap
   }
