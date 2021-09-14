@@ -17,9 +17,9 @@ object DumpEventSchemaPlugin extends AutoPlugin {
 
   lazy val additionalSettings: Seq[Def.Setting[_]] = Seq(
     libraryDependencies += compilerPlugin((dumpEventSchema / dumpEventSchemaCompilerPlugin).value),
-    scalacOptions += s"-P:dump-event-schema-plugin:--file ${(dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile).value.toPath}",
+    scalacOptions += s"-P:dump-persistence-schema-plugin:--file ${(dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile).value.toPath}",
     scalacOptions += (if ((dumpEventSchema / dumpEventSchemaCompilerPluginVerbose).value)
-                        "-P:dump-event-schema-plugin:-v"
+                        "-P:dump-persistence-schema-plugin:-v"
                       else ""),
     cleanFiles += (dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile).value)
 
@@ -32,7 +32,7 @@ object DumpEventSchemaPlugin extends AutoPlugin {
         (dumpEventSchema / dumpEventSchemaOutputDirectoryPath).value) / (dumpEventSchema / dumpEventSchemaOutputFilename).value,
     dumpEventSchema / dumpEventSchemaOutputFilename := s"${name.value}-dump-event-schema-${version.value}.json",
     dumpEventSchema / dumpEventSchemaOutputDirectoryPath := target.value.getPath,
-    dumpEventSchema / dumpEventSchemaCompilerPlugin := "org.virtuslab" %% "dump-event-schema-compiler-plugin" % "0.1.0-SNAPSHOT",
+    dumpEventSchema / dumpEventSchemaCompilerPlugin := "org.virtuslab" %% "dump-persistence-schema-compiler-plugin" % "0.1.0-SNAPSHOT",
     dumpEventSchema / dumpEventSchemaCompilerPluginVerbose := false,
     dumpEventSchema / dumpEventSchemaCompilerPluginOutputFile := target.value / "dump")
 }

@@ -1,0 +1,4 @@
+<plugin>
+    <name>dump-persistence-schema-plugin</name>
+    <classname>org.virtuslab.ash.DumpPersistenceSchemaCompilerPlugin</classname>
+</plugin>

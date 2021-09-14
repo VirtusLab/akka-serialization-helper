@@ -13,7 +13,7 @@ dumpEventSchema / dumpEventSchemaOutputFilename := "dump.json"
 
 sys.props.get("compiler-plugin.version") match {
   case Some(x) =>
-    dumpEventSchema / dumpEventSchemaCompilerPlugin := "org.virtuslab" %% "dump-event-schema-compiler-plugin" % x
+    dumpEventSchema / dumpEventSchemaCompilerPlugin := "org.virtuslab" %% "dump-persistence-schema-compiler-plugin" % x
   case _ =>
     sys.error("""|The system property 'compiler-plugin.version' is not defined.
                  |Specify this property using "-Dcompiler-plugin.version=..." in `scriptedLaunchOpts` sbt setting""".stripMargin)

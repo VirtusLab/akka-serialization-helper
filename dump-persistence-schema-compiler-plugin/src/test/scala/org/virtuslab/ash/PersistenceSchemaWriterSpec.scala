@@ -7,19 +7,19 @@ import spray.json._
 
 import org.virtuslab.ash.model.Field
 import org.virtuslab.ash.model.TypeDefinition
-import org.virtuslab.ash.writer.DumpEventSchemaJsonProtocol
-import org.virtuslab.ash.writer.EventSchemaWriter
+import org.virtuslab.ash.writer.DumpPersistenceSchemaJsonProtocol
+import org.virtuslab.ash.writer.PersistenceSchemaWriter
 
-class EventSchemaWriterSpec extends AnyWordSpecLike with should.Matchers with DumpEventSchemaJsonProtocol {
+class PersistenceSchemaWriterSpec extends AnyWordSpecLike with should.Matchers with DumpPersistenceSchemaJsonProtocol {
   val testDef: TypeDefinition =
     TypeDefinition("trait", "test", Seq("anno"), Seq(Field("a", "Int")), Seq("one", "two"))
 
-  "SchemaWriter" should {
+  "PersistenceSchemaWriter" should {
 
     "load previous dump" in {
       File.usingTemporaryDirectory() { directory =>
         (directory / s"${testDef.name}.json").createFile().appendLine(testDef.toJson.compactPrint)
-        val schemaWriter = new EventSchemaWriter(directory)
+        val schemaWriter = new PersistenceSchemaWriter(directory)
         val loaded = schemaWriter.lastDump
 
         loaded should have size 1
@@ -31,7 +31,7 @@ class EventSchemaWriterSpec extends AnyWordSpecLike with should.Matchers with Du
 
     "safe new class to dump" in {
       File.usingTemporaryDirectory() { directory =>
-        val schemaWriter = new EventSchemaWriter(directory)
+        val schemaWriter = new PersistenceSchemaWriter(directory)
 
         schemaWriter.isUpToDate(testDef.name) should equal(false)
         schemaWriter.consumeTypeDefinition(testDef)
