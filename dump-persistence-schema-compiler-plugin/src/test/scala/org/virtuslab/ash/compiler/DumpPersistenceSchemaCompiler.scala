@@ -13,9 +13,9 @@ import scala.tools.nsc.io.VirtualDirectory
 import scala.tools.nsc.reporters.ConsoleReporter
 import scala.tools.nsc.util.ClassPath
 
-import org.virtuslab.ash.DumpEventSchemaCompilerPlugin
+import org.virtuslab.ash.DumpPersistenceSchemaCompilerPlugin
 
-object DumpEventSchemaCompiler {
+object DumpPersistenceSchemaCompiler {
   def compileCode(code: List[String], options: List[String]): String = {
     val sources = code.zipWithIndex.map(x => new BatchSourceFile(s"test${x._2}.scala", x._1))
 
@@ -43,7 +43,7 @@ object DumpEventSchemaCompiler {
     val compiler: Global = new Global(settings, reporter) {
       override protected def computeInternalPhases(): Unit = {
         super.computeInternalPhases()
-        val plugin = new DumpEventSchemaCompilerPlugin(this)
+        val plugin = new DumpPersistenceSchemaCompilerPlugin(this)
         phasesSet ++= plugin.components
         plugin.init(options, _ => ())
       }

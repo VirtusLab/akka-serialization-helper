@@ -4,29 +4,31 @@ import better.files.File
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
 
-import org.virtuslab.ash.compiler.DumpEventSchemaCompiler
+import org.virtuslab.ash.compiler.DumpPersistenceSchemaCompiler
 import org.virtuslab.ash.model.TypeDefinition
-import org.virtuslab.ash.writer.EventSchemaWriter
+import org.virtuslab.ash.writer.PersistenceSchemaWriter
 
-class DumpEventSchemaCompilerPluginComponentSpec extends AnyWordSpecLike with should.Matchers {
+class DumpPersistenceSchemaCompilerPluginComponentSpec extends AnyWordSpecLike with should.Matchers {
   private def getResourceAsString(name: String) =
     new String(File(getClass.getClassLoader.getResource(name)).loadBytes)
 
+  private def getCode(filenames: List[String]) = filenames.map(_ + ".scala").map(getResourceAsString)
+
   private lazy val directory: List[TypeDefinition] = {
-    val code = List(getResourceAsString("Trigger.scala"), getResourceAsString("Data.scala"))
+    val code = getCode(List("Trigger", "Data", "StateData"))
 
     var res = List[TypeDefinition]()
     File.usingTemporaryDirectory() { directory =>
-      val out = DumpEventSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+      val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
       out should be("")
-      res = new EventSchemaWriter(directory).lastDump.values.toList
+      res = new PersistenceSchemaWriter(directory).lastDump.values.toList
     }
     res
   }
 
-  private val dumpSize = 9
+  private val dumpSize = 10
 
-  "DumpCompilerPlugin with correct Event[_,_]" should {
+  "DumpPersistenceSchemaPlugin with correct Event[_,_]" should {
 
     "dump signature of all relevant classes" in {
       directory should have size dumpSize
@@ -46,36 +48,40 @@ class DumpEventSchemaCompilerPluginComponentSpec extends AnyWordSpecLike with sh
     "dump class annotations" in {
       directory.find(_.name.contains("Annotation")).get.annotations should have size 2
     }
+
+    "include dump of classes representing states" in {
+      directory.map(_.name) should contain("org.random.project.StateData.State")
+    }
   }
 
-  "DumpCompilerPlugin" should {
+  "DumpPersistenceSchemaPlugin" should {
 
     "ignore generic Event[_,_]" in {
       File.usingTemporaryDirectory() { directory =>
-        val code = List(getResourceAsString("GenericTrigger.scala"), getResourceAsString("Data.scala"))
-        val out = DumpEventSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+        val code = getCode(List("GenericTrigger", "Data"))
+        val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
         out should be("")
-        val res = new EventSchemaWriter(directory).lastDump.values.toList
+        val res = new PersistenceSchemaWriter(directory).lastDump.values.toList
         res should have size 0
       }
     }
 
     "dump superclasses of abstract type" in {
       File.usingTemporaryDirectory() { directory =>
-        val code = List(getResourceAsString("AbstractTrigger.scala"), getResourceAsString("Data.scala"))
-        val out = DumpEventSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+        val code = getCode(List("Trigger", "Data", "StateData"))
+        val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
         out should be("")
-        val res = new EventSchemaWriter(directory).lastDump.values.toList
+        val res = new PersistenceSchemaWriter(directory).lastDump.values.toList
         res should have size dumpSize
       }
     }
 
     "dump case objects" in {
       File.usingTemporaryDirectory() { directory =>
-        val code = List(getResourceAsString("DataEnum.scala"))
-        val out = DumpEventSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
+        val code = getCode(List("DataEnum"))
+        val out = DumpPersistenceSchemaCompiler.compileCode(code, List(s"--file ${directory.toJava.getAbsolutePath}"))
         out should be("")
-        val res = new EventSchemaWriter(directory).lastDump.values.toList
+        val res = new PersistenceSchemaWriter(directory).lastDump.values.toList
         res should have size 5
         (res.map(_.typeSymbol) should contain).allOf("object", "class", "trait")
       }

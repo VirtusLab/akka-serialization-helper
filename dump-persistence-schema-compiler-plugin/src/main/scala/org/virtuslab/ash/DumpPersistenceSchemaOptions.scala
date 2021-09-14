@@ -6,4 +6,4 @@ package org.virtuslab.ash
  * and plugin receives options by a function call, after construction.
  * This means internal state of plugin must change, and this is happening here.
  */
-class DumpEventSchemaOptions(var outputDir: String, var verbose: Boolean)
+class DumpPersistenceSchemaOptions(var outputDir: String, var verbose: Boolean)

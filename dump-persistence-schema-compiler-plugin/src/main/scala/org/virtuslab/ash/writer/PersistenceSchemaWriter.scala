@@ -5,13 +5,13 @@ import scala.collection.mutable
 import better.files.File
 import spray.json._
 
-import org.virtuslab.ash.DumpEventSchemaOptions
+import org.virtuslab.ash.DumpPersistenceSchemaOptions
 import org.virtuslab.ash.model.TypeDefinition
 
-class EventSchemaWriter(outputDirectory: File) extends DumpEventSchemaJsonProtocol {
+class PersistenceSchemaWriter(outputDirectory: File) extends DumpPersistenceSchemaJsonProtocol {
 
-  def this(dumpEventSchemaOptions: DumpEventSchemaOptions) = {
-    this(File(dumpEventSchemaOptions.outputDir))
+  def this(dumpPersistenceSchemaOptions: DumpPersistenceSchemaOptions) = {
+    this(File(dumpPersistenceSchemaOptions.outputDir))
   }
 
   lazy val lastDump: Map[String, TypeDefinition] = {

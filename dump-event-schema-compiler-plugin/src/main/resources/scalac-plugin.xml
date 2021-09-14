@@ -1,4 +1,0 @@
-<plugin>
-    <name>dump-event-schema-plugin</name>
-    <classname>org.virtuslab.ash.DumpEventSchemaCompilerPlugin</classname>
-</plugin>

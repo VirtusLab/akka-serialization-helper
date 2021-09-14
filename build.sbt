@@ -148,9 +148,9 @@ lazy val dumpEventSchema = (project in file("sbt-dump-event-schema"))
     },
     scriptedBufferLog := false)
 
-lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-event-schema-compiler-plugin"))
+lazy val dumpEventSchemaCompilerPlugin = (projectMatrix in file("dump-persistence-schema-compiler-plugin"))
   .enablePlugins(AssemblyPlugin)
-  .settings(name := "dump-event-schema-compiler-plugin")
+  .settings(name := "dump-persistence-schema-compiler-plugin")
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= {
