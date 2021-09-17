@@ -23,21 +23,21 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
     libraryDependencies ++= Seq(
         ashAnnotationLibrary.value,
         compilerPlugin(ashDumpPersistenceSchemaCompilerPlugin.value),
-        compilerPlugin(ashRegistrationCheckerCompilerPlugin.value),
+        compilerPlugin(ashCodecRegistrationCheckerCompilerPlugin.value),
         compilerPlugin(ashSerializabilityCheckerCompilerPlugin.value)),
     Compile / scalacOptions ++= Seq(
         s"-P:dump-persistence-schema-plugin:${(ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginCacheDirectory).value}",
-        s"-P:registration-checker-plugin:${(ashRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value}"),
+        s"-P:codec-registration-checker-plugin:${(ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value}"),
     cleanFiles ++= Seq(
         (ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginCacheDirectory).value / "dump-persistence-schema-cache",
-        (ashRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value / "registration-checker-plugin-cache.csv"),
+        (ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value / "codec-registration-checker-cache.csv"),
     Compile / scalacOptions ++= (Compile / ashScalacOptions).value,
     Test / scalacOptions --= (Compile / ashScalacOptions).value,
     Test / scalacOptions ++= (Test / ashScalacOptions).value)
 
   lazy val baseAshSettings: Seq[Def.Setting[_]] = Seq(
       ashDumpPersistenceSchemaCompilerPlugin := component("dump-persistence-schema-compiler-plugin"),
-      ashRegistrationCheckerCompilerPlugin := component("registration-checker-compiler-plugin"),
+      ashCodecRegistrationCheckerCompilerPlugin := component("codec-registration-checker-compiler-plugin"),
       ashSerializabilityCheckerCompilerPlugin := component("serializability-checker-compiler-plugin"),
       ashAnnotationLibrary := ashAnnotation,
       ashCompilerPluginCacheDirectory := target.value,
@@ -60,8 +60,8 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
     inConfig(conf)(ashScalacOptions := {
       val de = (ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginEnable).value
       val dv = (ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginVerbose).value
-      val re = (ashRegistrationCheckerCompilerPlugin / ashCompilerPluginEnable).value
-      val rv = (ashRegistrationCheckerCompilerPlugin / ashCompilerPluginVerbose).value
+      val re = (ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginEnable).value
+      val rv = (ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginVerbose).value
       val se = (ashSerializabilityCheckerCompilerPlugin / ashCompilerPluginEnable).value
       val sv = (ashSerializabilityCheckerCompilerPlugin / ashCompilerPluginVerbose).value
       compilerPluginFlagsToScalacOptions(de, dv, re, rv, se, sv)
@@ -82,7 +82,7 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
       if (x) Some("--verbose") else None
     }
     val plugins =
-      List("dump-persistence-schema-plugin", "registration-checker-plugin", "serializability-checker-plugin")
+      List("dump-persistence-schema-plugin", "codec-registration-checker-plugin", "serializability-checker-plugin")
 
     l1.zip(l2).zip(plugins).flatMap { x =>
       val ((a, b), plugin) = x

@@ -5,7 +5,7 @@ import better.files.File
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.Matchers {
+class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.Matchers {
   private def getSerializerAsString(name: String) =
     (File(getClass.getClassLoader.getResource("serializers")) / (name + ".scala")).contentAsString
 
@@ -19,10 +19,10 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
     "InvalidAnnotationSerializer",
     "InvalidClassSerializer").map(getSerializerAsString)
 
-  "Registration checker compiler plugin" should {
+  "Codec registration checker compiler plugin" should {
     "detect correct registration for all kinds of classes" in {
       File.usingTemporaryDirectory() { directory =>
-        val out = RegistrationCheckerCompiler.compileCode(
+        val out = CodecRegistrationCheckerCompiler.compileCode(
           serializersCode(0) :: dataSourceCode,
           List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
@@ -32,7 +32,7 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
     "raise an error" when {
       "types don't match filter regex" in {
         File.usingTemporaryDirectory() { directory =>
-          val out = RegistrationCheckerCompiler.compileCode(
+          val out = CodecRegistrationCheckerCompiler.compileCode(
             serializersCode(1) :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
@@ -41,7 +41,7 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
 
       "types are missing in serializer definition" in {
         File.usingTemporaryDirectory() { directory =>
-          val out = RegistrationCheckerCompiler.compileCode(
+          val out = CodecRegistrationCheckerCompiler.compileCode(
             serializersCode(2) :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
@@ -50,7 +50,7 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
 
       "annotation value is not a compile time literal" in {
         File.usingTemporaryDirectory() { directory =>
-          val out = RegistrationCheckerCompiler.compileCode(
+          val out = CodecRegistrationCheckerCompiler.compileCode(
             serializersCode(3) :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
@@ -59,7 +59,7 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
 
       "class in annotation is not annotated with @SerializabilityTrait" in {
         File.usingTemporaryDirectory() { directory =>
-          val out = RegistrationCheckerCompiler.compileCode(
+          val out = CodecRegistrationCheckerCompiler.compileCode(
             serializersCode(4) :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
@@ -69,16 +69,18 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
 
     "work with no serializer" in {
       File.usingTemporaryDirectory() { directory =>
-        val out = RegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
+        val out =
+          CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
       }
     }
 
     "create cache file when missing" in {
       File.usingTemporaryDirectory() { directory =>
-        val out = RegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
+        val out =
+          CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
-        val cacheFile = (directory / RegistrationCheckerCompilerPlugin.cacheFileName).contentAsString
+        val cacheFile = (directory / CodecRegistrationCheckerCompilerPlugin.cacheFileName).contentAsString
         cacheFile should be("""org.random.project.SerializableTrait,org.random.project.GenericData
                               |org.random.project.SerializableTrait,org.random.project.IndirectData
                               |org.random.project.SerializableTrait,org.random.project.StdData""".stripMargin)
@@ -87,9 +89,10 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
 
     "use existing from cache file" in {
       File.usingTemporaryDirectory() { directory =>
-        val cacheFile = directory / RegistrationCheckerCompilerPlugin.cacheFileName
+        val cacheFile = directory / CodecRegistrationCheckerCompilerPlugin.cacheFileName
         cacheFile < "org.random.project.SerializableTrait,org.random.project.MissingData"
-        val out = RegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
+        val out =
+          CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
         val cacheFileAfter = cacheFile.contentAsString
         cacheFileAfter should be("""org.random.project.SerializableTrait,org.random.project.GenericData
@@ -103,9 +106,9 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
       "integrity of cache file is compromised" in {
         assertThrows[RuntimeException] {
           File.usingTemporaryDirectory() { directory =>
-            val cacheFile = directory / RegistrationCheckerCompilerPlugin.cacheFileName
+            val cacheFile = directory / CodecRegistrationCheckerCompilerPlugin.cacheFileName
             cacheFile < "org.random.project.SerializableTrait"
-            RegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
+            CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
           }
         }
       }
@@ -113,14 +116,16 @@ class RegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with should.
       "path in argument contains in invalid" in {
         assertThrows[RuntimeException] {
           File.usingTemporaryDirectory() { directory =>
-            RegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}\u0000"))
+            CodecRegistrationCheckerCompiler.compileCode(
+              dataSourceCode,
+              List(s"${directory.toJava.getAbsolutePath}\u0000"))
           }
         }
       }
 
       "no path is specified" in {
         assertThrows[RuntimeException] {
-          RegistrationCheckerCompiler.compileCode(dataSourceCode, Nil)
+          CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, Nil)
         }
       }
     }

@@ -12,5 +12,5 @@ ashCompilerPluginCacheDirectory := crossTarget.value
 ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath := crossTarget.value.getPath
 ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFilename := "dump.yaml"
 
-ashRegistrationCheckerCompilerPlugin / ashCompilerPluginEnable := false
+ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginEnable := false
 ashSerializabilityCheckerCompilerPlugin / ashCompilerPluginEnable := false

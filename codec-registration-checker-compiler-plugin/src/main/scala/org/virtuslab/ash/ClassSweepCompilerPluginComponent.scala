@@ -5,10 +5,10 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
 
-import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.classSweepPhaseName
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.classSweepPhaseName
 import org.virtuslab.ash.annotation.SerializabilityTrait
 
-class ClassSweepCompilerPluginComponent(options: RegistrationCheckerOptions, override val global: Global)
+class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions, override val global: Global)
     extends PluginComponent {
   import global._
   override val phaseName: String = classSweepPhaseName

@@ -12,14 +12,14 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
 
-import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.classSweepPhaseName
-import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.serializerCheckPhaseName
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.classSweepPhaseName
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.serializerCheckPhaseName
 import org.virtuslab.ash.annotation.SerializabilityTrait
 import org.virtuslab.ash.annotation.Serializer
 
 class SerializerCheckCompilerPluginComponent(
     classSweep: ClassSweepCompilerPluginComponent,
-    options: RegistrationCheckerOptions,
+    options: CodecRegistrationCheckerOptions,
     override val global: Global)
     extends PluginComponent {
   import global._
@@ -125,7 +125,8 @@ class SerializerCheckCompilerPluginComponent(
           if (!foundInSerializerTypesFqcns(fqcn))
             reporter.error(
               serializerClassDef.pos,
-              s"""$fqcn not registered in a class annotated with @org.virtuslab.ash.annotation.Serializer. This will lead to a missing codec for Akka serialization in the runtime. 
+              s"""No codec for $fqcn is registered in any class annotated with @${serializabilityTraitType.typeSymbol.fullName}.
+                 |This will lead to a missing codec for Akka serialization in the runtime. 
                  |Current filtering regex: $filterRegex""".stripMargin)
         }
       }

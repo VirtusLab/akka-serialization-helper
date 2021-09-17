@@ -11,14 +11,14 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.Plugin
 import scala.tools.nsc.plugins.PluginComponent
 
-import org.virtuslab.ash.RegistrationCheckerCompilerPlugin.cacheFileName
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.cacheFileName
 
-class RegistrationCheckerCompilerPlugin(override val global: Global) extends Plugin {
-  override val name: String = "registration-checker-plugin"
+class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extends Plugin {
+  override val name: String = "codec-registration-checker-plugin"
   override val description: String =
     "checks whether classes marked with serializability trait are being referenced in a marked serializer"
 
-  private val pluginOptions = RegistrationCheckerOptions()
+  private val pluginOptions = CodecRegistrationCheckerOptions()
   private val classSweep = new ClassSweepCompilerPluginComponent(pluginOptions, global)
   private val serializerCheck = new SerializerCheckCompilerPluginComponent(classSweep, pluginOptions, global)
   override val components: List[PluginComponent] = List(classSweep, serializerCheck)
@@ -64,8 +64,8 @@ class RegistrationCheckerCompilerPlugin(override val global: Global) extends Plu
       |""".stripMargin)
 }
 
-object RegistrationCheckerCompilerPlugin {
-  val classSweepPhaseName = "registration-class-sweep"
-  val serializerCheckPhaseName = "registration-serializer-check"
-  val cacheFileName = "registration-checker-plugin-cache.csv"
+object CodecRegistrationCheckerCompilerPlugin {
+  val classSweepPhaseName = "codec-registration-class-sweep"
+  val serializerCheckPhaseName = "codec-registration-serializer-check"
+  val cacheFileName = "codec-registration-checker-cache.csv"
 }

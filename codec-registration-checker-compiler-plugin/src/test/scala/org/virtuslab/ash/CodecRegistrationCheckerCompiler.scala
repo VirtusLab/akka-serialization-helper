@@ -14,7 +14,7 @@ import scala.tools.nsc.io.VirtualDirectory
 import scala.tools.nsc.reporters.ConsoleReporter
 import scala.tools.nsc.util.ClassPath
 
-object RegistrationCheckerCompiler {
+object CodecRegistrationCheckerCompiler {
   def compileCode(code: List[String], args: List[String] = List.empty): String = {
     val sources = code.zipWithIndex.map(x => new BatchSourceFile(s"test${x._2}.scala", x._1))
 
@@ -43,7 +43,7 @@ object RegistrationCheckerCompiler {
     val compiler = new Global(settings, reporter) {
       override protected def computeInternalPhases(): Unit = {
         super.computeInternalPhases()
-        val plugin = new RegistrationCheckerCompilerPlugin(this)
+        val plugin = new CodecRegistrationCheckerCompilerPlugin(this)
         if (plugin.init(args, initBuffer += _)) {
           for (phase <- plugin.components)
             phasesSet += phase

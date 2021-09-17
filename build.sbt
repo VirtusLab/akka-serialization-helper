@@ -105,8 +105,8 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
   .dependsOn(ashAnnotation)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val registrationCheckerCompilerPlugin = (projectMatrix in file("registration-checker-compiler-plugin"))
-  .settings(name := "registration-checker-compiler-plugin")
+lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-registration-checker-compiler-plugin"))
+  .settings(name := "codec-registration-checker-compiler-plugin")
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= {
@@ -142,8 +142,8 @@ lazy val sbtAsh = (project in file("sbt-ash"))
       // this can't be abstracted to function because of the limitation of sbt macro expansion
       (dumpPersistenceSchemaCompilerPlugin.projectRefs.head / publishLocal).value
       (dumpPersistenceSchemaCompilerPlugin.projectRefs.tail.head / publishLocal).value // both head and tail.head must be published because they are separate projects, one for scala 2.13, one for 2.12
-      (registrationCheckerCompilerPlugin.projectRefs.head / publishLocal).value
-      (registrationCheckerCompilerPlugin.projectRefs.tail.head / publishLocal).value
+      (codecRegistrationCheckerCompilerPlugin.projectRefs.head / publishLocal).value
+      (codecRegistrationCheckerCompilerPlugin.projectRefs.tail.head / publishLocal).value
       (serializabilityCheckerCompilerPlugin.projectRefs.head / publishLocal).value
       (serializabilityCheckerCompilerPlugin.projectRefs.tail.head / publishLocal).value
       (ashAnnotation.projectRefs.head / publishLocal).value

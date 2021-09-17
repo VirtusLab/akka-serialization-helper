@@ -7,7 +7,8 @@ import sbt.taskKey
 
 trait AkkaSerializationHelperKeys {
   lazy val ashDumpPersistenceSchemaCompilerPlugin = settingKey[ModuleID]("ModuleID of dump persistence plugin")
-  lazy val ashRegistrationCheckerCompilerPlugin = settingKey[ModuleID]("ModuleID of registration checker plugin")
+  lazy val ashCodecRegistrationCheckerCompilerPlugin =
+    settingKey[ModuleID]("ModuleID of codec registration checker plugin")
   lazy val ashSerializabilityCheckerCompilerPlugin = settingKey[ModuleID]("ModuleID of serializability checker plugin")
   lazy val ashAnnotationLibrary = settingKey[ModuleID]("ModuleID of annotation library")
   lazy val ashScalacOptions = settingKey[Seq[String]]("Options to Scala compiler used by plugins")

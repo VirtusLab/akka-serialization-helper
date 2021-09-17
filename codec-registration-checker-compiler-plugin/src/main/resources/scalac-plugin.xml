@@ -1,0 +1,4 @@
+<plugin>
+    <name>codec-registration-checker-plugin</name>
+    <classname>org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin</classname>
+</plugin>

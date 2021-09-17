@@ -1,4 +1,0 @@
-<plugin>
-    <name>registration-checker-plugin</name>
-    <classname>org.virtuslab.ash.RegistrationCheckerCompilerPlugin</classname>
-</plugin>
