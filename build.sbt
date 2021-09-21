@@ -122,9 +122,9 @@ lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-
   .dependsOn(ashAnnotation)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val sbtAsh = (project in file("sbt-ash"))
+lazy val sbtAkkaSerializationHelper = (project in file("sbt-akka-serialization-helper"))
   .enablePlugins(SbtPlugin)
-  .settings(name := "sbt-ash")
+  .settings(name := "sbt-akka-serialization-helper")
   .settings(commonSettings)
   .settings(
     pluginCrossBuild / sbtVersion := "1.2.8",
