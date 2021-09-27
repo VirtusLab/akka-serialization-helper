@@ -13,7 +13,7 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
 
   val circeAkkaSerializer = component("circe-akka-serializer")
 
-  val ashAnnotation = component("ash-annotation")
+  val annotation = component("annotation")
 
   override def projectSettings: Seq[Def.Setting[_]] = baseAshSettings ++ additionalSettings
 
@@ -39,7 +39,7 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
       ashDumpPersistenceSchemaCompilerPlugin := component("dump-persistence-schema-compiler-plugin"),
       ashCodecRegistrationCheckerCompilerPlugin := component("codec-registration-checker-compiler-plugin"),
       ashSerializabilityCheckerCompilerPlugin := component("serializability-checker-compiler-plugin"),
-      ashAnnotationLibrary := ashAnnotation,
+      ashAnnotationLibrary := annotation,
       ashCompilerPluginCacheDirectory := target.value,
       ashCompilerPluginEnable := true,
       Test / ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginEnable := false,
@@ -54,7 +54,7 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
 
   private lazy val ashVersion = getClass.getPackage.getImplementationVersion
 
-  private def component(id: String) = "org.virtuslab" %% id % ashVersion
+  private def component(id: String) = "org.virtuslab.ash" %% id % ashVersion
 
   private def ashScalacOptionsInConfig(conf: Configuration) = {
     inConfig(conf)(ashScalacOptions := {

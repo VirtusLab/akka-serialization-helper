@@ -6,7 +6,7 @@ import sbt.VirtualAxis.ScalaVersionAxis
 lazy val supportedScalaVersions = List(scalaVersion213, scalaVersion212)
 
 ThisBuild / scalaVersion := supportedScalaVersions.head
-ThisBuild / organization := "org.virtuslab"
+ThisBuild / organization := "org.virtuslab.ash"
 ThisBuild / organizationName := "VirtusLab"
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / homepage := Some(url("https://github.com/VirtusLab/akka-serialization-helper"))
@@ -83,8 +83,8 @@ lazy val circeAkkaSerializer = (projectMatrix in file("circe-akka-serializer"))
       }.get)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
-lazy val ashAnnotation = (projectMatrix in file("ash-annotation"))
-  .settings(name := "ash-annotation")
+lazy val annotation = (projectMatrix in file("annotation"))
+  .settings(name := "annotation")
   .settings(commonSettings)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
@@ -102,7 +102,7 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
         .getOrElse(Seq.empty)
     },
     libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test, betterFiles % Test))
-  .dependsOn(ashAnnotation)
+  .dependsOn(annotation)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-registration-checker-compiler-plugin"))
@@ -119,7 +119,7 @@ lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-
         .getOrElse(Seq.empty)
     },
     libraryDependencies ++= Seq(betterFiles % Test))
-  .dependsOn(ashAnnotation)
+  .dependsOn(annotation)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val sbtAkkaSerializationHelper = (project in file("sbt-akka-serialization-helper"))
@@ -140,14 +140,17 @@ lazy val sbtAkkaSerializationHelper = (project in file("sbt-akka-serialization-h
     scriptedDependencies := { // publishing compiler plugin locally for testing
       scriptedDependencies.value
       // this can't be abstracted to function because of the limitation of sbt macro expansion
-      (dumpPersistenceSchemaCompilerPlugin.projectRefs.head / publishLocal).value
-      (dumpPersistenceSchemaCompilerPlugin.projectRefs.tail.head / publishLocal).value // both head and tail.head must be published because they are separate projects, one for scala 2.13, one for 2.12
+      // both head and tail.head must be published because they are separate projects, one for scala 2.13, one for 2.12
+      (annotation.projectRefs.head / publishLocal).value
+      (annotation.projectRefs.tail.head / publishLocal).value
+      (circeAkkaSerializer.projectRefs.head / publishLocal).value
+      (circeAkkaSerializer.projectRefs.tail.head / publishLocal).value
       (codecRegistrationCheckerCompilerPlugin.projectRefs.head / publishLocal).value
       (codecRegistrationCheckerCompilerPlugin.projectRefs.tail.head / publishLocal).value
+      (dumpPersistenceSchemaCompilerPlugin.projectRefs.head / publishLocal).value
+      (dumpPersistenceSchemaCompilerPlugin.projectRefs.tail.head / publishLocal).value
       (serializabilityCheckerCompilerPlugin.projectRefs.head / publishLocal).value
       (serializabilityCheckerCompilerPlugin.projectRefs.tail.head / publishLocal).value
-      (ashAnnotation.projectRefs.head / publishLocal).value
-      (ashAnnotation.projectRefs.tail.head / publishLocal).value
     },
     scriptedBufferLog := false)
 
