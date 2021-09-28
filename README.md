@@ -1,88 +1,178 @@
 # Akka Serialization Helper
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.virtuslab.ash/sbt-akka-serialization-helper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.rsql/rsql-parser)
+
+![logo_ash_horizontal@4x](https://user-images.githubusercontent.com/25779550/135059025-4cfade5b-bfcb-47e8-872f-8a3d78ce0c25.png)
+
 Serialization toolbox for Akka messages, events and persistent state that helps achieve compile-time guarantee on
 serializability.
 
 ## Install
 
-To install the library use JitPack:
+To use the library use sbt plugin (version equals number on the maven badge):
 
 ```scala
-resolvers += "jitpack".at("https://jitpack.io")
-val commit = "master-SNAPSHOT" //name of a branch with -SNAPSHOT or raw commit hash
+addSbtPlugin("org.virtuslab.ash" % "sbt-akka-serialization-helper" % Version)
+```
+and enable it in target project:
+```scala
+lazy val app = (project in file("app"))
+  .enablePlugins(AkkaSerializationHelperPlugin)
 ```
 
-Then, add one or more of the modules below:
-
-## Modules
-
-The project consists of three modules that are independent of each other, comprising a complete solution together.
+## Features
 
 ### 1. Check For Base Trait 
 
-A Scala compiler plugin that detects messages, events and persistent state, and checks whether they extend the base
+A Scala compiler plugin that detects messages, events and persistent states, and checks whether they extend the base
 trait and report an error when they don't. This ensures that the specified serializer is used by Akka and protects
 against accidental use
 of [Java serialization](https://doc.akka.io/docs/akka/current/serialization.html#java-serialization).
 
-To use, just annotate a base trait with `@org.virtuslab.ash.SerializabilityTrait`:
+To use, annotate a base trait with `@org.virtuslab.ash.SerializabilityTrait`:
 
 ```scala
 @SerializabilityTrait
 trait MySerializable
 ```
 
-Installation:
-
+It allowes to catch errors like these:
 ```scala
-libraryDependencies += "com.github.VirtusLab.akka-serialization-helper" %% "serializability-checker-library" % commit
-libraryDependencies += compilerPlugin(
-  "com.github.VirtusLab.akka-serialization-helper" %% "serializability-checker-compiler-plugin" % commit)
+object BehaviorTest {
+  sealed trait Command //extends MySerializable
+  def method(msg: Command): Behavior[Command] = ???
+}
 ```
 
-### 2. Dump Event Schema
+And results in this error message:
+```
+test0.scala:7: error: org.random.project.BehaviorTest.Command is used as Akka message but does not extend a trait annotated with org.virtuslab.ash.annotation.SerializabilityTrait.
+Passing an object of class NOT extending SerializabilityTrait as a message may cause Akka to fall back to Java serialization during runtime.
 
-An sbt plugin that allows for dumping schema
-of [akka-persistence](https://doc.akka.io/docs/akka/current/typed/persistence.html#example-and-core-api) events to a
-file. Can be used for detecting accidental changes of events.
 
-To dump events to `<sbt-module>/target/<sbt-module-name>-dump-event-schema-<version>.json`, run:
+  def method(msg: Command): Behavior[Command] = ???
+                            ^
+test0.scala:6: error: Make sure this type is itself annotated, or extends a type annotated with  @org.virtuslab.ash.annotation.SerializabilityTrait.
+  sealed trait Command extends MySerializable
+               ^
+
+```
+
+### 2. Dump Persistance Schema
+
+A mix of a compiler plugin and an sbt task for dumping schema
+of [akka-persistence](https://doc.akka.io/docs/akka/current/typed/persistence.html#example-and-core-api) to a
+file. It can be used for detecting accidental changes of events and states with simple `diff`.
+
+To dump persistence schema, run:
 
 ```shell
-sbt dumpEventSchema
+sbt ashDumpPersistenceSchema
 ```
 
-Installation:
-
-Add to `plugins.sbt`:
-
+Default file is `<sbt-module>/target/<sbt-module-name>-dump-persistence-schema-<version>.yaml` but it can be changed using sbt keys:
 ```scala
-libraryDependencies += "com.github.VirtusLab.akka-serialization-helper" % "sbt-dump-event-schema" % commit
+ashDumpPersistenceSchemaOutputFilenames := "file.yaml" //Changes filename
+ashDumpPersistenceSchemaOutputDirectoryPath := "~" // Changes directory
 ```
 
-To enable the plugin for a specific project, use:
-
-```scala
-enablePlugins(DumpEventSchemaPlugin)
-```
-
-You also have to change one setting responsible for resolving companion compiler plugin:
-
-```scala
-dumpEventSchema / dumpEventSchemaCompilerPlugin := "com.github.VirtusLab.akka-serialization-helper" % "dump-event-schema-compiler-plugin" % commit 
+#### Example dump
+```yaml
+- name: org.random.project.Data
+  typeSymbol: trait
+- name: org.random.project.Data.ClassTest
+  typeSymbol: class
+  fields:
+  - name: a
+    typeName: java.lang.String
+  - name: b
+    typeName: scala.Int
+  - name: c
+    typeName: scala.Double
+  parents:
+  - org.random.project.Data
+- name: org.random.project.Data.ClassWithAdditionData
+  typeSymbol: class
+  fields:
+  - name: ad
+    typeName: org.random.project.Data.AdditionalData
+  parents:
+  - org.random.project.Data
 ```
 
 ### 3. Serializer
 
-[Circe-based](https://circe.github.io/circe/) Akka serializer. It uses codecs, derived using Magnolia, that are
-generated during compile time (so serializer won't crash during runtime like reflection-based serializers may do).
+[Circe-based](https://circe.github.io/circe/) Akka serializer. It uses Circe codecs, derived using Magnolia, that are
+generated during compile time (so serializer won't crash during runtime like reflection-based serializers may do). For a comparison of Circe with other serializers, read Appendix A at the bottom.
+
+#### Usage
+
+Add to dependecies:
 
 ```scala
-libraryDependencies += "com.github.VirtusLab.akka-serialization-helper" %% "circe-akka-serializer" % commit
+libraryDependencies += AkkaSerializationHelperPlugin.circeAkkaSerializer
 ```
 
+Create a custom serializer by extending a base class:
+```scala
+class ExampleSerializer(actorSystem: ExtendedActorSystem)
+    extends CirceAkkaSerializer[MySerializable](actorSystem) {
 
-## Comparison of available Akka Serializers
+  override def identifier: Int = 41
+
+  override lazy val codecs = Seq(Register[OneCommand], Register[TwoCommand])
+
+  override lazy val manifestMigrations = Nil
+
+  override lazy val packagePrefix = "org.project"
+}
+```
+
+For information on how to use the defined serializer, read [Akka documentation about serialization](https://doc.akka.io/docs/akka/2.5.32//serialization.html), `CirceAkkaSerializer` scaladoc and look at projects in folder example.
+
+### 4. Codec Registration Checker
+
+Compiler plugin for checking, whether all codecs are registered. It gathers during compilation all direct descendants of the class marked with `@org.virtuslab.ash.SerializabilityTrait` and later checks the body of classes annotated with `@org.virtuslab.ash.Serializer` if they, using any means, reference all direct descendants found earlier. 
+
+In practice, this is used for checking a class extending `CirceAkkaSerializer`.
+
+Example usage:
+
+```scala
+@Serializer(
+  classOf[MySerializable],
+  typeRegexPattern = "org\\.virtuslab\\.ash\\.circe\\.Register\\.Registration\\[.*\\]")
+class ExampleSerializer(actorSystem: ExtendedActorSystem) extends CirceAkkaSerializer[MySerializable](actorSystem)
+```
+
+For more information, read `@Serializer` scaladoc.
+
+### 5. Additional configuration for compiler plugins 
+
+You can enable/disable all compiler plugins and enable/disable their verbose mode using two sbt keys:
+
+```scala
+ashCompilerPluginEnable := false // default is true
+ashCompilerPluginVerbose := true // default is false
+```
+
+This can be done for all compiler plugins, like above, or just one:
+```scala
+ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginEnable := false
+ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginVerbose := true
+```
+
+Additionally, `Compile` and `Test` scope can be specified:
+
+```scala
+Compile / ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginVerbose := true
+Test / ashCompilerPluginEnable := false
+```
+
+For full list of sbt keys, check `org.virtuslab.ash.AkkaSerializationHelperKeys`.
+
+
+## Appendix A: Comparison of available Akka Serializers
 
 | Serializer             | [Jackson](https://github.com/FasterXML/jackson)                                                                                                                                                                                                                                                                                                                                                 | [Circe](https://circe.github.io/circe/)                                        | [Protobuf v3](https://developers.google.com/protocol-buffers)                                  | [Avro](https://avro.apache.org/docs/current/)                                                    | [Borer](https://github.com/sirthias/borer)                                                                                        | [Kryo](https://github.com/EsotericSoftware/kryo)                                                                                                             |
 |:-----------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------|
