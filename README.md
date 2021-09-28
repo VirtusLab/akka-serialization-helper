@@ -128,15 +128,13 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem)
 }
 ```
 
-For information on how to use the defined serializer, read [Akka documentation about serialization](https://doc.akka.io/docs/akka/2.5.32//serialization.html), `CirceAkkaSerializer` scaladoc and look at projects in folder example.
+For information on how to use the defined serializer, read [Akka documentation about serialization](https://doc.akka.io/docs/akka/2.5.32/serialization.html), `CirceAkkaSerializer` scaladoc and look at projects in folder example.
 
 ### 4. Codec Registration Checker
 
 Compiler plugin for checking, whether all codecs are registered. It gathers during compilation all direct descendants of the class marked with `@org.virtuslab.ash.SerializabilityTrait` and later checks the body of classes annotated with `@org.virtuslab.ash.Serializer` if they, using any means, reference all direct descendants found earlier. 
 
-In practice, this is used for checking a class extending `CirceAkkaSerializer`.
-
-Example usage:
+In practice, this is used for checking a class extending `CirceAkkaSerializer`, like this:
 
 ```scala
 @Serializer(

@@ -12,6 +12,9 @@ import io.circe.Codec
 import io.circe.Decoder
 import io.circe.Encoder
 
+/**
+ * Default codecs for serializing some of Akka types
+ */
 trait AkkaCodecs {
   private def serializationSystem: actor.ActorSystem = Serialization.getCurrentTransportInformation().system
 
