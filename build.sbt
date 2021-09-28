@@ -7,7 +7,6 @@ lazy val supportedScalaVersions = List(scalaVersion213, scalaVersion212)
 
 ThisBuild / scalaVersion := supportedScalaVersions.head
 ThisBuild / organization := "org.virtuslab.ash"
-ThisBuild / sonatypeProfileName := "org.virtuslab"
 ThisBuild / organizationName := "VirtusLab"
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / homepage := Some(url("https://github.com/VirtusLab/akka-serialization-helper"))
@@ -18,6 +17,8 @@ ThisBuild / developers := List(
   Developer("HubertBalcerzak", "Hubert Balcerzak", "hubertbalc@gmail.com", url("https://github.com/HubertBalcerzak")),
   Developer("PawelLipski", "Paweł Lipski", "plipski@virtuslab.com", url("https://github.com/PawelLipski")))
 
+sonatypeProfileName := "org.virtuslab"
+
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / semanticdbEnabled := true
@@ -25,6 +26,7 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
 lazy val commonSettings = Seq(
+  sonatypeProfileName := "org.virtuslab",
   scalafmtOnCompile := true,
   scalacOptions ++= Seq(
       "-deprecation",
