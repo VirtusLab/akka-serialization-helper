@@ -7,6 +7,7 @@ lazy val supportedScalaVersions = List(scalaVersion213, scalaVersion212)
 
 ThisBuild / scalaVersion := supportedScalaVersions.head
 ThisBuild / organization := "org.virtuslab.ash"
+ThisBuild / sonatypeProfileName := "org.virtuslab"
 ThisBuild / organizationName := "VirtusLab"
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / homepage := Some(url("https://github.com/VirtusLab/akka-serialization-helper"))
