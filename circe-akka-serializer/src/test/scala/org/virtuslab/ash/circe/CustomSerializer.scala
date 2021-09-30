@@ -13,8 +13,7 @@ import org.virtuslab.ash.circe.data._
 class CustomSerializer(actorSystem: ExtendedActorSystem)
     extends CirceAkkaSerializer[CirceSerializabilityTrait](actorSystem) {
 
-  @nowarn implicit private val serializabilityEncoder: Encoder[CirceSerializabilityTrait] = genericEncoder
-  @nowarn implicit private val serializabilityDecoder: Decoder[CirceSerializabilityTrait] = genericDecoder
+  @nowarn implicit private val serializabilityCodec: Codec[CirceSerializabilityTrait] = genericCodec
 
   override def identifier: Int = 42352
 

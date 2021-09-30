@@ -49,7 +49,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
     with AkkaCodecs {
 
   /**
-   * Sequence that must contain [[org.virtuslab.ash.circe.Register#Registration]] for all direct subclasses of Ser.
+   * Sequence that must contain [[org.virtuslab.ash.circe.Registration]] for all direct subclasses of Ser.
    *
    * Each `Registration` is created using [[org.virtuslab.ash.circe.Register]]s [[org.virtuslab.ash.circe.Register#apply]] method.
    *
@@ -57,7 +57,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
    *
    * @see [[org.virtuslab.ash.circe.Register]][[org.virtuslab.ash.circe.Register#apply]] for more information about type derivation
    */
-  val codecs: Seq[(ru.TypeTag[_ <: Ser], (Encoder[_ <: Ser], Decoder[_ <: Ser]))]
+  val codecs: Seq[Registration[_ <: Ser]]
 
   /**
    * A sequence containing information used in type migration.
@@ -95,7 +95,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
 
   private val mirror = ru.runtimeMirror(getClass.getClassLoader)
   private val parents = codecs.flatMap { x =>
-    val clazz = x._1.tpe.typeSymbol.asClass
+    val clazz = x.typeTag.tpe.typeSymbol.asClass
     val rootClazzName = mirror.runtimeClass(clazz).getName
     def getAllSubclasses(clazz: ru.ClassSymbol): List[ru.ClassSymbol] = {
       if (!clazz.isSealed)
@@ -105,7 +105,9 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
     }
     getAllSubclasses(clazz).map(x => (mirror.runtimeClass(x).getName, rootClazzName))
   }.toMap
-  private val codecsMap = codecs.map(x => x.copy(_1 = mirror.runtimeClass(x._1.tpe).getName)).toMap
+  private val codecsMap = codecs
+    .map(x => (mirror.runtimeClass(x.typeTag.tpe).getName, (x.encoder, x.decoder)))
+    .toMap[String, (Encoder[_ <: Ser], Decoder[_ <: Ser])]
   private val manifestMap = manifestMigrations.toMap
 
   private val parser = new JawnParser
@@ -130,7 +132,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
     val startTime = if (isDebugEnabled) System.nanoTime else 0L
     codecsMap.get(manifestMap.getOrElse(manifest, manifest)) match {
       case Some((_, decoder)) =>
-        val res = parser.parseByteArray(bytes).flatMap(_.as(decoder)).fold(e => throw e, identity).asInstanceOf[AnyRef]
+        val res = parser.parseByteArray(bytes).flatMap(_.as(decoder)).fold(e => throw e, identity)
         logDuration("Deserialization", res, startTime, bytes)
         res
       case None =>
@@ -163,7 +165,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
    */
   protected def genericCodec: Codec[Ser] = Codec.from(genericDecoder, genericEncoder)
 
-  protected def genericEncoder: Encoder[Ser] =
+  private def genericEncoder: Encoder[Ser] =
     (a: Ser) => {
       val manifestString = manifest(a)
       val encoder = codecsMap.get(manifestString) match {
@@ -175,7 +177,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
       Json.obj((manifestString, encoder.asInstanceOf[Encoder[Ser]](a)))
     }
 
-  protected def genericDecoder: Decoder[Ser] =
+  private def genericDecoder: Decoder[Ser] =
     (c: HCursor) => {
       c.value.asObject match {
         case Some(obj) =>
@@ -221,7 +223,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
 
   private def checkCodecsForNull(): Unit = {
     codecs.foreach { registration =>
-      val (tag, (encoder, decoder)) = registration
+      val Registration(tag, encoder, decoder) = registration
       if (encoder == null || decoder == null)
         throw new AssertionError(
           s"Codec for [${tag.tpe.typeSymbol.fullName}] is null. If this codec is custom defined, declare it as a def or lazy val instead of val.")
