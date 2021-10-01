@@ -36,7 +36,7 @@ import org.reflections8.Reflections
  *         Register(implicitly[ru.TypeTag[ModifiedCodec]], prepareEncoder, prepareDecoder),
  *         Register[GenericClass[MySerializable, MySerializable]])
  *
- *     override lazy val manifestMigrations = Seq("app.OldName" -> classOf[TopTraitMigration].getName)
+ *     override lazy val manifestMigrations = Seq("app.OldName" -> classOf[TopTraitMigration])
  *
  *     override lazy val packagePrefix = "app"
  *   }
@@ -62,23 +62,23 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
   /**
    * A sequence containing information used in type migration.
    *
-   * If you ever change the name of a class that is a direct descendant of `Ser` and is persisted in any way, you must append new pair of strings to this field.
-   * The first one is the old FQCN and the second one is the new FQCN. The second `String` can be hardcoded, or better, extracted from `class`.
+   * If you ever change the name of a class that is a direct descendant of `Ser` and is persisted in any way, you must append new pair to this field.
+   *  - The first element of the pair is a String with the value of old FQCN.
+   *  - The second element of the pair is a class that had its name changed
    *
    * Example:
    * {{{
    *   override lazy val manifestMigrations = Seq(
-   *    "app.OldName" -> "app.NewName",
-   *    "app.OldName2" -> classOf[app.NewName2].getName
+   *    "app.OldName" -> classOf[app.NewName]
    *   )
    * }}}
    */
-  val manifestMigrations: Seq[(String, String)]
+  val manifestMigrations: Seq[(String, Class[_])]
 
   /**
    * Package prefix of your project. Ensure that `Ser` is included in that package and as many classes that extend it.
    *
-   * It should look something like `"org.group.project"``
+   * It should look something like `"org.group.project"`
    *
    * It is used for some runtime checks that are executed near the end of initialisation by Akka.
    */
@@ -108,7 +108,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
   private val codecsMap = codecs
     .map(x => (mirror.runtimeClass(x.typeTag.tpe).getName, (x.encoder, x.decoder)))
     .toMap[String, (Encoder[_ <: Ser], Decoder[_ <: Ser])]
-  private val manifestMap = manifestMigrations.toMap
+  private val manifestMap = manifestMigrations.map(x => (x._1, x._2.getName)).toMap
 
   private val parser = new JawnParser
   private val printer = Printer.noSpaces
