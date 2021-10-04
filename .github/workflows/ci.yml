@@ -1,0 +1,87 @@
+name: Scala CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v10
+        with:
+          java-version: adopt@1.11
+
+      - name: Resolving dependencies
+        run: sbt update
+    
+      - name: Compiling production code
+        run: sbt compile
+    
+      - name: Compiling tests
+        run: sbt Test/compile
+    
+      - name: Running unit tests
+        run: sbt test
+    
+      - name: Checking code style
+        run: sbt scalafmtCheckAll "scalafixAll --check"
+
+  test-sbt-plugin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v10
+        with:
+          java-version: adopt@1.11
+
+      - name: Testing sbt plugin
+        run: sbt scripted
+
+  run-examples:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v10
+        with:
+          java-version: adopt@1.11
+    
+      - name: Running examples
+        run: sbt test
+        working-directory: examples/event-migration
+
+  publish:
+    needs: [test-sbt-plugin, test, run-examples]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v10
+
+      - name: Publish from CI
+        run: sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}

@@ -58,7 +58,7 @@ test0.scala:6: error: Make sure this type is itself annotated, or extends a type
 
 ```
 
-### 2. Dump Persistance Schema
+### 2. Dump Persistence Schema
 
 A mix of a compiler plugin and an sbt task for dumping schema
 of [akka-persistence](https://doc.akka.io/docs/akka/current/typed/persistence.html#example-and-core-api) to a
