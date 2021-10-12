@@ -17,7 +17,8 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
     "EmptySerializer",
     "IncompleteSerializer",
     "InvalidAnnotationSerializer",
-    "InvalidClassSerializer").map(getSerializerAsString)
+    "InvalidClassSerializer",
+    "ObjectSerializer").map(getSerializerAsString)
 
   "Codec registration checker compiler plugin" should {
     "detect correct registration for all kinds of classes" in {
@@ -26,6 +27,15 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
           serializersCode(0) :: dataSourceCode,
           List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
+      }
+    }
+
+    "detect serializer as object" in {
+      File.usingTemporaryDirectory() { directory =>
+        val out = CodecRegistrationCheckerCompiler.compileCode(
+          serializersCode(5) :: dataSourceCode,
+          List(s"${directory.toJava.getAbsolutePath}"))
+        out should include("error")
       }
     }
 

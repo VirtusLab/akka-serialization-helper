@@ -56,22 +56,22 @@ class SerializerCheckCompilerPluginComponent(
         }
         unit.body
           .collect {
-            case x: ClassDef => (x, x.symbol.annotations)
+            case x: ImplDef => (x, x.symbol.annotations)
           }
           .map(x => (x._1, x._2.filter(_.tpe =:= serializerType)))
           .filter(_._2.nonEmpty)
           .foreach { x =>
-            val (classDef, annotations) = x
+            val (implDef, annotations) = x
             if (annotations.size > 1) {
               reporter.warning(
                 x._2.head.pos,
                 s"Class can only have one @Serializer annotation. Currently it has ${annotations.size}. Using the one found first.")
             }
-            processSerializerClass(classDef, annotations.head)
+            processSerializerClass(implDef, annotations.head)
           }
       }
 
-      private def processSerializerClass(serializerClassDef: ClassDef, serializerAnnotation: AnnotationInfo): Unit = {
+      private def processSerializerClass(serializerImplDef: ImplDef, serializerAnnotation: AnnotationInfo): Unit = {
         val (fqcn, filterRegex) = serializerAnnotation.args match {
           case List(clazzTree, regexTree) =>
             val fqcn = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
@@ -97,7 +97,7 @@ class SerializerCheckCompilerPluginComponent(
 
         val foundTypes =
           try {
-            serializerClassDef
+            serializerImplDef
               .collect {
                 case x: Tree if x.tpe != null => x.tpe
               }
@@ -106,7 +106,7 @@ class SerializerCheckCompilerPluginComponent(
               .map(_._2.head)
           } catch {
             case e: PatternSyntaxException =>
-              reporter.error(serializerClassDef.pos, "Exception throw during the use of filter regex: " + e.getMessage)
+              reporter.error(serializerImplDef.pos, "Exception throw during the use of filter regex: " + e.getMessage)
               return
           }
 
@@ -124,7 +124,7 @@ class SerializerCheckCompilerPluginComponent(
         typesToCheck(fqcn).map(_._2).foreach { fqcn =>
           if (!foundInSerializerTypesFqcns(fqcn))
             reporter.error(
-              serializerClassDef.pos,
+              serializerImplDef.pos,
               s"""No codec for $fqcn is registered in any class annotated with @${serializabilityTraitType.typeSymbol.fullName}.
                  |This will lead to a missing codec for Akka serialization in the runtime. 
                  |Current filtering regex: $filterRegex""".stripMargin)
