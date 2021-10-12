@@ -1,5 +1,6 @@
 package org.virtuslab.ash.circe
 
+import scala.reflect.macros.blackbox
 import scala.reflect.runtime.{universe => ru}
 
 import io.circe.Decoder
@@ -25,4 +26,15 @@ object Register {
    */
   def apply[T: ru.TypeTag: Encoder: Decoder]: Registration[T] =
     Registration[T](implicitly[ru.TypeTag[T]], implicitly[Encoder[T]], implicitly[Decoder[T]])
+
+  //noinspection LanguageFeature
+  def REGISTRATION_REGEX: String = macro regexImpl
+
+  private val circeRegex = """org\.virtuslab\.ash\.circe\.Register\.Registration\[.*\]"""
+
+  def regexImpl(c: blackbox.Context): c.Expr[String] = {
+    import c.universe._
+    c.Expr[String](Literal(Constant(circeRegex)))
+  }
+
 }

@@ -131,8 +131,11 @@ class SerializerCheckCompilerPluginComponent(
         }
       }
 
-      private def extractValueOfLiteralConstantFromTree[A: ClassTag](tree: Tree): Option[A] = {
+      @tailrec
+      private def extractValueOfLiteralConstantFromTree[A: ClassTag: TypeTag](tree: Tree): Option[A] = {
         tree match {
+          case Typed(literal, tpeTree) if tpeTree.tpe =:= typeOf[A] =>
+            extractValueOfLiteralConstantFromTree[A](literal)
           case literal @ Literal(Constant(value)) =>
             value match {
               case res: A => Some(res)

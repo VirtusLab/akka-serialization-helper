@@ -13,7 +13,7 @@ import scala.annotation.nowarn
  *
  * For example, if we want to serialize `trait Command`, then type `Registration[Command]` is relevant, while `Option[Command]` is not.
  *
- * If you are using `circe-akka-serializer`, set `typeRegexPattern` to `"""org\.virtuslab\.ash\.circe\.Register\.Registration\[.*\]"""`
+ * If you are using `circe-akka-serializer`, set `typeRegexPattern` to `Register.REGISTRATION_REGEX`
  *
  * @param clazz class literal of serializability marker trait, for example `classOf[MySerializable]`
  * @param typeRegexPattern regular expression that is used for filtering detected types, before type argument extraction

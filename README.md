@@ -1,6 +1,6 @@
 # Akka Serialization Helper
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.virtuslab.ash/sbt-akka-serialization-helper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.rsql/rsql-parser)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.virtuslab.ash/sbt-akka-serialization-helper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.virtuslab.ash/sbt-akka-serialization-helper)
 
 ![logo_ash_horizontal@4x](https://user-images.githubusercontent.com/25779550/135059025-4cfade5b-bfcb-47e8-872f-8a3d78ce0c25.png)
 
@@ -36,7 +36,7 @@ To use, annotate a base trait with `@org.virtuslab.ash.SerializabilityTrait`:
 trait MySerializable
 ```
 
-It allowes to catch errors like these:
+It allows to catch errors like these:
 ```scala
 object BehaviorTest {
   sealed trait Command //extends MySerializable
@@ -139,7 +139,7 @@ In practice, this is used for checking a class extending `CirceAkkaSerializer`, 
 ```scala
 @Serializer(
   classOf[MySerializable],
-  typeRegexPattern = "org\\.virtuslab\\.ash\\.circe\\.Register\\.Registration\\[.*\\]")
+  typeRegexPattern = Register.REGISTRATION_REGEX)
 class ExampleSerializer(actorSystem: ExtendedActorSystem) extends CirceAkkaSerializer[MySerializable](actorSystem)
 ```
 
