@@ -27,7 +27,7 @@ lazy val app = (project in file("app"))
 A Scala compiler plugin that detects messages, events and persistent states, and checks whether they extend the base
 trait and report an error when they don't. This ensures that the specified serializer is used by Akka and protects
 against accidental use
-of [Java serialization](https://doc.akka.io/docs/akka/current/serialization.html#java-serialization).
+of [Java serialization](https://doc.akka.io/docs/akka/current/serialization.html#java-serialization) or outright serialization failure.
 
 To use, annotate a base trait with `@org.virtuslab.ash.SerializabilityTrait`:
 
