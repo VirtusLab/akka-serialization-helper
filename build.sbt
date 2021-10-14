@@ -53,8 +53,9 @@ lazy val circeAkkaSerializer = (projectMatrix in file("circe-akka-serializer"))
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
-        akkaTyped % Provided,
-        akkaTestKit % Test,
+        akkaActor % Provided,
+        akkaActorTyped % Provided,
+        akkaTestKitTyped % Test,
         akkaStream % Provided,
         circeCore,
         circeParser,
@@ -104,7 +105,12 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(akkaTyped % Test, akkaPersistence % Test, akkaProjections % Test, betterFiles % Test))
+    libraryDependencies ++= Seq(
+        akkaActor % Test,
+        akkaActorTyped % Test,
+        akkaPersistenceTyped % Test,
+        akkaProjections % Test,
+        betterFiles % Test))
   .dependsOn(annotation)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
@@ -171,7 +177,7 @@ lazy val dumpPersistenceSchemaCompilerPlugin = (projectMatrix in file("dump-pers
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(sprayJson, betterFiles, akkaTyped % Test, akkaPersistence % Test),
+    libraryDependencies ++= Seq(sprayJson, betterFiles, akkaActorTyped % Test, akkaPersistenceTyped % Test),
     packageBin / publishArtifact := false, //we want to publish fat jar
     Compile / packageBin / artifactPath := crossTarget.value / "packageBinPlaceholder.jar", //this ensures that normal jar doesn't override fat jar
     assembly / assemblyMergeStrategy := {

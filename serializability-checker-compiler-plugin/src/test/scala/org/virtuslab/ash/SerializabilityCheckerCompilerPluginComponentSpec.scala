@@ -1,12 +1,12 @@
 package org.virtuslab.ash
 
 import better.files.File
-import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should
+import org.scalatest.wordspec.AnyWordSpecLike
 
 import org.virtuslab.ash.compiler.SerializabilityCheckerCompiler
 
-class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike with should.Matchers {
+class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike with should.Matchers {
   private def getResourceAsString(name: String) =
     new String(File(getClass.getClassLoader.getResource(name)).loadBytes)
 
@@ -14,8 +14,9 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
   private val serNoCode = getResourceAsString("MySerializableNo.scala")
 
   private def testCode(resourceName: String, errorTypes: ClassType = ClassType.Message, detectionType: Int = 0) = {
+    import SerializabilityCheckerCompilerPlugin.Flags._
     val disableFlags =
-      List("--disable-detection-generics", "--disable-detection-generic-methods", "--disable-detection-methods")
+      List(disableGenerics, disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions)
     val pluginArgs = disableFlags.filter(_ != disableFlags(detectionType))
     val code = getResourceAsString(resourceName)
     SerializabilityCheckerCompiler.compileCode(List(code, serYesCode), pluginArgs) should be("")
@@ -24,68 +25,94 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyFlatSpecLike 
     noOut should include(errorTypes.name)
   }
 
-  "Plugin" should "correctly traverse from Behavior to serializer trait" in {
-    testCode("BehaviorTest.scala")
-  }
+  "Serializability checker compiler plugin" should {
 
-  it should "correctly traverse from EventEnvelope to serializer trait" in {
-    testCode("EventEnvelopeTest.scala", ClassType.PersistentEvent)
-  }
+    "correctly detect and traverse to serialization marker trait" when {
+      "given Behavior" in {
+        testCode("BehaviorTest.scala")
+      }
 
-  it should "correctly traverse from Persistent State in ReplyEffect to serializer trait" in {
-    testCode("ReplyEffectTestState.scala", ClassType.PersistentState)
-  }
+      "given EventEnvelope" in {
+        testCode("EventEnvelopeTest.scala", ClassType.PersistentEvent)
+      }
 
-  it should "correctly traverse from Persistent Event in ReplyEffect to serializer trait" in {
-    testCode("ReplyEffectTestEvent.scala", ClassType.PersistentEvent)
-  }
+      "given Persistent State in ReplyEffect" in {
+        testCode("ReplyEffectTestState.scala", ClassType.PersistentState)
+      }
 
-  it should "whitelist all akka types from checks" in {
-    val akkaWhitelist = getResourceAsString("AkkaWhitelistTest.scala")
+      "give Persistent Event in ReplyEffect" in {
+        testCode("ReplyEffectTestEvent.scala", ClassType.PersistentEvent)
+      }
 
-    val out = SerializabilityCheckerCompiler.compileCode(List(serYesCode, akkaWhitelist))
-    out should have size 0
-  }
+      "given Effect" in {
+        testCode("EffectTest.scala", ClassType.PersistentEvent)
+      }
 
-  it should "correctly traverse from Effect to serializer trait" in {
-    testCode("EffectTest.scala", ClassType.PersistentEvent)
-  }
+      "given ask pattern" in {
+        testCode("AskTest.scala", detectionType = 1)
+      }
 
-  it should "be able to detect serializer trait in generics" in {
-    testCode("GenericsTest.scala")
-  }
+      "given tell pattern" in {
+        testCode("TellTest.scala", detectionType = 2)
+      }
 
-  it should "detect lack of upper bounds in generics" in {
-    val code = getResourceAsString("GenericsTest2.scala")
-    SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should include("error")
-  }
+      "given ask pattern with sign" in {
+        testCode("AskSignTest.scala", detectionType = 1)
+      }
 
-  it should "detect ask pattern" in {
-    testCode("AskTest.scala", detectionType = 1)
-  }
+      "given tell pattern with sign" in {
+        testCode("TellSignTest.scala", detectionType = 2)
+      }
 
-  it should "detect tell pattern" in {
-    testCode("TellTest.scala", detectionType = 2)
-  }
+      "given pipe pattern" in {
+        testCode("PipeTest.scala", detectionType = 1)
+      }
 
-  it should "detect ask pattern with sign" in {
-    testCode("AskSignTest.scala", detectionType = 1)
-  }
+      "given classic tell pattern" in {
+        testCode("TellClassicTest.scala", detectionType = 3)
+      }
 
-  it should "detect tell pattern with sign" in {
-    testCode("TellSignTest.scala", detectionType = 2)
-  }
+      "given classic tell sing pattern" in {
+        testCode("TellSignClassicTest.scala", detectionType = 3)
+      }
 
-  it should "detect pipe pattern" in {
-    testCode("PipeTest.scala", detectionType = 1)
-  }
+      "given classic ask pattern" in {
+        testCode("AskClassicTest.scala", detectionType = 3)
+      }
 
-  it should "ignore Any and Nothing" in {
-    testCode("AnyNothingTest.scala")
-  }
+      "given classic ask pattern with sign" in {
+        testCode("AskSignClassicTest.scala", detectionType = 3)
+      }
 
-  it should "respect akka serializers" in {
-    val code = getResourceAsString("AkkaSerializabilityTraitsTest.scala")
-    SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should be("")
+      "given classic ask pattern with higher order function" in {
+        testCode("AskHigherOrderClassicTest.scala", detectionType = 4)
+      }
+
+    }
+
+    "whitelist all akka types from checks" in {
+      val akkaWhitelist = getResourceAsString("AkkaWhitelistTest.scala")
+
+      val out = SerializabilityCheckerCompiler.compileCode(List(serYesCode, akkaWhitelist))
+      out should have size 0
+    }
+
+    "be able to detect serializer trait in generics" in {
+      testCode("GenericsTest.scala")
+    }
+
+    "detect lack of upper bounds in generics" in {
+      val code = getResourceAsString("GenericsTest2.scala")
+      SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should include("error")
+    }
+
+    "ignore Any and Nothing" in {
+      testCode("AnyNothingTest.scala")
+    }
+
+    "respect akka serializers" in {
+      val code = getResourceAsString("AkkaSerializabilityTraitsTest.scala")
+      SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should be("")
+    }
   }
 }

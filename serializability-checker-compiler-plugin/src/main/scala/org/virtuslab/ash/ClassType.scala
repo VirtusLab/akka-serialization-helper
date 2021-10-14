@@ -14,4 +14,8 @@ object ClassType {
   case object PersistentState extends ClassType {
     val name = "persistent state"
   }
+
+  case object Ignore extends ClassType {
+    val name = "ignore"
+  }
 }
