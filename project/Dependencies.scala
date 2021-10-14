@@ -15,11 +15,12 @@ object Dependencies {
   val sprayJson = "io.spray" %% "spray-json" % "1.3.6"
   val scalaCollectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.5.0"
 
-  val akkaTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
+  val akkaActor = "com.typesafe.akka" %% "akka-actor" % akkaVersion
+  val akkaActorTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
   val akkaStream = "com.typesafe.akka" %% "akka-stream" % akkaVersion
-  val akkaPersistence = "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion
+  val akkaPersistenceTyped = "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion
   val akkaProjections = "com.lightbend.akka" %% "akka-projection-eventsourced" % "1.2.2"
-  val akkaTestKit = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
+  val akkaTestKitTyped = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
   val akkaStreamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
 
   val borerCore = "io.bullet" %% "borer-core" % borerVersion

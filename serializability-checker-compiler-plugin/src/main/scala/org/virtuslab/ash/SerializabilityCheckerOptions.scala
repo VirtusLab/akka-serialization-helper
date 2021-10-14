@@ -10,4 +10,6 @@ class SerializabilityCheckerOptions(
     var verbose: Boolean = false,
     var detectFromGenerics: Boolean = true,
     var detectFromGenericMethods: Boolean = true,
-    var detectFromMethods: Boolean = true)
+    var detectFromMethods: Boolean = true,
+    var detectFromUntypedMethods: Boolean = true,
+    var detectFromHigherOrderFunctions: Boolean = true)
