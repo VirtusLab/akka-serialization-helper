@@ -30,7 +30,7 @@ object Register {
   //noinspection LanguageFeature
   def REGISTRATION_REGEX: String = macro regexImpl
 
-  private val circeRegex = """org\.virtuslab\.ash\.circe\.Register\.Registration\[.*\]"""
+  private val circeRegex = """org\.virtuslab\.ash\.circe\.Registration\[.*\]"""
 
   def regexImpl(c: blackbox.Context): c.Expr[String] = {
     import c.universe._
