@@ -126,7 +126,7 @@ class SerializerCheckCompilerPluginComponent(
             reporter.error(
               serializerImplDef.pos,
               s"""No codec for $fqcn is registered in any class annotated with @${serializabilityTraitType.typeSymbol.fullName}.
-                 |This will lead to a missing codec for Akka serialization in the runtime. 
+                 |This will lead to a missing codec for Akka serialization in the runtime.
                  |Current filtering regex: $filterRegex""".stripMargin)
         }
       }

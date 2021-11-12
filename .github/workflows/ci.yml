@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Check out
         uses: actions/checkout@v2
 
       - name: Setup Scala
@@ -19,34 +19,42 @@ jobs:
         with:
           java-version: adopt@1.11
 
-      - name: Resolving dependencies
+      - name: Run initial checks
+        run: |
+          PATH=$PATH:./scripts
+          set -x
+          enforce-newline-at-eof
+          prohibit-trailing-whitespace
+
+          npm install --global remark-cli remark-lint-no-dead-urls remark-validate-links
+          validate-markdown-links
+
+      - name: Resolve dependencies
         run: sbt update
-    
-      - name: Compiling production code
-        run: sbt compile
-    
-      - name: Compiling tests
-        run: sbt Test/compile
-    
-      - name: Running unit tests
+
+      - name: Compile
+        run: sbt compile Test/compile
+
+      - name: Run tests
         run: sbt test
-    
-      - name: Checking code style
-        run: sbt scalafmtCheckAll "scalafixAll --check"
+
+      - name: Check code style
+        # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
+        run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
 
   test-sbt-plugin:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Check out
         uses: actions/checkout@v2
 
-      - name: Setup Scala
+      - name: Set up Scala
         uses: olafurpg/setup-scala@v10
         with:
           java-version: adopt@1.11
 
-      - name: Testing sbt plugin
+      - name: Test sbt plugin
         run: sbt scripted
 
   run-examples:
@@ -56,12 +64,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Scala
+      - name: Set up Scala
         uses: olafurpg/setup-scala@v10
         with:
           java-version: adopt@1.11
-    
-      - name: Running examples
+
+      - name: Run examples
         run: sbt test
         working-directory: examples/event-migration
 
@@ -70,12 +78,12 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout
+      - name: Check out
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Setup Scala
+      - name: Set up Scala
         uses: olafurpg/setup-scala@v10
 
       - name: Publish from CI

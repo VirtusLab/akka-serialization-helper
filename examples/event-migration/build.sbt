@@ -4,7 +4,7 @@ scalaVersion := "2.13.6"
 
 val circeVersion = "0.14.1"
 val borerVersion = "1.7.2"
-val scalaTestVersion = "3.2.9"
+val scalaTestVersion = "3.2.10"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",

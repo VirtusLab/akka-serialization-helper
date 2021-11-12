@@ -78,4 +78,3 @@ git push origin vx.y.z
 The tagged commit is then released to Maven Central.
 
 Note that we are using an early semantic versioning scheme.
-

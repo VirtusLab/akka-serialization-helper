@@ -15,7 +15,7 @@ import io.circe.jawn.JawnParser
  * An abstract class that is extended to create a custom serializer.
  *
  * After creating your subclass, don't forget to add your serializer and base trait to `application.conf`
- * (for more info [[https://doc.akka.io/docs/akka/2.5.32/serialization.html]])
+ * (for more info [[https://doc.akka.io/docs/akka/2.6.17/serialization.html]])
  *
  * Example subclass:
  * {{{

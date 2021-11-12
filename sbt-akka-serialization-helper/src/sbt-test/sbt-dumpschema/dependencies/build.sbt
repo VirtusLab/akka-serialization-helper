@@ -1,4 +1,4 @@
-lazy val scala213 = "2.13.6"
+val scala213 = "2.13.6"
 
 name := "dependencies"
 version := "0.1"
