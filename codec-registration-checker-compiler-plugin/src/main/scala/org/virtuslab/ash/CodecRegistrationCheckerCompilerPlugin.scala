@@ -1,12 +1,12 @@
 package org.virtuslab.ash
 
-import java.io.BufferedReader
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileReader
 import java.io.IOException
+import java.io.RandomAccessFile
+import java.nio.ByteBuffer
+import java.nio.charset.StandardCharsets
 
-import scala.collection.mutable
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.Plugin
 import scala.tools.nsc.plugins.PluginComponent
@@ -34,14 +34,19 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
           f.getCanonicalPath
           pluginOptions.cacheFile = f
           pluginOptions.oldTypes = {
-            val list = mutable.Buffer[String]()
-            val br = new BufferedReader(new FileReader(f))
-            br.lines().forEach((t: String) => list += t)
-            br.close()
-            list.toList.map(_.split(",")).map {
-              case Array(a, b) => (a, b)
-              case other =>
-                throw new RuntimeException(s"Invalid line in $cacheFileName file: ${other.reduce(_ + "," + _)}")
+            val raf = new RandomAccessFile(f, "rw")
+            try {
+              val channel = raf.getChannel
+              val lock = channel.lock()
+              try {
+                val buffer = ByteBuffer.allocate(channel.size().toInt)
+                channel.read(buffer)
+                CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind())
+              } finally {
+                lock.close()
+              }
+            } finally {
+              raf.close()
             }
           }
           true
@@ -68,4 +73,13 @@ object CodecRegistrationCheckerCompilerPlugin {
   val classSweepPhaseName = "codec-registration-class-sweep"
   val serializerCheckPhaseName = "codec-registration-serializer-check"
   val cacheFileName = "codec-registration-checker-cache.csv"
+
+  def parseCacheFile(buffer: ByteBuffer): Seq[(String, String)] = {
+    StandardCharsets.UTF_8.decode(buffer).toString.split("\n").toSeq.filterNot(_.isBlank).map(_.split(",")).map {
+      case Array(a, b) => (a, b)
+      case other =>
+        throw new RuntimeException(s"Invalid line in $cacheFileName file: ${other.mkString(",")}")
+    }
+  }
+
 }

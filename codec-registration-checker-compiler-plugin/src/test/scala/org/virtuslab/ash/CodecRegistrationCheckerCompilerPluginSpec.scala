@@ -56,6 +56,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
             serializersCode(2) :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
+          (out should not).include("literal")
         }
       }
 

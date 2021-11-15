@@ -1,7 +1,8 @@
 package org.virtuslab.ash
 
-import java.io.BufferedWriter
-import java.io.FileWriter
+import java.io.RandomAccessFile
+import java.nio.ByteBuffer
+import java.nio.charset.StandardCharsets
 import java.util.regex.PatternSyntaxException
 
 import scala.annotation.tailrec
@@ -38,21 +39,31 @@ class SerializerCheckCompilerPluginComponent(
     new StdPhase(prev) {
       override def apply(unit: global.CompilationUnit): Unit = {
         if (typesNotDumped) {
-          val ft = classSweep.foundTypes.toSet
-          val tu = classSweep.typesToUpdate.toSet
-          val ot = options.oldTypes.toSet
-          val out = ((ot -- tu) | ft).toList
-          typesToCheck ++= out.groupBy(_._1)
-          val outData =
+          val raf = new RandomAccessFile(options.cacheFile, "rw")
+          try {
+            val channel = raf.getChannel
+            val lock = channel.lock()
             try {
-              out.map(x => x._1 + "," + x._2).sorted.reduce(_ + "\n" + _)
-            } catch {
-              case _: UnsupportedOperationException => ""
+              val buffer = ByteBuffer.allocate(channel.size().toInt)
+              channel.read(buffer)
+              val ot = CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
+              val ft = classSweep.foundTypes.toSet
+              val tu = classSweep.typesToUpdate.toSet
+              val out = ((ot -- tu) | ft).toList
+
+              val outData = out.map(x => x._1 + "," + x._2).sorted.reduceOption(_ + "\n" + _).getOrElse("")
+              channel.truncate(0)
+              channel.write(ByteBuffer.wrap(outData.getBytes(StandardCharsets.UTF_8)))
+
+              typesToCheck ++= out.groupBy(_._1)
+              typesNotDumped = false
+            } finally {
+              lock.close()
             }
-          val bw = new BufferedWriter(new FileWriter(options.cacheFile))
-          bw.write(outData)
-          bw.close()
-          typesNotDumped = false
+
+          } finally {
+            raf.close()
+          }
         }
         unit.body
           .collect {
@@ -84,8 +95,11 @@ class SerializerCheckCompilerPluginComponent(
                 None
               }
             }
-
-            val filterRegex = extractValueOfLiteralConstantFromTree[String](regexTree)
+            val filterRegex =
+              regexTree match {
+                case Select(_, TermName("$lessinit$greater$default$2")) => Some(".*")
+                case other                                              => extractValueOfLiteralConstantFromTree[String](other)
+              }
 
             (fqcn, filterRegex) match {
               case (Some(tpe), Some(regex)) => (tpe, regex)
@@ -121,13 +135,14 @@ class SerializerCheckCompilerPluginComponent(
         }
         val foundInSerializerTypesFqcns = typeArgsBfs(foundTypes.toSet).map(_.typeSymbol.fullName)
 
-        typesToCheck(fqcn).map(_._2).foreach { fqcn =>
-          if (!foundInSerializerTypesFqcns(fqcn))
-            reporter.error(
-              serializerImplDef.pos,
-              s"""No codec for $fqcn is registered in any class annotated with @${serializabilityTraitType.typeSymbol.fullName}.
-                 |This will lead to a missing codec for Akka serialization in the runtime.
-                 |Current filtering regex: $filterRegex""".stripMargin)
+        val missingFqcn = typesToCheck(fqcn).map(_._2).filterNot(foundInSerializerTypesFqcns)
+        if (missingFqcn.nonEmpty) {
+          reporter.error(
+            serializerImplDef.pos,
+            s"""No codecs for ${missingFqcn
+              .mkString(", ")} are registered in class annotated with @${serializabilityTraitType.typeSymbol.fullName}.
+               |This will lead to a missing codec for Akka serialization in the runtime.
+               |Current filtering regex: $filterRegex""".stripMargin)
         }
       }
 
