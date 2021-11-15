@@ -157,7 +157,7 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem)
 ```
 
 For more guidelines on how to use the serializer,
-read [Akka documentation about serialization](https://doc.akka.io/docs/akka/2.6.17/serialization.html),
+read [Akka documentation about serialization](https://doc.akka.io/docs/akka/current/serialization.html),
 [`CirceAkkaSerializer`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/circe-akka-serializer/src/main/scala/org/virtuslab/ash/circe/CirceAkkaSerializer.scala) Scaladoc
 and look at the [examples](https://github.com/VirtusLab/akka-serialization-helper/tree/main/examples).
 
