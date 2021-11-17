@@ -88,7 +88,7 @@ To dump persistence schema for each sbt module where `AkkaSerializationHelperPlu
 sbt ashDumpPersistenceSchema
 ```
 
-Default file is `<sbt-module>/target/<sbt-module-name>-dump-persistence-schema-<version>.yaml` but it can be changed using sbt keys:
+Default file is `target/<sbt-module-name>-dump-persistence-schema-<version>.yaml` (`target/` of top-level module!) but it can be changed using sbt keys:
 ```scala
 ashDumpPersistenceSchemaOutputFilename := "file.yaml" // Changes filename
 ashDumpPersistenceSchemaOutputDirectoryPath := "~" // Changes directory
