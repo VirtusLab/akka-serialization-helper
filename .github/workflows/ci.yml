@@ -85,6 +85,8 @@ jobs:
 
       - name: Set up Scala
         uses: olafurpg/setup-scala@v10
+        with:
+          java-version: adopt@1.11
 
       - name: Publish from CI
         run: sbt ci-release
