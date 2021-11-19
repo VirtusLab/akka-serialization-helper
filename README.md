@@ -124,6 +124,9 @@ ashDumpPersistenceSchemaOutputDirectoryPath := "~" // Changes directory
 generated during compile time (so serializer won't crash during runtime like reflection-based serializers may do).
 For a comparison of Circe with other serializers, read [Appendix A](#appendix-a-comparison-of-available-akka-serializers).
 
+Note that it is **not** obligatory to use our serializer for the other features (serializability checker, persistence schema dump) to work.
+They work as well with e.g. when [Jackson serializer](https://doc.akka.io/docs/akka/current/serialization-jackson.html) is selected.
+
 #### Usage
 
 Add the following to project dependencies:
@@ -180,8 +183,8 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem)
   extends CirceAkkaSerializer[MySerializable](actorSystem) {
     // ...
     override lazy val codecs = Seq(Register[CommandOne]) // WHOOPS someone forgot to register CommandTwo...
-    // ... but Codec Registration Checker will throw an error here!
-    // ...
+    // ... but Codec Registration Checker will throw a compilation error here:
+    // `No codec for `CommandOne` is registered in class annotated with @org.virtuslab.ash.annotation.Serializer`
 }
 ```
 
