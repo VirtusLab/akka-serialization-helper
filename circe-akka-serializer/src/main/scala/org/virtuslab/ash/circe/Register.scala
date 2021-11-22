@@ -10,7 +10,7 @@ object Register {
 
   /**
    * This method takes three implicit arguments: [[scala.reflect.api.TypeTags.TypeTag]], [[io.circe.Encoder]] and [[io.circe.Decoder]]. TypeTag is provided by the compiler,
-   * Encoder and Decoder are derived using Magnolia.
+   * Encoder and Decoder are derived using Shapeless.
    * There are several scenarios, in which derivation may fail, requiring defining custom codecs in a separate trait.
    *
    * Type class derivation will fail if the type or any of its fields don't have custom-defined Encoder/Decoder and at least one of the following statements about any of them is true:

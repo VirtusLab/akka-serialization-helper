@@ -59,12 +59,14 @@ Additionally, all warnings locally are escalated to errors in CI, so make sure t
 Releasing is done automatically by `sbt-ci-release` sbt plugin (read more on the plugin's [GitHub page](https://github.com/sbt/sbt-ci-release))
 
 ### Snapshots
+
 The new `SNAPSHOT` version is automatically published by GitHub Actions to [Sonatype OSS Snapshot repo](https://oss.sonatype.org/content/repositories/snapshots/org/virtuslab/ash/) every time a new commit is pushed to `main`.
 
 To depend on the newest version with sbt, add the following setting:
 ```scala
-resolvers += Resolver.sonatypeRepo("snapshots")
+ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 ```
+to both `build.sbt` **and** `project/build.sbt` (so that the sbt plugin added in `project/plugins.sbt` can be resolved).
 
 ### Maven Central
 
