@@ -9,7 +9,7 @@
 Serialization toolbox for Akka messages, events and persistent state that helps achieve compile-time guarantee on
 serializability. There're some Akka serialization caveats this tool can help with:
 1. [Missing serialization binding](#missing-serialization-binding)
-2. [Inconsistent persistent data](#inconsistent-persistent-data)
+2. [Incompatibility of persistent data](#incompatibility-of-persistent-data)
 3. [Jackson Akka Serializer](#jackson-akka-serializer)
 4. [Missing Codec registration](#missing-codec-registration)
 
@@ -29,7 +29,7 @@ lazy val app = (project in file("app"))
 
 ## Missing serialization binding
 
-To serialize message, state or event in Akka, Scala trait needs to be defined:
+To serialize message, persistent state or event in Akka, Scala trait needs to be defined:
 
 ```scala
 package org
@@ -110,7 +110,7 @@ lazy val core = (project in file("core"))
   .settings(libraryDependencies += AkkaSerializationHelperPlugin.annotation)
 ```
 
-## Inconsistent persistent data
+## Incompatibility of persistent data
 
 ![Typical tragic story](docs/typical-tragic-story.png "Typical tragic story")
 
