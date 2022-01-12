@@ -19,6 +19,14 @@ To build docs, type
 sbt doc
 ```
 
+### Running
+If some changes are made we can test it by publishing it to the local Maven repository
+and using it in another project. Make sure that `mavenLocal` is added to the resolvers.
+
+```shell
+sbt publishM2
+```
+
 ### Testing
 
 To run unit tests, type
