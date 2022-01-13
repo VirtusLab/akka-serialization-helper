@@ -259,7 +259,7 @@ and look at the [examples](https://github.com/VirtusLab/akka-serialization-helpe
 
 ## Missing Codec registration
 
-If a codec is not registered there will be problems in a runtime. To solve that an annotation 
+If a codec is not registered there will be problems in a runtime. To solve that an annotation
 [`@org.virtuslab.ash.Serializer`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala)
 can be used.
 
