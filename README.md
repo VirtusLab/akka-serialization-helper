@@ -36,7 +36,7 @@ package org
 trait MySer
 ```
 
-Also, we need to define a serializer for the Akka in the Scala configuration file:
+Also, a serializer needs to be defined for the Akka in the Scala configuration file:
 
 ```scala
 akka.actor {
@@ -49,27 +49,27 @@ akka.actor {
 }
 ```
 
-The problem occurs if we forget to use created serializer:
+The problem occurs if a class is not extended with the base trait bound to the serializer:
 
 ```scala
 trait MySer
 case class MyMessage() // extends MySer
 ```
 
-To solve that we can use this plugin that detects messages, events and persistent states, and checks whether they
+To solve that this plugin can be used. It detects messages, events and persistent states, and checks whether they
 extend the given base trait and report an error when they don't. This ensures that the specified serializer is
 used by Akka and protects against accidental use of
 [Java serialization](https://doc.akka.io/docs/akka/current/serialization.html#java-serialization) or outright
 serialization failure.
 
-To use, annotate your base trait with [`@org.virtuslab.ash.SerializabilityTrait`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/SerializabilityTrait.scala):
+To use, base trait should be annotated with [`@org.virtuslab.ash.SerializabilityTrait`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/SerializabilityTrait.scala):
 
 ```scala
 @SerializabilityTrait
 trait MySerializable
 ```
 
-It allows to catch errors like these:
+It allows catching errors like these:
 ```scala
 import akka.actor.typed.Behavior
 
@@ -97,11 +97,11 @@ with  @org.virtuslab.ash.annotation.SerializabilityTrait.
 
 
 The compiler plugin only checks the classes in the sbt modules where `AkkaSerializationHelperPlugin` is explicitly enabled.
-It may happen that your base trait (like `MySerializable` in the example) may live in an sbt module like `core` where you do **not** want to enable the plugin
-(e.g. for compilation performance reasons).
-You still need to reference `org.virtuslab.ash.SerializabilityTrait` to annotate `MySerializable`, however.
+It may happen that the base trait (like `MySerializable` in the example) lives in a sbt module like `core` where the plugin
+should **not** be enabled (e.g. for compilation performance reasons).
+However, `MySerializable` needs to be annotated with a `org.virtuslab.ash.SerializabilityTrait`.
 In order to have access to the `SerializabilityTrait` annotation without enabling the entire suite of compiler plugins,
-add `AkkaSerializationHelperPlugin.annotation` to `libraryDependencies`:
+`AkkaSerializationHelperPlugin.annotation` should be added to `libraryDependencies`:
 
 ```scala
 import org.virtuslab.ash.AkkaSerializationHelperPlugin
@@ -112,12 +112,12 @@ lazy val core = (project in file("core"))
 
 ## Incompatibility of persistent data
 
-![Typical tragic story](docs/typical-tragic-story.png "Typical tragic story")
+![Typical tragic story](docs/typical-tragic-story.png)
 
-A typical problem we could have with persistence is when we persisted some data that is not compatible
-with a new version.
+A typical problem with a persistence is when the already persisted data is not compatible
+with the schemas defined in a new version of the application.
 
-To solve this we can use a mix of a compiler plugin and an sbt task for dumping schema
+To solve this a mix of a compiler plugin and a sbt task for dumping schema can be used for dumping schema
 of [akka-persistence](https://doc.akka.io/docs/akka/current/typed/persistence.html#example-and-core-api) to a
 file. It can be used for detecting accidental changes of events (journal) and states (snapshots) with a simple `diff`.
 
@@ -157,10 +157,10 @@ ashDumpPersistenceSchemaOutputDirectoryPath := "~" // Changes directory
   - org.random.project.Data
 ```
 
-We can use diff to check the difference between the last version of a schema and the
+A `diff` command can be used to check the difference between the last version of a schema and the
 current version on a current branch.
 
-![Easy to diff](docs/easy-to-diff.png "Easy to diff")
+![Easy to diff](docs/easy-to-diff.png)
 
 
 ## Jackson Akka Serializer
@@ -179,7 +179,7 @@ final case class Lion(name: String) extends Animal
 final case class Tiger(name: String) extends Animal
 ```
 
-We need to add a lot of Jackson annotations to run this code:
+To run this code a lot of Jackson annotations should be added:
 
 ```scala
 case class Message(animal: Animal) extends MultiDocPrintService
@@ -196,7 +196,7 @@ final case class Tiger(name: String) extends Animal
 
 ```
 
-Also if we define object:
+Also if an object is defined:
 ```scala
 case object Tick
 ```
@@ -210,14 +210,14 @@ actorRef ! Tick
 // Inside the actor:
 def receive = {
   case Tick => // this won't get matched
-}// message will be unhandled
+} // message will be unhandled
 ```
 
-We can use [Circe-based](https://circe.github.io/circe/) Akka serializer. It uses Circe codecs, derived using [Shapeless](https://circe.github.io/circe/codecs/auto-derivation.html),
+A [Circe-based](https://circe.github.io/circe/) Akka serializer can be used. It uses Circe codecs, derived using [Shapeless](https://circe.github.io/circe/codecs/auto-derivation.html),
 that are generated during compile time (so serializer won't crash during runtime as reflection-based serializers may do).
 For a comparison of Circe with other serializers, read [Appendix A](#appendix-a-comparison-of-available-akka-serializers).
 
-Note that it is **not** obligatory to use our serializer for the other features (serializability checker, persistence schema dump) to work.
+Note that it is **not** obligatory to use this serializer for the other features (serializability checker, persistence schema dump) to work.
 They work as well with e.g. when [Jackson serializer](https://doc.akka.io/docs/akka/current/serialization-jackson.html) is selected.
 
 #### Usage
@@ -259,8 +259,9 @@ and look at the [examples](https://github.com/VirtusLab/akka-serialization-helpe
 
 ## Missing Codec registration
 
-If we forget to register a codec we would have problems in run time. To solve that we can use
-annotation [`@org.virtuslab.ash.Serializer`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala)
+If a codec is not registered there will be problems in a runtime. To solve that an annotation 
+[`@org.virtuslab.ash.Serializer`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala)
+can be used.
 
 During compilation, the plugin gathers all direct descendants of the class marked with [`@org.virtuslab.ash.SerializabilityTrait`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/SerializabilityTrait.scala)
 and checks the body of classes annotated with [`@org.virtuslab.ash.Serializer`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala) if they reference all these direct descendants in any way.
@@ -290,7 +291,7 @@ For more information, read [`@Serializer` scaladoc](https://github.com/VirtusLab
 
 ## Additional configuration for compiler plugins
 
-You can enable/disable all compiler plugins and enable/disable their verbose mode using two sbt keys:
+All compiler plugins and their verbose modes can be enabled/disabled using two sbt keys:
 
 ```scala
 ashCompilerPluginEnable := false // default is true
@@ -314,7 +315,7 @@ For full list of sbt keys, check [`org.virtuslab.ash.AkkaSerializationHelperKeys
 
 ## Contributing Guide
 
-If you want to contribute to the ASH checkout our [Contributing Guide](https://github.com/VirtusLab/akka-serialization-helper/blob/main/CONTRIBUTING.md)
+If you want to contribute to this project, see [Contributing Guide](https://github.com/VirtusLab/akka-serialization-helper/blob/main/CONTRIBUTING.md)
 
 ## Appendix A: Comparison of available Akka Serializers
 
