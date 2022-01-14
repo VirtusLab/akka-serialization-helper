@@ -36,7 +36,7 @@ package org
 trait MySer
 ```
 
-Also, a serializer needs to be defined for the Akka in the Scala configuration file:
+Also, a serializer needs to be defined for Akka in Scala configuration file:
 
 ```scala
 akka.actor {
@@ -56,7 +56,7 @@ trait MySer
 case class MyMessage() // extends MySer
 ```
 
-To solve that this plugin can be used. It detects messages, events and persistent states, and checks whether they
+`akka-serialization-helper` to the rescue! It detects messages, events and persistent states, and checks whether they
 extend the given base trait and report an error when they don't. This ensures that the specified serializer is
 used by Akka and protects against accidental use of
 [Java serialization](https://doc.akka.io/docs/akka/current/serialization.html#java-serialization) or outright
@@ -97,9 +97,9 @@ with  @org.virtuslab.ash.annotation.SerializabilityTrait.
 
 
 The compiler plugin only checks the classes in the sbt modules where `AkkaSerializationHelperPlugin` is explicitly enabled.
-It may happen that the base trait (like `MySerializable` in the example) lives in a sbt module like `core` where the plugin
+It may happen that the base trait (like `MySerializable` in the example) lives in an sbt module like `core` where the plugin
 should **not** be enabled (e.g. for compilation performance reasons).
-However, `MySerializable` needs to be annotated with a `org.virtuslab.ash.SerializabilityTrait`.
+However, `MySerializable` needs to be annotated with `org.virtuslab.ash.SerializabilityTrait`.
 In order to have access to the `SerializabilityTrait` annotation without enabling the entire suite of compiler plugins,
 `AkkaSerializationHelperPlugin.annotation` should be added to `libraryDependencies`:
 
@@ -117,7 +117,7 @@ lazy val core = (project in file("core"))
 A typical problem with a persistence is when the already persisted data is not compatible
 with the schemas defined in a new version of the application.
 
-To solve this a mix of a compiler plugin and a sbt task for dumping schema can be used for dumping schema
+To solve this, a mix of a compiler plugin and an sbt task can be used for dumping schema
 of [akka-persistence](https://doc.akka.io/docs/akka/current/typed/persistence.html#example-and-core-api) to a
 file. It can be used for detecting accidental changes of events (journal) and states (snapshots) with a simple `diff`.
 
@@ -157,8 +157,8 @@ ashDumpPersistenceSchemaOutputDirectoryPath := "~" // Changes directory
   - org.random.project.Data
 ```
 
-A `diff` command can be used to check the difference between the last version of a schema and the
-current version on a current branch.
+A `diff` command can be used to check the difference between the version of a schema from `develop`/`main` branch and the
+version from the current commit.
 
 ![Easy to diff](docs/easy-to-diff.png)
 
@@ -179,7 +179,7 @@ final case class Lion(name: String) extends Animal
 final case class Tiger(name: String) extends Animal
 ```
 
-To run this code a lot of Jackson annotations should be added:
+To run this code, a lot of Jackson annotations should be added:
 
 ```scala
 case class Message(animal: Animal) extends MultiDocPrintService
@@ -259,7 +259,9 @@ and look at the [examples](https://github.com/VirtusLab/akka-serialization-helpe
 
 ## Missing Codec registration
 
-If a codec is not registered there will be problems in a runtime. To solve that an annotation
+If a codec is not registered, there will be problems in a runtime. This will lead to a missing
+codec for Akka serialization. It's one of the main caveats of using
+a serializer that depends on the compile-time. To solve that, an annotation
 [`@org.virtuslab.ash.Serializer`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala)
 can be used.
 
