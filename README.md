@@ -36,7 +36,7 @@ package org
 trait MySer
 ```
 
-Also, a serializer needs to be defined for Akka in Scala configuration file:
+Also, a serializer needs to be bound to this trait in a configuration file:
 
 ```scala
 akka.actor {
@@ -58,7 +58,7 @@ case class MyMessage() // extends MySer
 
 `akka-serialization-helper` to the rescue! It detects messages, events and persistent states, and checks whether they
 extend the given base trait and report an error when they don't. This ensures that the specified serializer is
-used by Akka and protects against accidental use of
+used by Akka and protects against an unintended fallback to
 [Java serialization](https://doc.akka.io/docs/akka/current/serialization.html#java-serialization) or outright
 serialization failure.
 
@@ -101,7 +101,7 @@ It may happen that the base trait (like `MySerializable` in the example) lives i
 should **not** be enabled (e.g. for compilation performance reasons).
 However, `MySerializable` needs to be annotated with `org.virtuslab.ash.SerializabilityTrait`.
 In order to have access to the `SerializabilityTrait` annotation without enabling the entire suite of compiler plugins,
-`AkkaSerializationHelperPlugin.annotation` should be added to `libraryDependencies`:
+add `AkkaSerializationHelperPlugin.annotation` to `libraryDependencies`:
 
 ```scala
 import org.virtuslab.ash.AkkaSerializationHelperPlugin
@@ -165,8 +165,8 @@ version from the current commit.
 
 ## Jackson Akka Serializer
 
-Using Jackson Serializer for Akka-persistence is also one of the pitfalls and this
-plugin provides an alternative by using a serializer that uses Circe.
+Using Jackson Serializer for akka-persistence is also one of the pitfalls and this
+plugin provides an alternative by using a serializer that uses [Circe](https://circe.github.io/circe/).
 
 Dangerous code for Jackson:
 
@@ -179,7 +179,7 @@ final case class Lion(name: String) extends Animal
 final case class Tiger(name: String) extends Animal
 ```
 
-To run this code, a lot of Jackson annotations should be added:
+To make this code work, a lot of Jackson annotations should be added:
 
 ```scala
 case class Message(animal: Animal) extends MultiDocPrintService
@@ -202,7 +202,7 @@ case object Tick
 ```
 
 There will not be exceptions during serialization but Jackson will create
-another instance of Tick instead of restoring Singleton.
+another instance of `Tick` instead of restoring the `object Tick`'s underlying singleton.
 
 ```scala
 actorRef ! Tick
@@ -259,9 +259,23 @@ and look at the [examples](https://github.com/VirtusLab/akka-serialization-helpe
 
 ## Missing Codec registration
 
-If a codec is not registered, there will be problems in a runtime. This will lead to a missing
-codec for Akka serialization. It's one of the main caveats of using
-a serializer that depends on the compile-time. To solve that, an annotation
+If a codec is not registered, a runtime exception will occur. 
+```scala
+import org.virtuslab.ash.circe.CirceAkkaSerializer
+import org.virtuslab.ash.circe.Register
+
+class ExampleSerializer(actorSystem: ExtendedActorSystem)
+  extends CirceAkkaSerializer[MySerializable](actorSystem) {
+  // ...
+  override lazy val codecs = Seq(Register[CommandOne]) // WHOOPS someone forgot to register CommandTwo...
+}
+```
+```shell
+java.lang.RuntimeException: Serialization of [CommandTwo] failed. Call Register[A]
+for this class or its supertype and append result to `def codecs`.
+```
+
+To solve that, an annotation
 [`@org.virtuslab.ash.Serializer`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala)
 can be used.
 

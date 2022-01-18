@@ -20,7 +20,7 @@ sbt doc
 ```
 
 ### Running
-If some changes are made we can test it by publishing it to the local Maven repository
+If some changes are made, you can test them by publishing it to the local Maven repository
 and using it in another project. Make sure that `mavenLocal` is added to the resolvers.
 
 ```shell
