@@ -259,7 +259,7 @@ and look at the [examples](https://github.com/VirtusLab/akka-serialization-helpe
 
 ## Missing Codec registration
 
-If a codec is not registered, a runtime exception will occur. 
+If a codec is not registered, a runtime exception will occur.
 ```scala
 import org.virtuslab.ash.circe.CirceAkkaSerializer
 import org.virtuslab.ash.circe.Register
