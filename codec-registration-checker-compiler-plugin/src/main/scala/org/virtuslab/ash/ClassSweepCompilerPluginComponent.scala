@@ -1,12 +1,10 @@
 package org.virtuslab.ash
 
 import scala.collection.mutable
-import scala.tools.nsc.Global
-import scala.tools.nsc.Phase
+import scala.tools.nsc.{Global, Phase}
 import scala.tools.nsc.plugins.PluginComponent
 
-import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.classSweepPhaseName
-import org.virtuslab.ash.annotation.SerializabilityTrait
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.{classSweepPhaseName, serializabilityTraitType}
 
 class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions, override val global: Global)
     extends PluginComponent {
@@ -17,8 +15,6 @@ class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions
 
   val foundTypes: mutable.Buffer[(String, String)] = mutable.ListBuffer()
   val typesToUpdate: mutable.Buffer[(String, String)] = mutable.ListBuffer()
-
-  private val serializabilityTraitType = typeOf[SerializabilityTrait]
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
@@ -31,7 +27,7 @@ class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions
             case x: ClassDef => x.impl
           }
           .flatMap(x => x.parents.map((_, x)))
-          .filter(_._1.symbol.annotations.map(_.tpe).contains(serializabilityTraitType))
+          .filter(_._1.symbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType))
           .map(x => (x._1.tpe.typeSymbol.fullName, x._2.tpe.typeSymbol.fullName))
         typesToUpdate ++= body
           .collect {

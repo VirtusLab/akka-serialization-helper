@@ -1,5 +1,12 @@
 package org.virtuslab.ash
 
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.{
+  classSweepPhaseName,
+  serializabilityTraitType,
+  serializerCheckPhaseName,
+  serializerType
+}
+
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
@@ -13,11 +20,6 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
 
-import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.classSweepPhaseName
-import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.serializerCheckPhaseName
-import org.virtuslab.ash.annotation.SerializabilityTrait
-import org.virtuslab.ash.annotation.Serializer
-
 class SerializerCheckCompilerPluginComponent(
     classSweep: ClassSweepCompilerPluginComponent,
     options: CodecRegistrationCheckerOptions,
@@ -28,9 +30,6 @@ class SerializerCheckCompilerPluginComponent(
   override val runsAfter: List[String] = List(classSweepPhaseName)
   override def description: String =
     s"Checks marked serializer for references to classes found in $serializerCheckPhaseName"
-
-  private val serializerType = typeOf[Serializer]
-  private val serializabilityTraitType = typeOf[SerializabilityTrait]
 
   private var typesNotDumped = true
   private val typesToCheck = mutable.Map[String, List[(String, String)]]().withDefaultValue(Nil)
@@ -69,7 +68,7 @@ class SerializerCheckCompilerPluginComponent(
           .collect {
             case x: ImplDef => (x, x.symbol.annotations)
           }
-          .map(x => (x._1, x._2.filter(_.tpe =:= serializerType)))
+          .map(x => (x._1, x._2.filter(_.tpe.toString() == serializerType)))
           .filter(_._2.nonEmpty)
           .foreach { x =>
             val (implDef, annotations) = x
@@ -86,12 +85,12 @@ class SerializerCheckCompilerPluginComponent(
         val (fqcn, filterRegex) = serializerAnnotation.args match {
           case List(clazzTree, regexTree) =>
             val fqcn = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
-              if (tpe.typeSymbol.annotations.map(_.tpe).contains(serializabilityTraitType))
+              if (tpe.typeSymbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType))
                 Some(tpe.typeSymbol.fullName)
               else {
                 reporter.error(
                   serializerAnnotation.pos,
-                  s"Type given in annotation argument must be annotated with ${serializabilityTraitType.typeSymbol.fullName}")
+                  s"Type given in annotation argument must be annotated with $serializabilityTraitType")
                 None
               }
             }
@@ -140,7 +139,7 @@ class SerializerCheckCompilerPluginComponent(
           reporter.error(
             serializerImplDef.pos,
             s"""No codecs for ${missingFqcn
-              .mkString(", ")} are registered in class annotated with @${serializabilityTraitType.typeSymbol.fullName}.
+              .mkString(", ")} are registered in class annotated with @$serializabilityTraitType.
                |This will lead to a missing codec for Akka serialization in the runtime.
                |Current filtering regex: $filterRegex""".stripMargin)
         }
