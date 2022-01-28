@@ -1,10 +1,12 @@
 package org.virtuslab.ash
 
 import scala.collection.mutable
-import scala.tools.nsc.{Global, Phase}
+import scala.tools.nsc.Global
+import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
 
-import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.{classSweepPhaseName, serializabilityTraitType}
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.classSweepPhaseName
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.serializabilityTraitType
 
 class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions, override val global: Global)
     extends PluginComponent {

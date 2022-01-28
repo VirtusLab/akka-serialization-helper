@@ -1,12 +1,5 @@
 package org.virtuslab.ash
 
-import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.{
-  classSweepPhaseName,
-  serializabilityTraitType,
-  serializerCheckPhaseName,
-  serializerType
-}
-
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
@@ -19,6 +12,11 @@ import scala.reflect.classTag
 import scala.tools.nsc.Global
 import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
+
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.classSweepPhaseName
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.serializabilityTraitType
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.serializerCheckPhaseName
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.serializerType
 
 class SerializerCheckCompilerPluginComponent(
     classSweep: ClassSweepCompilerPluginComponent,
