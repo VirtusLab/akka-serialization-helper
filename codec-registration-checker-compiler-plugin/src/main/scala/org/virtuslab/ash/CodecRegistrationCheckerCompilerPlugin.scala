@@ -73,6 +73,8 @@ object CodecRegistrationCheckerCompilerPlugin {
   val classSweepPhaseName = "codec-registration-class-sweep"
   val serializerCheckPhaseName = "codec-registration-serializer-check"
   val cacheFileName = "codec-registration-checker-cache.csv"
+  val serializabilityTraitType = "org.virtuslab.ash.annotation.SerializabilityTrait"
+  val serializerType = "org.virtuslab.ash.annotation.Serializer"
 
   def parseCacheFile(buffer: ByteBuffer): Seq[(String, String)] = {
     StandardCharsets.UTF_8.decode(buffer).toString.split("\n").toSeq.filterNot(_.isBlank).map(_.split(",")).map {

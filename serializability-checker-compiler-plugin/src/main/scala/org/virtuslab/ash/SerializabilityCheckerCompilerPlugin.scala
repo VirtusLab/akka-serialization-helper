@@ -50,4 +50,5 @@ object SerializabilityCheckerCompilerPlugin {
     val disableMethodsUntyped = "--disable-detection-untyped-methods"
     val disableHigherOrderFunctions = "--disable-detection-higher-order-function"
   }
+  val serializabilityTraitType = "org.virtuslab.ash.annotation.SerializabilityTrait"
 }

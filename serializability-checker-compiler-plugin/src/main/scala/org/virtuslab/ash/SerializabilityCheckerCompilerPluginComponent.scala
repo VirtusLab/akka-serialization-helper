@@ -4,7 +4,7 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
 
-import org.virtuslab.ash.annotation.SerializabilityTrait
+import org.virtuslab.ash.SerializabilityCheckerCompilerPlugin.serializabilityTraitType
 
 class SerializabilityCheckerCompilerPluginComponent(
     val pluginOptions: SerializabilityCheckerOptions,
@@ -20,8 +20,6 @@ class SerializabilityCheckerCompilerPluginComponent(
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
-      private val serializabilityTraitType = typeOf[SerializabilityTrait]
-
       private val akkaSerializabilityTraits = Seq(
         "com.google.protobuf.GeneratedMessage",
         "com.google.protobuf.GeneratedMessageV3",
@@ -162,13 +160,13 @@ class SerializabilityCheckerCompilerPluginComponent(
                 reporter.error(
                   detectedPosition,
                   s"""${tpe
-                    .toString()} is used as Akka ${classType.name} but does not extend a trait annotated with ${serializabilityTraitType.toLongString}.
-                     |Passing an object of class NOT extending ${serializabilityTraitType.nameAndArgsString} as a ${classType.name} may cause Akka to fall back to Java serialization during runtime.
+                    .toString()} is used as Akka ${classType.name} but does not extend a trait annotated with $serializabilityTraitType.
+                     |Passing an object of class NOT extending $serializabilityTraitType as a ${classType.name} may cause Akka to fall back to Java serialization during runtime.
                      |
                      |""".stripMargin)
                 reporter.error(
                   tpe.typeSymbol.pos,
-                  s"""Make sure this type is itself annotated, or extends a type annotated with  @${serializabilityTraitType.toLongString}.""")
+                  s"""Make sure this type is itself annotated, or extends a type annotated with  @$serializabilityTraitType.""")
                 annotatedTraits
             }
           }
@@ -180,7 +178,7 @@ class SerializabilityCheckerCompilerPluginComponent(
       private def findSuperclassAnnotatedWithSerializabilityTrait(tp: Type): Option[Type] = {
         if (tp =:= typeTag[AnyRef].tpe || tp =:= typeTag[Any].tpe)
           None
-        else if (tp.typeSymbol.annotations.exists(_.atp =:= serializabilityTraitType))
+        else if (tp.typeSymbol.annotations.exists(_.atp.toString() == serializabilityTraitType))
           Some(tp)
         else if (akkaSerializabilityTraits.contains(tp.typeSymbol.fullName))
           Some(tp)
