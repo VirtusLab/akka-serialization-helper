@@ -36,11 +36,21 @@ jobs:
         run: sbt compile Test/compile
 
       - name: Run tests
-        run: sbt test
+        run: |
+          sbt -scala-version 2.12.13 test
+          sbt -scala-version 2.12.14 test
+          sbt -scala-version 2.12.15 test
+          sbt -scala-version 2.13.2 test
+          sbt -scala-version 2.13.3 test
+          sbt -scala-version 2.13.4 test
+          sbt -scala-version 2.13.5 test
+          sbt -scala-version 2.13.6 test
+          sbt -scala-version 2.13.7 test
+          sbt -scala-version 2.13.8 test
 
       - name: Check code style
         # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
-        run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
+        run: sbt scalafmtCheckAll scalafmtSbtCheck # "scalafixAll --check"
 
   test-sbt-plugin:
     runs-on: ubuntu-latest
