@@ -25,6 +25,7 @@ jobs:
           set -x
           enforce-newline-at-eof
           prohibit-trailing-whitespace
+          enforce-issue-number-for-todos
 
           npm install --global remark-cli remark-lint-no-dead-urls remark-validate-links
           validate-markdown-links
@@ -37,19 +38,20 @@ jobs:
 
       - name: Run tests
         run: |
-          sbt -scala-version 2.12.13 test
-          sbt -scala-version 2.12.14 test
-          sbt -scala-version 2.12.15 test
-          sbt -scala-version 2.13.2 test
-          sbt -scala-version 2.13.3 test
-          sbt -scala-version 2.13.4 test
-          sbt -scala-version 2.13.5 test
-          sbt -scala-version 2.13.6 test
-          sbt -scala-version 2.13.7 test
-          sbt -scala-version 2.13.8 test
+          sbt "++ 2.12.13 test"
+          sbt "++ 2.12.14 test"
+          sbt "++ 2.12.15 test"
+          sbt "++ 2.13.2 test"
+          sbt "++ 2.13.3 test"
+          sbt "++ 2.13.4 test"
+          sbt "++ 2.13.5 test"
+          sbt "++ 2.13.6 test"
+          sbt "++ 2.13.7 test"
+          sbt "++ 2.13.8 test"
 
       - name: Check code style
         # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
+        # TODO (#147): Enable check when scalafix support has been restored
         run: sbt scalafmtCheckAll scalafmtSbtCheck # "scalafixAll --check"
 
   test-sbt-plugin:

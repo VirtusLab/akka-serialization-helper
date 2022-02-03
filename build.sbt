@@ -21,7 +21,10 @@ sonatypeProfileName := "org.virtuslab"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+// TODO (#147): Uncomment when scalafix support has been restored
+// ThisBuild / semanticdbEnabled := true
+// ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+// ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
 lazy val commonSettings = Seq(
   sonatypeProfileName := "org.virtuslab",
