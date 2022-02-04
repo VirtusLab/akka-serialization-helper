@@ -42,8 +42,7 @@ jobs:
 
       - name: Check code style
         # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
-        # TODO (#147): Enable check when scalafix support has been restored
-        run: sbt scalafmtCheckAll scalafmtSbtCheck # "scalafixAll --check"
+        run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
 
   test-212:
     runs-on: ubuntu-latest
