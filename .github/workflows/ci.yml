@@ -7,24 +7,6 @@ on:
   pull_request:
 
 jobs:
-  initial-code-check:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: Run code checks
-        run: |
-          PATH=$PATH:./scripts
-          set -x
-          enforce-newline-at-eof
-          prohibit-trailing-whitespace
-          enforce-issue-number-for-todos
-
-          npm install --global remark-cli remark-lint-no-dead-urls remark-validate-links
-          validate-markdown-links
-
   code-style-check:
     runs-on: ubuntu-latest
 
@@ -39,6 +21,17 @@ jobs:
 
       - name: Resolve dependencies
         run: sbt update
+
+      - name: Run code checks
+        run: |
+          PATH=$PATH:./scripts
+          set -x
+          enforce-newline-at-eof
+          prohibit-trailing-whitespace
+          enforce-issue-number-for-todos
+
+          npm install --global remark-cli remark-lint-no-dead-urls remark-validate-links
+          validate-markdown-links
 
       - name: Check code style
         # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
@@ -149,7 +142,7 @@ jobs:
         working-directory: examples/event-migration
 
   publish:
-    needs: [initial-code-check, code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
+    needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-20.04
     steps:
