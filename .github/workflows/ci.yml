@@ -150,7 +150,7 @@ jobs:
         working-directory: examples/event-migration
 
   publish:
-    needs: [test-sbt-plugin, test, run-examples]
+    needs: [initial-code-check, code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-20.04
     steps:
