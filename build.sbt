@@ -22,7 +22,12 @@ sonatypeProfileName := "org.virtuslab"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / semanticdbVersion := {
+  scalaVersion.value match {
+    case "2.13.7" | "2.13.8" => "4.4.32"
+    case _                   => "4.4.28"
+  }
+}
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
 lazy val commonSettings = Seq(

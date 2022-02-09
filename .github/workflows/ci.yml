@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  code-style-check:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,15 +19,35 @@ jobs:
         with:
           java-version: adopt@1.11
 
-      - name: Run initial checks
+      - name: Resolve dependencies
+        run: sbt update
+
+      - name: Run code checks
         run: |
           PATH=$PATH:./scripts
           set -x
           enforce-newline-at-eof
           prohibit-trailing-whitespace
+          enforce-issue-number-for-todos
 
           npm install --global remark-cli remark-lint-no-dead-urls remark-validate-links
           validate-markdown-links
+
+      - name: Check code style
+        # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
+        run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
+
+  test-212:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v10
+        with:
+          java-version: adopt@1.11
 
       - name: Resolve dependencies
         run: sbt update
@@ -36,11 +56,59 @@ jobs:
         run: sbt compile Test/compile
 
       - name: Run tests
-        run: sbt test
+        run: |
+          sbt "++ 2.12.13 test"
+          sbt "++ 2.12.14 test"
+          sbt "++ 2.12.15 test"
 
-      - name: Check code style
-        # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
-        run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
+  test-213-1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v10
+        with:
+          java-version: adopt@1.11
+
+      - name: Resolve dependencies
+        run: sbt update
+
+      - name: Compile
+        run: sbt compile Test/compile
+
+      - name: Run tests
+        run: |
+          sbt "++ 2.13.2 test"
+          sbt "++ 2.13.3 test"
+          sbt "++ 2.13.4 test"
+          sbt "++ 2.13.5 test"
+
+  test-213-2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Setup Scala
+        uses: olafurpg/setup-scala@v10
+        with:
+          java-version: adopt@1.11
+
+      - name: Resolve dependencies
+        run: sbt update
+
+      - name: Compile
+        run: sbt compile Test/compile
+
+      - name: Run tests
+        run: |
+          sbt "++ 2.13.6 test"
+          sbt "++ 2.13.7 test"
+          sbt "++ 2.13.8 test"
 
   test-sbt-plugin:
     runs-on: ubuntu-latest
@@ -74,7 +142,7 @@ jobs:
         working-directory: examples/event-migration
 
   publish:
-    needs: [test-sbt-plugin, test, run-examples]
+    needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-20.04
     steps:

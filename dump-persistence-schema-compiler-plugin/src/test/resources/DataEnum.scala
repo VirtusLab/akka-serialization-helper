@@ -8,7 +8,7 @@ object DataEnum {
   case object Two extends Enum
   case object Three extends Enum
 
-  case class Data(enum: Enum)
+  case class Data(`enum`: Enum)
 
   def trigger: Effect[Data, Any] = ???
 }
