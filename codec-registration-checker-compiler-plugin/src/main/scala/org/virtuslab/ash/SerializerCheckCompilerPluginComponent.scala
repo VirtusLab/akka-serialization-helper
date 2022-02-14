@@ -43,9 +43,9 @@ class SerializerCheckCompilerPluginComponent(
             try {
               val buffer = ByteBuffer.allocate(channel.size().toInt)
               channel.read(buffer)
-              val ot = CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
-              val ft = classSweep.foundTypes.toSet
-              val tu = classSweep.typesToUpdate.toSet
+              val ot = CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind())
+              val ft = classSweep.foundTypes
+              val tu = classSweep.typesToUpdate
               val out = ((ot -- tu) | ft).toList
 
               val outData = out.map(x => x._1 + "," + x._2).sorted.reduceOption(_ + "\n" + _).getOrElse("")
@@ -64,10 +64,9 @@ class SerializerCheckCompilerPluginComponent(
         }
         unit.body
           .collect {
-            case x: ImplDef => (x, x.symbol.annotations)
+            case x: ImplDef if x.symbol.annotations.exists(_.tpe.toString() == serializerType) =>
+              (x, x.symbol.annotations.filter(_.tpe.toString() == serializerType))
           }
-          .map(x => (x._1, x._2.filter(_.tpe.toString() == serializerType)))
-          .filter(_._2.nonEmpty)
           .foreach { x =>
             val (implDef, annotations) = x
             if (annotations.size > 1) {
@@ -82,15 +81,14 @@ class SerializerCheckCompilerPluginComponent(
       private def processSerializerClass(serializerImplDef: ImplDef, serializerAnnotation: AnnotationInfo): Unit = {
         val (fqcn, filterRegex) = serializerAnnotation.args match {
           case List(clazzTree, regexTree) =>
-            val fqcn = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
-              if (tpe.typeSymbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType))
+            val fqcn = extractValueOfLiteralConstantFromTree[Type](clazzTree) match {
+              case Some(tpe) if tpe.typeSymbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType) =>
                 Some(tpe.typeSymbol.fullName)
-              else {
+              case _ =>
                 reporter.error(
                   serializerAnnotation.pos,
                   s"Type given in annotation argument must be annotated with $serializabilityTraitType")
                 None
-              }
             }
             val filterRegex =
               regexTree match {
@@ -108,13 +106,9 @@ class SerializerCheckCompilerPluginComponent(
 
         val foundTypes =
           try {
-            serializerImplDef
-              .collect {
-                case x: Tree if x.tpe != null => x.tpe
-              }
-              .groupBy(_.toString())
-              .filter(_._1.matches(filterRegex))
-              .map(_._2.head)
+            serializerImplDef.collect {
+              case x: Tree if x.tpe != null && x.tpe.toString().matches(filterRegex) => x.tpe
+            }
           } catch {
             case e: PatternSyntaxException =>
               reporter.error(serializerImplDef.pos, "Exception throw during the use of filter regex: " + e.getMessage)
@@ -122,17 +116,16 @@ class SerializerCheckCompilerPluginComponent(
           }
 
         @tailrec
-        def typeArgsBfs(current: Set[Type], prev: Set[Type] = Set.empty): Set[Type] = {
+        def typeArgsBfs(current: Set[Type], prev: Set[Type] = Set.empty): Set[String] = {
           val next = current.flatMap(_.typeArgs)
           val acc = prev | current
           if ((next &~ acc).isEmpty)
-            acc
+            acc.map(_.typeSymbol.fullName)
           else
             typeArgsBfs(next, acc)
         }
-        val foundInSerializerTypesFqcns = typeArgsBfs(foundTypes.toSet).map(_.typeSymbol.fullName)
 
-        val missingFqcn = typesToCheck(fqcn).map(_._2).filterNot(foundInSerializerTypesFqcns)
+        val missingFqcn = typesToCheck(fqcn).map(_._2).filterNot(typeArgsBfs(foundTypes.toSet))
         if (missingFqcn.nonEmpty) {
           reporter.error(
             serializerImplDef.pos,

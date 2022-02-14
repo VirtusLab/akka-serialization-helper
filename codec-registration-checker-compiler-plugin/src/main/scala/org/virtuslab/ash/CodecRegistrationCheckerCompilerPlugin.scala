@@ -52,7 +52,7 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
           true
         } catch {
           case _: FileNotFoundException =>
-            pluginOptions.oldTypes = Nil
+            pluginOptions.oldTypes = Set.empty
             true
           case e @ (_: IOException | _: RuntimeException) =>
             error(s"Exception thrown, message: ${e.getMessage}")
@@ -76,8 +76,8 @@ object CodecRegistrationCheckerCompilerPlugin {
   val serializabilityTraitType = "org.virtuslab.ash.annotation.SerializabilityTrait"
   val serializerType = "org.virtuslab.ash.annotation.Serializer"
 
-  def parseCacheFile(buffer: ByteBuffer): Seq[(String, String)] = {
-    StandardCharsets.UTF_8.decode(buffer).toString.split("\n").toSeq.filterNot(_.isBlank).map(_.split(",")).map {
+  def parseCacheFile(buffer: ByteBuffer): Set[(String, String)] = {
+    StandardCharsets.UTF_8.decode(buffer).toString.split("\n").toSet.filterNot(_.isBlank).map(_.split(",")).map {
       case Array(a, b) => (a, b)
       case other =>
         throw new RuntimeException(s"Invalid line in $cacheFileName file: ${other.mkString(",")}")

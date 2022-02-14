@@ -15,8 +15,8 @@ class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions
   override val runsAfter: List[String] = List("refchecks")
   override def description: String = s"searches for direct descendants of classes annotated with serializability trait"
 
-  val foundTypes: mutable.Buffer[(String, String)] = mutable.ListBuffer()
-  val typesToUpdate: mutable.Buffer[(String, String)] = mutable.ListBuffer()
+  val foundTypes: mutable.Set[(String, String)] = mutable.Set()
+  val typesToUpdate: mutable.Set[(String, String)] = mutable.Set()
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
