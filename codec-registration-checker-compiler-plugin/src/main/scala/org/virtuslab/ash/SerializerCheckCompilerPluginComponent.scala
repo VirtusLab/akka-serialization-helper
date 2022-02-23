@@ -107,7 +107,7 @@ class SerializerCheckCompilerPluginComponent(
         val foundTypes =
           try {
             serializerImplDef.collect {
-              case x: Tree if x.tpe != null && x.tpe.toString().matches(filterRegex) => x.tpe
+              case x @ (_: Select | _: GenericApply) if x.tpe != null && x.tpe.toString().matches(filterRegex) => x.tpe
             }
           } catch {
             case e: PatternSyntaxException =>
@@ -124,8 +124,9 @@ class SerializerCheckCompilerPluginComponent(
           else
             typeArgsBfs(next, acc)
         }
+        val foundInSerializerTypesFqcns = typeArgsBfs(foundTypes.toSet)
 
-        val missingFqcn = typesToCheck(fqcn).map(_._2).filterNot(typeArgsBfs(foundTypes.toSet))
+        val missingFqcn = typesToCheck(fqcn).map(_._2).filterNot(foundInSerializerTypesFqcns)
         if (missingFqcn.nonEmpty) {
           reporter.error(
             serializerImplDef.pos,
