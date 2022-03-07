@@ -88,7 +88,7 @@ class SerializerCheckCompilerPluginComponent(
               else {
                 reporter.error(
                   serializerAnnotation.pos,
-                  s"Type given in annotation argument must be annotated with $serializabilityTraitType")
+                  s"Type given as `clazz` argument to @$serializerType must be annotated with $serializabilityTraitType")
                 None
               }
             }
@@ -136,8 +136,7 @@ class SerializerCheckCompilerPluginComponent(
         if (missingFqcn.nonEmpty) {
           reporter.error(
             serializerImplDef.pos,
-            s"""No codecs for ${missingFqcn
-              .mkString(", ")} are registered in class annotated with @$serializabilityTraitType.
+            s"""No codecs for ${missingFqcn.mkString(", ")} are registered in class annotated with @$serializerType.
                |This will lead to a missing codec for Akka serialization in the runtime.
                |Current filtering regex: $filterRegex""".stripMargin)
         }

@@ -83,7 +83,7 @@ And results in a compile error, preventing non-runtime-safe code from being exec
 ```
 test0.scala:7: error: org.random.project.BehaviorTest.Command is used as Akka message
 but does not extend a trait annotated with org.virtuslab.ash.annotation.SerializabilityTrait.
-Passing an object of class NOT extending SerializabilityTrait as a message may cause Akka to
+Passing an object of a class that does NOT extend a trait annotated with SerializabilityTrait as a message may cause Akka to
 fall back to Java serialization during runtime.
 
 

@@ -161,7 +161,8 @@ class SerializabilityCheckerCompilerPluginComponent(
                   detectedPosition,
                   s"""${tpe
                     .toString()} is used as Akka ${classType.name} but does not extend a trait annotated with $serializabilityTraitType.
-                     |Passing an object of class NOT extending $serializabilityTraitType as a ${classType.name} may cause Akka to fall back to Java serialization during runtime.
+                     |Passing an object of a class that does NOT extend a trait annotated with $serializabilityTraitType as a ${classType.name}
+                     |may cause Akka to fall back to Java serialization during runtime.
                      |
                      |""".stripMargin)
                 reporter.error(
