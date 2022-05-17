@@ -3,6 +3,13 @@ import org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile
 import sbt.Keys.{semanticdbEnabled, semanticdbVersion, versionScheme}
 import sbt.VirtualAxis.ScalaVersionAxis
 
+initialize ~= { _ =>
+  if (sys.props.getOrElse("java.specification.version", "0").toDouble < 11.0) {
+    throw new IllegalArgumentException(
+      "Project must be built with java version 11 or higher. Current java version will cause failure of compilation.")
+  }
+}
+
 lazy val supportedScalaVersions = List(scalaVersion213, scalaVersion212)
 
 ThisBuild / scalaVersion := supportedScalaVersions.head

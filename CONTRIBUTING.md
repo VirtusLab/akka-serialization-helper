@@ -56,11 +56,15 @@ Otherwise, incremental compilation might determine there is nothing to compile a
 
 Before committing, don't forget to type
 ```shell
-sbt scalafmtAll scalafixAll
+sbt scalafmtAll scalafixAll scalafmtSbt
 ```
-to format the code and check imports. You can use `pre-commit` hook, provided in `./pre-commit`, to do formating and checking automatically.
+to format the code, .sbt files and check imports. You can use `pre-commit` hook, provided in `./pre-commit`, to do formating and checking automatically.
 
 Additionally, all warnings locally are escalated to errors in CI, so make sure there are none.
+
+### Compatible JDK versions
+
+To build this project successfully, use JDK version 11 or higher. It won't work with lower java versions.
 
 ## Releasing
 
