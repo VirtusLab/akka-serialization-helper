@@ -52,6 +52,11 @@ Then, in the target project sbt shell, type `compile`. If the compilation finish
 Remember to type `clean` after successful compilations.
 Otherwise, incremental compilation might determine there is nothing to compile and won't run the plugin you are testing.
 
+### Profiling
+
+To profile akka-serialization-helper compiler plugin used in another project - follow instructions from https://www.lightbend.com/blog/profiling-jvm-applications
+You might as well use any other profiler, but using https://github.com/jvm-profiling-tools/async-profiler with flamegraphs should be really effective and easy to achieve (+ no unexpected bugs / issues / errors).
+
 ### Code quality
 
 Before committing, don't forget to type

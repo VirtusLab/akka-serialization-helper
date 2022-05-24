@@ -32,7 +32,10 @@ class SerializerCheckCompilerPluginComponent(
   private var typesNotDumped = true
   private val typesToCheck = mutable.Map[String, List[(String, String)]]().withDefaultValue(Nil)
 
-  override def newPhase(prev: Phase): Phase =
+  private lazy val ft = classSweep.foundTypes.toSet
+  private lazy val tu = classSweep.typesToUpdate.toSet
+
+  override def newPhase(prev: Phase): Phase = {
     new StdPhase(prev) {
       override def apply(unit: global.CompilationUnit): Unit = {
         if (typesNotDumped) {
@@ -44,8 +47,6 @@ class SerializerCheckCompilerPluginComponent(
               val buffer = ByteBuffer.allocate(channel.size().toInt)
               channel.read(buffer)
               val ot = CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
-              val ft = classSweep.foundTypes.toSet
-              val tu = classSweep.typesToUpdate.toSet
               val out = ((ot -- tu) | ft).toList
 
               val outData = out.map(x => x._1 + "," + x._2).sorted.reduceOption(_ + "\n" + _).getOrElse("")
@@ -112,6 +113,7 @@ class SerializerCheckCompilerPluginComponent(
               .collect {
                 case x: Tree if x.tpe != null => x.tpe
               }
+              .distinct
               .groupBy(_.toString())
               .filter(_._1.matches(filterRegex))
               .map(_._2.head)
@@ -130,6 +132,7 @@ class SerializerCheckCompilerPluginComponent(
           else
             typeArgsBfs(next, acc)
         }
+
         val foundInSerializerTypesFqcns = typeArgsBfs(foundTypes.toSet).map(_.typeSymbol.fullName)
 
         val missingFqcn = typesToCheck(fqcn).map(_._2).filterNot(foundInSerializerTypesFqcns)
@@ -165,4 +168,5 @@ class SerializerCheckCompilerPluginComponent(
         }
       }
     }
+  }
 }
