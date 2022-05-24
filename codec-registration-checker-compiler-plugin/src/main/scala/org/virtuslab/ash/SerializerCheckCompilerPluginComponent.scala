@@ -32,8 +32,8 @@ class SerializerCheckCompilerPluginComponent(
   private var typesNotDumped = true
   private val typesToCheck = mutable.Map[String, List[(String, String)]]().withDefaultValue(Nil)
 
-  private lazy val ft = classSweep.foundTypes.toSet
-  private lazy val tu = classSweep.typesToUpdate.toSet
+  private lazy val classSweepFoundTypes = classSweep.foundTypes.toSet
+  private lazy val classSweepTypesToUpdate = classSweep.typesToUpdate.toSet
 
   override def newPhase(prev: Phase): Phase = {
     new StdPhase(prev) {
@@ -46,14 +46,14 @@ class SerializerCheckCompilerPluginComponent(
             try {
               val buffer = ByteBuffer.allocate(channel.size().toInt)
               channel.read(buffer)
-              val ot = CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
-              val out = ((ot -- tu) | ft).toList
+              val typesFromCacheFile = CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
+              val outTypes = ((typesFromCacheFile -- classSweepTypesToUpdate) | classSweepFoundTypes).toList
 
-              val outData = out.map(x => x._1 + "," + x._2).sorted.reduceOption(_ + "\n" + _).getOrElse("")
+              val outData = outTypes.map(x => x._1 + "," + x._2).sorted.reduceOption(_ + "\n" + _).getOrElse("")
               channel.truncate(0)
               channel.write(ByteBuffer.wrap(outData.getBytes(StandardCharsets.UTF_8)))
 
-              typesToCheck ++= out.groupBy(_._1)
+              typesToCheck ++= outTypes.groupBy(_._1)
               typesNotDumped = false
             } finally {
               lock.close()
