@@ -96,8 +96,8 @@ git push origin vx.y.z
 ```
 The tagged commit is then released to Maven Central.
 
-Note that we are using an early semantic versioning scheme (see https://www.scala-lang.org/blog/2021/02/16/preventing-version-conflicts-with-versionscheme.html#early-semver-and-sbt-version-policy for details).
+Note that we are using an [early semantic versioning scheme](https://www.scala-lang.org/blog/2021/02/16/preventing-version-conflicts-with-versionscheme.html#early-semver-and-sbt-version-policy).
 
 ### Github Releases
 
-Github Releases are done automatically - with settings defined in the .github/workflows/release-drafter.yml file. Release is published when new "vX.Y.Z" git tag is pushed to the main branch.
+Github Releases are done automatically - with settings defined in the [publish-release-config](.github/publish-release-config.yml) file. Release is published when new "vX.Y.Z" git tag is pushed to the main branch.
