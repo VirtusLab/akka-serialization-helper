@@ -107,21 +107,21 @@ class SerializerCheckCompilerPluginComponent(
           case _ => throw new IllegalStateException()
         }
 
-        val foundTypes =
+        val foundTypes = {
           try {
             serializerImplDef
               .collect {
                 case x: Tree if x.tpe != null => x.tpe
               }
               .distinct
-              .groupBy(_.toString())
-              .filter(_._1.matches(filterRegex))
-              .map(_._2.head)
+              .filter(_.toString.matches(filterRegex))
           } catch {
             case e: PatternSyntaxException =>
               reporter.error(serializerImplDef.pos, "Exception throw during the use of filter regex: " + e.getMessage)
               return
+
           }
+        }
 
         @tailrec
         def typeArgsBfs(current: Set[Type], prev: Set[Type] = Set.empty): Set[Type] = {
