@@ -100,4 +100,4 @@ Note that we are using an early semantic versioning scheme (see https://www.scal
 
 ### Github Releases
 
-Github Releases are done automatically - with settings defined in the .github/workflows/release-drafter.yml file. Release is published when new "vX.Y.Z" git tag is pushed to the main branch. 
+Github Releases are done automatically - with settings defined in the .github/workflows/release-drafter.yml file. Release is published when new "vX.Y.Z" git tag is pushed to the main branch.
