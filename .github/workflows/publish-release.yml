@@ -1,4 +1,4 @@
-name: Release Drafter
+name: Publish Release
 
 on:
   push:
@@ -6,8 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  update_release_draft:
-    if: github.event.base_ref == 'refs/heads/main'
+  publish-github-release:
     runs-on: ubuntu-latest
     steps:
       # Publishes new Release as new git tag (vX.Y.Z) is pushed to repository

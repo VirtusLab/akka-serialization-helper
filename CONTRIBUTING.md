@@ -96,7 +96,7 @@ git push origin vx.y.z
 ```
 The tagged commit is then released to Maven Central.
 
-Note that we are using an early semantic versioning scheme.
+Note that we are using an early semantic versioning scheme (see https://www.scala-lang.org/blog/2021/02/16/preventing-version-conflicts-with-versionscheme.html#early-semver-and-sbt-version-policy for details).
 
 ### Github Releases
 
