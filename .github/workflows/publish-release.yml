@@ -1,0 +1,21 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish-github-release:
+    if: github.event.base_ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      # Publishes new Release as new git tag (vX.Y.Z) is pushed to repository
+      - uses: release-drafter/release-drafter@v5
+        with:
+          config-name: publish-release-config.yml
+          publish: true
+          tag: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
