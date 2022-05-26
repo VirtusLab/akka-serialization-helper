@@ -89,7 +89,7 @@ to both `build.sbt` **and** `project/build.sbt` (so that the sbt plugin added in
 
 Releases to [Maven Central](https://repo1.maven.org/maven2/org/virtuslab/ash/) are triggered by pushing a lightweight git tag with a version number.
 
-To publish version x.y.z, type in the console
+To publish version x.y.z, type in the console (on main branch)
 ```shell
 git tag vx.y.z
 git push origin vx.y.z
@@ -97,3 +97,7 @@ git push origin vx.y.z
 The tagged commit is then released to Maven Central.
 
 Note that we are using an early semantic versioning scheme.
+
+### Github Releases
+
+Github Releases are done automatically - with settings defined in the .github/workflows/release-drafter.yml file. Release is published when new "vX.Y.Z" git tag is pushed to the main branch. 
