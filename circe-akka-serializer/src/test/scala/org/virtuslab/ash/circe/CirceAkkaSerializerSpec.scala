@@ -94,7 +94,7 @@ class CirceAkkaSerializerSpec extends AnyWordSpecLike with should.Matchers {
     val compressionActorSystem: ActorSystem[Nothing] = compressionTestKit.system
     val compressionSerializationTestKit = new MigrationAndCompressionTestKit(compressionActorSystem)
 
-    val heavyWeightString = Source.fromResource("more_than_1KiB_object_file.txt").getLines.toList.mkString("\n")
+    val heavyWeightString = Source.fromResource("more_than_1KiB_object_file.txt").getLines().toList.mkString("\n")
     val lightWeightString = "x"
     val largeSerializableObject = StdData.One(123, 456.0f, heavyWeightString)
     val smallSerializableObject = StdData.One(123, 456.0f, lightWeightString)

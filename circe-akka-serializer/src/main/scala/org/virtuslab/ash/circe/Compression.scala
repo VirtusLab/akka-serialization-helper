@@ -11,8 +11,7 @@ object Compression {
   sealed trait Algorithm
   case object Off extends Algorithm
   case class GZip(greaterThan: Long) extends Algorithm
-  // TODO: add support for LZ4 java compression:
-  // https://github.com/VirtusLab/akka-serialization-helper/issues/159
+  // TODO (#159): add support for LZ4 java compression
   // case class LZ4(greaterThan: Long) extends Algorithm
 
   private[circe] def compressIfNeeded(
