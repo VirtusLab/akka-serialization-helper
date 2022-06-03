@@ -76,7 +76,9 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
     .toMap
     .withDefaultValue("")
 
-  // Decoder apply method - decodes from Json into an object of type Ser
+  /**
+   * Decoder apply method - decodes from Json into an object of type Ser
+   */
   override def apply(c: HCursor): Result[Ser] = {
     c.value.asObject match {
       case Some(obj) =>
@@ -93,7 +95,9 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
     }
   }
 
-  // Encoder apply method - encodes given object of type Ser into Json
+  /**
+   * Encoder apply method - encodes given object of type Ser into Json
+   */
   override def apply(a: Ser): Json = {
     val manifestString = manifest(a)
     val encoder = codecsMap.get(manifestString) match {
@@ -115,13 +119,13 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
   doNeededChecksOnStart()
 
   private def doNeededChecksOnStart(): Unit = {
-    checkImplementationForInvalidMembersDeclarations()
+    checkImplementationForInvalidMemberDeclarations()
     checkSerializableTypesForMissingCodec(packagePrefix)
     checkCodecsForNull()
     checkCodecsForDuplication()
   }
 
-  private def checkImplementationForInvalidMembersDeclarations(): Unit = {
+  private def checkImplementationForInvalidMemberDeclarations(): Unit = {
     Seq(
       (codecs, "codecs"),
       (manifestMigrations, "manifestMigrations"),
