@@ -1,30 +1,63 @@
-type::<notype>
-type::phoenix.bets.infrastructure.BetsAkkaSerialization.type
-type::AnyRef
-type::phoenix.core.serialization.PhoenixAkkaSerialization[phoenix.bets.infrastructure.BetsAkkaSerializable]
-type::phoenix.core.serialization.PhoenixCodecs
-type::Unit
-type::Object
-type::(): Object
-type::phoenix.bets.infrastructure.BetsAkkaSerialization.type
-type::phoenix.bets.infrastructure.BetsAkkaSerialization.type
-type::io.circe.Codec[phoenix.punters.PunterEntity.PunterId]
-type::io.circe.Codec.AsObject[phoenix.punters.PunterEntity.PunterId]
-type::(implicit codec: shapeless.Lazy[io.circe.generic.codec.DerivedAsObjectCodec[phoenix.punters.PunterEntity.PunterId]]): io.circe.Codec.AsObject[phoenix.punters.PunterEntity.PunterId]
-type::[A](implicit codec: shapeless.Lazy[io.circe.generic.codec.DerivedAsObjectCodec[A]]): io.circe.Codec.AsObject[A]
-type::io.circe.generic.semiauto.type
-type::io.circe.generic.type
-type::io.circe.type
-type::io.type
-type::phoenix.punters.PunterEntity.PunterId
-type::shapeless.Lazy[io.circe.generic.codec.DerivedAsObjectCodec[phoenix.punters.PunterEntity.PunterId]]
-type::io.circe.generic.codec.DerivedAsObjectCodec[phoenix.punters.PunterEntity.PunterId]
-type::anon$lazy$macro$5
-type::Serializable
-type::anon$lazy$macro$5.super.type
-type::[T0]T0
-type::(implicit gen: shapeless.LabelledGeneric.Aux[phoenix.punters.PunterEntity.PunterId,shapeless.labelled.FieldType[Symbol @@ String("value"),String] :: shapeless.ops.hlist.ZipWithKeys.hnilZipWithKeys.Out], codec: shapeless.Lazy[io.circe.generic.codec.ReprAsObjectCodec[shapeless.labelled.FieldType[Symbol @@ String("value"),String] :: shapeless.ops.hlist.ZipWithKeys.hnilZipWithKeys.Out]]): io.circe.generic.codec.DerivedAsObjectCodec[phoenix.punters.PunterEntity.PunterId]
-type::[A, R](implicit gen: shapeless.LabelledGeneric.Aux[A,R], codec: shapeless.Lazy[io.circe.generic.codec.ReprAsObjectCodec[R]]): io.circe.generic.codec.DerivedAsObjectCodec[A]
-type::io.circe.generic.codec.DerivedAsObjectCodec.type
-type::io.circe.generic.codec.type
-type::shapeless.labelled.FieldType[Symbol @@ String("value"),String] :: shapeless.ops.hlist.ZipWithKeys.hnilZipWithKeys.Out
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
+this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string || this is some random string ||
