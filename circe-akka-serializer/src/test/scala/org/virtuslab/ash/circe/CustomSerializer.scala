@@ -17,7 +17,7 @@ class CustomSerializer(actorSystem: ExtendedActorSystem)
 
   override def identifier: Int = 42352
 
-  override lazy val codecs =
+  override lazy val codecs: Seq[Registration[_ <: CirceSerializabilityTrait]] =
     Seq(
       Register[Tree],
       Register[StdData],
@@ -26,7 +26,8 @@ class CustomSerializer(actorSystem: ExtendedActorSystem)
       Register(implicitly[ru.TypeTag[ModifiedCodec]], prepareEncoder, prepareDecoder),
       Register[GenericClass[CirceSerializabilityTrait, CirceSerializabilityTrait]])
 
-  override lazy val manifestMigrations = Seq("org.virtuslab.ash.data.OldName" -> classOf[TopTraitMigration])
+  override lazy val manifestMigrations: Seq[(String, Class[TopTraitMigration])] =
+    Seq("org.virtuslab.ash.data.OldName" -> classOf[TopTraitMigration])
 
   override lazy val packagePrefix = "org.virtuslab.ash"
 }

@@ -251,6 +251,7 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem)
   override lazy val packagePrefix = "org.project"
 }
 ```
+`CirceAkkaSerializer` can be configured to use Gzip compression when serializing payloads greater than defined size (default is without compression). See [default reference.conf file](circe-akka-serializer/src/main/resources/reference.conf) with comments for details.  
 
 For more guidelines on how to use the serializer,
 read [Akka documentation about serialization](https://doc.akka.io/docs/akka/current/serialization.html),
