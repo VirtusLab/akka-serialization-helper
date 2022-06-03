@@ -89,7 +89,7 @@ class CirceAkkaSerializerSpec extends AnyWordSpecLike with should.Matchers {
 
     // setup for testing compression feature - with compression enabled
     val compressionConfig =
-      config.withValue("org.virtuslab.ash.compression.algorithm", ConfigValueFactory.fromAnyRef("gzip"))
+      config.withValue("org.virtuslab.ash.circe.compression.algorithm", ConfigValueFactory.fromAnyRef("gzip"))
     val compressionTestKit: ActorTestKit = ActorTestKit(compressionConfig)
     val compressionActorSystem: ActorSystem[Nothing] = compressionTestKit.system
     val compressionSerializationTestKit = new MigrationAndCompressionTestKit(compressionActorSystem)
