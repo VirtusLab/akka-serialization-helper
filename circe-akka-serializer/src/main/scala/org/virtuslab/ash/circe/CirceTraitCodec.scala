@@ -54,15 +54,6 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
 
   val errorCallback: String => Unit
 
-  Seq(
-    (codecs, "codecs"),
-    (manifestMigrations, "manifestMigrations"),
-    (packagePrefix, "packagePrefix"),
-    (classTagEvidence, "classTagEvidence"),
-    (errorCallback, "errorCallback")).foreach { x =>
-    assert(x._1 != null, s"${x._2} must be declared as a def or a lazy val to work correctly")
-  }
-
   private val mirror = ru.runtimeMirror(getClass.getClassLoader)
 
   protected val codecsMap: Map[String, (Encoder[_ <: Ser], Decoder[_ <: Ser])] = codecs
@@ -85,8 +76,9 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
     .toMap
     .withDefaultValue("")
 
-  def manifest(o: AnyRef): String = parentsUpToRegisteredTypeMap(o.getClass.getName)
-
+  /**
+   * Decoder apply method - decodes from Json into an object of type Ser
+   */
   override def apply(c: HCursor): Result[Ser] = {
     c.value.asObject match {
       case Some(obj) =>
@@ -103,6 +95,9 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
     }
   }
 
+  /**
+   * Encoder apply method - encodes given object of type Ser into Json
+   */
   override def apply(a: Ser): Json = {
     val manifestString = manifest(a)
     val encoder = codecsMap.get(manifestString) match {
@@ -112,6 +107,33 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
           s"Failed to encode generic type: Codec for [${a.getClass.getName}] with manifest [$manifestString] not found in codecs")
     }
     Json.obj((manifestString, encoder.asInstanceOf[Encoder[Ser]](a)))
+  }
+
+  def manifest(o: AnyRef): String = parentsUpToRegisteredTypeMap(o.getClass.getName)
+
+  /*
+   * All code below serves as a check - it checks,
+   * whether class extending this trait is a valid implementation.
+   * doNeededChecksOnStart() gets invoked on object creation.
+   */
+  doNeededChecksOnStart()
+
+  private def doNeededChecksOnStart(): Unit = {
+    checkImplementationForInvalidMemberDeclarations()
+    checkSerializableTypesForMissingCodec(packagePrefix)
+    checkCodecsForNull()
+    checkCodecsForDuplication()
+  }
+
+  private def checkImplementationForInvalidMemberDeclarations(): Unit = {
+    Seq(
+      (codecs, "codecs"),
+      (manifestMigrations, "manifestMigrations"),
+      (packagePrefix, "packagePrefix"),
+      (classTagEvidence, "classTagEvidence"),
+      (errorCallback, "errorCallback")).foreach { x =>
+      assert(x._1 != null, s"${x._2} must be declared as a def or a lazy val to work correctly")
+    }
   }
 
   private def checkSerializableTypesForMissingCodec(packagePrefix: String): Unit = {
@@ -142,8 +164,4 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
       errorCallback(s"Codec for class ${x._1} has been declared multiple times with types ${x._2.mkString(",")}.")
     }
   }
-
-  checkSerializableTypesForMissingCodec(packagePrefix)
-  checkCodecsForNull()
-  checkCodecsForDuplication()
 }

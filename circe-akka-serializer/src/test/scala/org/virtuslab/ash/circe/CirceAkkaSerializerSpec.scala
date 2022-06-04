@@ -1,13 +1,17 @@
 package org.virtuslab.ash.circe
 
+import scala.io.Source
+
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.testkit.typed.scaladsl.SerializationTestKit
 import akka.actor.typed.ActorSystem
 import com.typesafe.config.ConfigFactory
+import com.typesafe.config.ConfigValueFactory
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
 
-import org.virtuslab.ash.circe.MigrationTestKit.SerializationData
+import org.virtuslab.ash.circe.Compression.isCompressedWithGzip
+import org.virtuslab.ash.circe.MigrationAndCompressionTestKit.SerializationData
 import org.virtuslab.ash.circe.data.Tree.Node._
 import org.virtuslab.ash.circe.data._
 
@@ -17,7 +21,7 @@ class CirceAkkaSerializerSpec extends AnyWordSpecLike with should.Matchers {
     val testKit: ActorTestKit = ActorTestKit(config)
     val system: ActorSystem[Nothing] = testKit.system
     val serializationTestKit = new SerializationTestKit(system)
-    val migrationTestKit = new MigrationTestKit(system)
+    val migrationTestKit = new MigrationAndCompressionTestKit(system)
 
     "serialize standard data" in {
       import org.virtuslab.ash.circe.data.StdData._
@@ -81,6 +85,41 @@ class CirceAkkaSerializerSpec extends AnyWordSpecLike with should.Matchers {
 
     "serialize generic classes" in {
       serializationTestKit.verifySerialization(GenericClass(StdData.One(1, 1, "aaa"), Tree.Leaf()))
+    }
+
+    // setup for testing compression feature - with compression enabled
+    val compressionConfig =
+      config.withValue("org.virtuslab.ash.circe.compression.algorithm", ConfigValueFactory.fromAnyRef("gzip"))
+    val compressionTestKit: ActorTestKit = ActorTestKit(compressionConfig)
+    val compressionActorSystem: ActorSystem[Nothing] = compressionTestKit.system
+    val compressionSerializationTestKit = new MigrationAndCompressionTestKit(compressionActorSystem)
+
+    val heavyWeightString = Source.fromResource("more_than_1KiB_object_file.txt").getLines().toList.mkString("\n")
+    val lightWeightString = "x"
+    val largeSerializableObject = StdData.One(123, 456.0f, heavyWeightString)
+    val smallSerializableObject = StdData.One(123, 456.0f, lightWeightString)
+
+    "compress payload using GZip compression algorithm when gzip compression is enabled and payload's size is bigger than threshold" in {
+      val largeObjectSerialized = compressionSerializationTestKit.serialize(largeSerializableObject)
+      isCompressedWithGzip(largeObjectSerialized._1) shouldBe true
+    }
+
+    "decompress payload properly when it has been compressed previously with GZip compression algorithm" in {
+      val largeObjectSerialized = compressionSerializationTestKit.serialize(largeSerializableObject)
+      val deserializedObject = compressionSerializationTestKit.deserialize(largeObjectSerialized)
+      deserializedObject shouldEqual largeSerializableObject
+    }
+
+    "not compress payload when gzip compression is enabled and payload's size is smaller than threshold" in {
+      val smallObjectSerialized = compressionSerializationTestKit.serialize(smallSerializableObject)
+      isCompressedWithGzip(smallObjectSerialized._1) shouldBe false
+    }
+
+    // below example uses standard `config` from circe-akka-serializer/src/test/resources/application.conf
+    // which is available in the migrationTestKit object - so compression is disabled
+    "not compress payload when compression is configuration is set to 'off'" in {
+      val largeObjectSerialized = migrationTestKit.serialize(largeSerializableObject)
+      isCompressedWithGzip(largeObjectSerialized._1) shouldBe false
     }
 
   }

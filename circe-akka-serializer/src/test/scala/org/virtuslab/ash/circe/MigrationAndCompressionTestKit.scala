@@ -5,10 +5,10 @@ import akka.actor.typed.scaladsl.adapter._
 import akka.serialization.SerializationExtension
 import akka.serialization.Serializers
 
-import org.virtuslab.ash.circe.MigrationTestKit.SerializationData
+import org.virtuslab.ash.circe.MigrationAndCompressionTestKit.SerializationData
 
 /**
- * Utilities to test serialization migration.
+ * Utilities to test serialization migration and compression.
  * To perform round trip:
  * {{{
  * val migrationTestKit = new MigrationTestKit(system)
@@ -18,7 +18,7 @@ import org.virtuslab.ash.circe.MigrationTestKit.SerializationData
  * original == result
  * }}}
  */
-class MigrationTestKit(system: ActorSystem[_]) {
+class MigrationAndCompressionTestKit(system: ActorSystem[_]) {
   private val serialization = SerializationExtension(system.toClassic)
 
   def serialize(objAnyRef: AnyRef): SerializationData = {
@@ -33,6 +33,6 @@ class MigrationTestKit(system: ActorSystem[_]) {
   }
 }
 
-object MigrationTestKit {
+object MigrationAndCompressionTestKit {
   type SerializationData = (Array[Byte], Int, String)
 }

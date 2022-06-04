@@ -45,8 +45,18 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
     with AkkaCodecs {
 
   private lazy val log = Logging(system, getClass)
-  private lazy val conf = system.settings.config.getConfig("org.virtuslab.ash")
+  private lazy val conf = system.settings.config.getConfig("org.virtuslab.ash.circe")
   private lazy val isDebugEnabled = conf.getBoolean("verbose-debug-logging") && log.isDebugEnabled
+  private lazy val compressionAlgorithm: Compression.Algorithm = conf.getString("compression.algorithm") match {
+    case "off" =>
+      Compression.Off
+    case "gzip" =>
+      Compression.GZip(conf.getBytes("compression.compress-larger-than"))
+    case other =>
+      throw new IllegalArgumentException(
+        s"Unknown compression algorithm value: [$other], possible values are: 'off' and 'gzip'")
+  }
+  protected val bufferSize: Int = 1024 * 4
 
   override lazy val classTagEvidence: ClassTag[Ser] = implicitly[ClassTag[Ser]]
   override lazy val errorCallback: String => Unit = x => log.error(x)
@@ -58,9 +68,10 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
     val startTime = if (isDebugEnabled) System.nanoTime else 0L
     codecsMap.get(manifest(o)) match {
       case Some((encoder, _)) =>
-        val res = printer.print(encoder.asInstanceOf[Encoder[AnyRef]](o)).getBytes(UTF_8)
-        logDuration("Serialization", o, startTime, res)
-        res
+        val bytes = printer.print(encoder.asInstanceOf[Encoder[AnyRef]](o)).getBytes(UTF_8)
+        val result = Compression.compressIfNeeded(bytes, bufferSize, compressionAlgorithm)
+        logDuration("Serialization", o, startTime, result)
+        result
       case None =>
         throw new RuntimeException(
           s"Serialization of [${o.getClass.getName}] failed. Call Register[A] for this class or its supertype and append result to `def codecs`.")
@@ -71,9 +82,10 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
     val startTime = if (isDebugEnabled) System.nanoTime else 0L
     codecsMap.get(manifestMigrationsMap.getOrElse(manifest, manifest)) match {
       case Some((_, decoder)) =>
-        val res = parser.parseByteArray(bytes).flatMap(_.as(decoder)).fold(e => throw e, identity)
-        logDuration("Deserialization", res, startTime, bytes)
-        res
+        val decompressedBytes = Compression.decompressIfNeeded(bytes, bufferSize)
+        val result = parser.parseByteArray(decompressedBytes).flatMap(_.as(decoder)).fold(e => throw e, identity)
+        logDuration("Deserialization", result, startTime, bytes)
+        result
       case None =>
         throw new NotSerializableException(
           s"Manifest [$manifest] did not match any known codec. If you're not currently performing a rolling upgrade, you must add a manifest migration to correct codec.")
@@ -115,4 +127,5 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
         bytes.length)
     }
   }
+
 }
