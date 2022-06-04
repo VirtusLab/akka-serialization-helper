@@ -54,9 +54,14 @@ object Compression {
     }
 
   /*
-  Since we are encoding JSON for Ser <: AnyRef types - they will start with '{' char for Json objects or with '[' char for Arrays.
-  Thus, the first element of the `bytes` array is either the 123 Byte number - which is the decimal representation of the { character,
-  or - the 91 Byte number - which is the decimal representation of the [ character.
+  Since we are encoding JSON for Ser <: AnyRef types - they can start with:
+  a) '{' char for Json objects or
+  b) '[' char for Arrays or
+  c) '"' char for String
+  Thus, the first element of the `bytes` array could be one of three below:
+  a) 123 Byte number - which is the decimal representation of the { character
+  b) 91 Byte number - which is the decimal representation of the [ character
+  c) 34 Byte number - which is the decimal representation of the " character
 
    So, below quick comment on why isCompressedWithGzip will not return false positives (for not compressed JSON data):
 
@@ -65,7 +70,7 @@ object Compression {
     bytes(0) == 35615.toByte
     which gets evaluated to:
     bytes(0) == 31 // where 31 is of type Byte
-    And since bytes(0) holds a Byte with value equal to 123 or 91 - this will never be true.
+    And since bytes(0) holds a Byte with value equal to 123, 91 or 34 - this will never be true.
    */
   private[circe] def isCompressedWithGzip(bytes: Array[Byte]): Boolean =
     (bytes != null) && (bytes.length >= 2) &&
