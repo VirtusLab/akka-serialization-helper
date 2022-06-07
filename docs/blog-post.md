@@ -3,24 +3,40 @@
 ![bulletproof shield](https://images.unsplash.com/photo-1561156772-a44477f220a5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80)
 <i>bulletproof shield from [Unsplash](https://images.unsplash.com/photo-1561156772-a44477f220a5) by [NIFTYART](https://unsplash.com/@niftyartofficial1_)</i>
 
-<p>Every message leaving a JVM boundary in Akka needs to be serialized first. However, the existing solutions for serialization in Scala leave a lot of room for runtime failures that are NOT reported in compile time. We’re glad to introduce [Akka Serialization Helper](https://github.com/VirtusLab/akka-serialization-helper), a toolkit including a Circe-based, runtime-safe serializer and a set of Scala compiler plugins to counteract the common caveats when working with Akka serialization.</p>
+Every message leaving a JVM boundary in Akka needs to be serialized first. However, the existing solutions for serialization in Scala leave a lot of room for runtime failures that are NOT reported in compile time. We’re glad to introduce [Akka Serialization Helper](https://github.com/VirtusLab/akka-serialization-helper), a toolkit including a Circe-based, runtime-safe serializer and a set of Scala compiler plugins to counteract the common caveats when working with Akka serialization.
 
 ![logo_ash_horizontal@4x](https://user-images.githubusercontent.com/25779550/135059025-4cfade5b-bfcb-47e8-872f-8a3d78ce0c25.png)
 
-<p>While Akka is generally a great tool to work with serialization, there are few specific situations, where things might go wrong and cause unexpected errors. Specifically, things that make standard akka serialization prone to errors are:
+While Akka is generally a great tool to work with serialization, there are few specific situations, where things might go wrong and cause unexpected errors. Specifically, things that make standard akka serialization prone to errors are:
 
 1. [Missing serialization binding](#missing-serialization-binding)
 2. [Incompatibility of persistent data](#incompatibility-of-persistent-data)
-3. [Jackson Akka Serializer issues](#jackson-akka-serializer-drawbacks)
+3. [Jackson Akka Serializer drawbacks](#jackson-akka-serializer-drawbacks)
 4. [Missing Codec registration](#missing-codec-registration)
 
 All of these problems have one thing in common - these are bugs in application code (programmer's oversights) that are not detected in compile-time, but can easily break your app in runtime. Fortunately - you can get rid of all these issues by catching them in compilation, because Akka Serialization Helper (shortly: ASH) comes to the rescue!
 
+## How to install ASH in your project
+
+Add the following line to `plugins.sbt` (take `Version` from the above maven badge or [GitHub Releases](https://github.com/VirtusLab/akka-serialization-helper/releases)):
+
+```scala
+addSbtPlugin("org.virtuslab.ash" % "sbt-akka-serialization-helper" % Version)
+```
+
+and enable the sbt plugin in the target project:
+```scala
+lazy val app = (project in file("app"))
+  .enablePlugins(AkkaSerializationHelperPlugin)
+```
+
+## <i>Ok, but why would I ever need to use that?</i>
+
 ![serialization_graphics](https://user-images.githubusercontent.com/49597713/172339712-f2cfd6d8-8411-41d2-a51d-9ae13b3040b0.png)
 
-<p>As shown on the picture above, akka-specific objects that get serialized are: Messages, Events and States. Let's take a quick dive and see what exactly can go wrong with serializing these types and how our toolbox can help.</p>
+Akka-specific objects that get serialized are: Messages, Events and States. Unfortunately, there might be a lot of serialization-related errors in runtime. Let's take a quick dive and see what exactly can go wrong and how the ASH toolbox can help.
 
-### Missing serialization binding
+### 1. Missing serialization binding
 
 To serialize message, persistent state or event in Akka, Scala trait needs to be defined:
 
@@ -49,7 +65,7 @@ trait MySer
 case class MyMessage() // extends MySer
 ```
 
-`akka-serialization-helper` to the rescue! It detects messages, events and persistent states, and checks whether they
+`akka-serialization-helper` to the rescue! The `serializability-checker-plugin` (part of ASH) detects messages, events and persistent states, and checks whether they
 extend the given base trait and report an error when they don't. This ensures that the specified serializer is
 used by Akka and protects against an unintended fallback to
 [Java serialization](https://doc.akka.io/docs/akka/current/serialization.html#java-serialization) or outright
@@ -88,14 +104,14 @@ with  @org.virtuslab.ash.annotation.SerializabilityTrait.
                ^
 ```
 
-### Incompatibility of persistent data
+### 2. Incompatibility of persistent data
 
 <img width="1201" alt="typical-tragic-story" src="https://user-images.githubusercontent.com/49597713/172349918-a4af3ffe-e3e7-4582-ac2e-bb559f139bf5.png">
 
 A typical problem with persistence is when the already persisted data is not compatible
 with the schemas defined in a new version of the application.
 
-To solve this, a mix of a compiler plugin and a sbt task can be used for dumping schema
+To solve this, the `dump-persistence-schema-plugin` (a mix of a compiler plugin and a sbt task, part of ASH toolbox) can be used for dumping schema
 of [akka-persistence](https://doc.akka.io/docs/akka/current/typed/persistence.html#example-and-core-api) to a
 file. It can be used for detecting accidental changes of events (journal) and states (snapshots) with a simple `diff`.
 
@@ -136,7 +152,7 @@ version from the current commit.
 
 <img width="1043" alt="easy-to-diff" src="https://user-images.githubusercontent.com/49597713/172350313-cd03f033-ca68-40c3-a4df-064456c483d0.png">
 
-### Jackson Akka Serializer drawbacks
+### 3. Jackson Akka Serializer drawbacks
 
 Using Jackson Serializer for akka-persistence is also one of the pitfalls. Akka Serialization Helper provides an alternative - a more Scala-friendly serializer that uses [Circe](https://circe.github.io/circe/).
 
@@ -189,13 +205,9 @@ def receive = {
 } // message will be unhandled !!
 ```
 
+#### But there is a better way to do serialization!
 To get rid of such problems, our circe-based Akka serializer can be used. [Circe Akka Serializer](https://github.com/VirtusLab/akka-serialization-helper/tree/main/circe-akka-serializer) (part of the `akka-serialization-helper` toolbox) uses Circe codecs, derived using [Shapeless](https://circe.github.io/circe/codecs/auto-derivation.html),
 that are generated during compile time (so serializer won't crash during runtime as reflection-based serializers may do).
-
-(Note that it is **not** obligatory to use this serializer for the other features - serializability checker, persistence schema dump - to work.
-They work as well with e.g. when [Jackson serializer](https://doc.akka.io/docs/akka/current/serialization-jackson.html) is selected)
-
-#### Usage
 
 Circe Akka Serializer is really easy to use, just add the following to project dependencies...
 
@@ -225,7 +237,7 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem)
 ```
 and that's it! You have safe and sound circe-based serializer to cope with serialization of your objects.
 
-### Missing Codec registration
+### 4. Missing Codec registration
 
 Last thing that might cause unexpected issues during serialization goes here: if a codec is not registered, a runtime exception will occur.
 ```scala
