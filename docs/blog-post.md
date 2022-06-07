@@ -9,10 +9,10 @@ Every message leaving a JVM boundary in Akka needs to be serialized first. Howev
 
 While Akka is generally a great tool to work with serialization, there are few specific situations, where things might go wrong and cause unexpected errors. Specifically, things that make standard akka serialization prone to errors are:
 
-1. [Missing serialization binding](#missing-serialization-binding)
-2. [Incompatibility of persistent data](#incompatibility-of-persistent-data)
-3. [Jackson Akka Serializer drawbacks](#jackson-akka-serializer-drawbacks)
-4. [Missing Codec registration](#missing-codec-registration)
+1. [Missing serialization binding](#1-missing-serialization-binding)
+2. [Incompatibility of persistent data](#2-incompatibility-of-persistent-data)
+3. [Jackson Akka Serializer drawbacks](#3-jackson-akka-serializer-drawbacks)
+4. [Missing Codec registration](#4-missing-codec-registration)
 
 All of these problems have one thing in common - these are bugs in application code (programmer's oversights) that are not detected in compile-time, but can easily break your app in runtime. Fortunately - you can get rid of all these issues by catching them in compilation, because Akka Serialization Helper (shortly: ASH) comes to the rescue!
 
