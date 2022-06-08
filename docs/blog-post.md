@@ -158,7 +158,7 @@ Using Jackson Serializer for akka-persistence is also one of the pitfalls. Akka 
 
 Examples below show some problems that might occur when combining Jackson with Scala code:
 
-#### Example 1 
+#### Example 1
 Dangerous code for Jackson:
 
 ```scala
