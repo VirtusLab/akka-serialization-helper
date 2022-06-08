@@ -34,7 +34,7 @@ lazy val app = (project in file("app"))
 
 ![serialization_graphics](https://user-images.githubusercontent.com/49597713/172339712-f2cfd6d8-8411-41d2-a51d-9ae13b3040b0.png)
 
-Akka-specific objects that get serialized are: Messages, Events and States (see [Akka docs regarding Events and States](https://doc.akka.io/docs/akka/current/typed/persistence.html)). Unfortunately, there might be a lot of serialization-related errors in runtime. Let's take a quick dive and see what exactly can go wrong and how the ASH toolbox can help.
+Akka-specific objects that get serialized are: Messages, Events and States ([events and persistent state](https://doc.akka.io/docs/akka/current/typed/persistence.html)). Unfortunately, there might be a lot of serialization-related errors in runtime. Let's take a quick dive and see what exactly can go wrong and how the ASH toolbox can help.
 
 ### 1. Missing serialization binding
 
@@ -193,8 +193,8 @@ If a Scala object is defined:
 case object Tick
 ```
 
-There **will not be exceptions** during serialization but Jackson will create
-another instance of `Tick` instead of restoring the `object Tick`'s underlying singleton. So, deserialization will end up very bad...
+There **will not be exceptions** during serialization but, during deserialization, Jackson will create
+another `Tick` object instead of restoring the `object Tick`'s underlying singleton. So, deserialization will end up very bad...
 
 ```scala
 actorRef ! Tick
