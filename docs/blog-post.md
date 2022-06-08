@@ -194,7 +194,7 @@ case object Tick
 ```
 
 There **will not be exceptions** during serialization but, during deserialization, Jackson will create
-another `Tick` object instead of restoring the `object Tick`'s underlying singleton. So, deserialization will end up very bad...
+another instance of `object Tick`'s underlying class instead of restoring the `object Tick`'s underlying singleton. So, deserialization will end up very bad...
 
 ```scala
 actorRef ! Tick
