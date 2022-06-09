@@ -30,11 +30,11 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
     options.filterNot(_.startsWith("-")).headOption match {
       case Some(path) =>
         try {
-          val f = new File(path + File.separator + cacheFileName)
-          f.getCanonicalPath
-          pluginOptions.cacheFile = f
+          val cacheFile = new File(path + File.separator + cacheFileName)
+          cacheFile.getCanonicalPath
+          pluginOptions.cacheFile = cacheFile
           pluginOptions.oldTypes = {
-            val raf = new RandomAccessFile(f, "rw")
+            val raf = new RandomAccessFile(cacheFile, "rw")
             try {
               val channel = raf.getChannel
               val lock = channel.lock()

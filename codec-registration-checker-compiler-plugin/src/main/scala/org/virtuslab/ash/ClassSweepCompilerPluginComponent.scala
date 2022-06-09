@@ -20,7 +20,7 @@ class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
-      private val up = options.oldTypes.groupBy(_._2)
+      private val oldTypesFromPreviousCompilation = options.oldTypes.groupBy(_._2)
 
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
@@ -35,7 +35,7 @@ class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions
           .collect {
             case x: ClassDef => x.impl.tpe.typeSymbol.fullName
           }
-          .flatMap(up.get)
+          .flatMap(oldTypesFromPreviousCompilation.get)
           .flatten
       }
     }

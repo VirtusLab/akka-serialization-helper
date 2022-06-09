@@ -67,7 +67,7 @@ class SerializerCheckCompilerPluginComponent(
           .collect {
             case x: ImplDef => (x, x.symbol.annotations)
           }
-          .map(x => (x._1, x._2.filter(_.tpe.toString() == serializerType)))
+          .map(x => (x._1, x._2.filter(_.tpe.toString == serializerType)))
           .filter(_._2.nonEmpty)
           .foreach { x =>
             val (implDef, annotations) = x
@@ -81,7 +81,7 @@ class SerializerCheckCompilerPluginComponent(
       }
 
       private def processSerializerClass(serializerImplDef: ImplDef, serializerAnnotation: AnnotationInfo): Unit = {
-        val (fqcn, filterRegex) = serializerAnnotation.args match {
+        val (fullyQualifiedClassName, filterRegex) = serializerAnnotation.args match {
           case List(clazzTree, regexTree) =>
             val fqcn = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
               if (tpe.typeSymbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType))
@@ -133,13 +133,15 @@ class SerializerCheckCompilerPluginComponent(
             typeArgsBfs(next, acc)
         }
 
-        val foundInSerializerTypesFqcns = typeArgsBfs(foundTypes.toSet).map(_.typeSymbol.fullName)
+        val fullyQualifiedClassNamesOfFoundTypes = typeArgsBfs(foundTypes.toSet).map(_.typeSymbol.fullName)
 
-        val missingFqcn = typesToCheck(fqcn).map(_._2).filterNot(foundInSerializerTypesFqcns)
-        if (missingFqcn.nonEmpty) {
+        val missingFullyQualifiedClassNames =
+          typesToCheck(fullyQualifiedClassName).map(_._2).filterNot(fullyQualifiedClassNamesOfFoundTypes)
+        if (missingFullyQualifiedClassNames.nonEmpty) {
           reporter.error(
             serializerImplDef.pos,
-            s"""No codecs for ${missingFqcn.mkString(", ")} are registered in class annotated with @$serializerType.
+            s"""No codecs for ${missingFullyQualifiedClassNames
+              .mkString(", ")} are registered in class annotated with @$serializerType.
                |This will lead to a missing codec for Akka serialization in the runtime.
                |Current filtering regex: $filterRegex""".stripMargin)
         }
