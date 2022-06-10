@@ -15,27 +15,40 @@ class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions
   override val runsAfter: List[String] = List("refchecks")
   override def description: String = s"searches for direct descendants of classes annotated with serializability trait"
 
-  val foundTypes: mutable.Buffer[(String, String)] = mutable.ListBuffer()
-  val typesToUpdate: mutable.Buffer[(String, String)] = mutable.ListBuffer()
+  val foundParentChildFullyQualifiedClassNamePairs: mutable.Buffer[ParentChildFullyQualifiedClassNamePair] =
+    mutable.ListBuffer()
+  val parentChildFullyQualifiedClassNamePairsToUpdate: mutable.Buffer[ParentChildFullyQualifiedClassNamePair] =
+    mutable.ListBuffer()
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
-      private val oldTypesFromPreviousCompilation = options.oldTypes.groupBy(_._2)
+      private val parentChildClassNamesFromPreviousCompilation =
+        options.oldParentChildFullyQualifiedClassNamePairs.groupBy(_.childFullyQualifiedClassName)
 
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
-        foundTypes ++= body
+
+        foundParentChildFullyQualifiedClassNamePairs ++= body
           .collect {
-            case x: ClassDef => x.impl
+            case classDef: ClassDef => classDef.impl
           }
-          .flatMap(x => x.parents.map((_, x)))
-          .filter(_._1.symbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType))
-          .map(x => (x._1.tpe.typeSymbol.fullName, x._2.tpe.typeSymbol.fullName))
-        typesToUpdate ++= body
+          .flatMap(template => template.parents.map((_, template)))
+          .filter {
+            case (parentTypeTree, _) =>
+              parentTypeTree.symbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType)
+          }
+          .map {
+            case (parentTypeTree, childTypeTree) =>
+              ParentChildFullyQualifiedClassNamePair(
+                parentTypeTree.tpe.typeSymbol.fullName,
+                childTypeTree.tpe.typeSymbol.fullName)
+          }
+
+        parentChildFullyQualifiedClassNamePairsToUpdate ++= body
           .collect {
-            case x: ClassDef => x.impl.tpe.typeSymbol.fullName
+            case classDef: ClassDef => classDef.impl.tpe.typeSymbol.fullName
           }
-          .flatMap(oldTypesFromPreviousCompilation.get)
+          .flatMap(parentChildClassNamesFromPreviousCompilation.get)
           .flatten
       }
     }

@@ -30,30 +30,40 @@ class SerializerCheckCompilerPluginComponent(
     s"Checks marked serializer for references to classes found in $serializerCheckPhaseName"
 
   private var typesNotDumped = true
-  private val typesToCheck = mutable.Map[String, List[(String, String)]]().withDefaultValue(Nil)
+  private val typeNamesToCheck =
+    mutable.Map[String, List[ParentChildFullyQualifiedClassNamePair]]().withDefaultValue(Nil)
 
-  private lazy val classSweepFoundTypes = classSweep.foundTypes.toSet
-  private lazy val classSweepTypesToUpdate = classSweep.typesToUpdate.toSet
+  private lazy val classSweepFoundTypeNamePairs = classSweep.foundParentChildFullyQualifiedClassNamePairs.toSet
+  private lazy val classSweepTypeNamePairsToUpdate = classSweep.parentChildFullyQualifiedClassNamePairsToUpdate.toSet
 
   override def newPhase(prev: Phase): Phase = {
     new StdPhase(prev) {
       override def apply(unit: global.CompilationUnit): Unit = {
         if (typesNotDumped) {
-          val raf = new RandomAccessFile(options.cacheFile, "rw")
+          val raf = new RandomAccessFile(options.directClassDescendantsCacheFile, "rw")
           try {
             val channel = raf.getChannel
             val lock = channel.lock()
             try {
               val buffer = ByteBuffer.allocate(channel.size().toInt)
               channel.read(buffer)
-              val typesFromCacheFile = CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
-              val outTypes = ((typesFromCacheFile -- classSweepTypesToUpdate) | classSweepFoundTypes).toList
 
-              val outData = outTypes.map(x => x._1 + "," + x._2).sorted.reduceOption(_ + "\n" + _).getOrElse("")
+              val parentChildFullyQualifiedClassNamePairsFromCacheFile =
+                CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
+              val outParentChildFullyQualifiedClassNamePairs =
+                ((parentChildFullyQualifiedClassNamePairsFromCacheFile -- classSweepTypeNamePairsToUpdate) |
+                classSweepFoundTypeNamePairs).toList
+
+              val outData: String =
+                outParentChildFullyQualifiedClassNamePairs
+                  .map(pair => pair.parentFullyQualifiedClassName + "," + pair.childFullyQualifiedClassName)
+                  .sorted
+                  .reduceOption(_ + "\n" + _)
+                  .getOrElse("")
               channel.truncate(0)
               channel.write(ByteBuffer.wrap(outData.getBytes(StandardCharsets.UTF_8)))
 
-              typesToCheck ++= outTypes.groupBy(_._1)
+              typeNamesToCheck ++= outParentChildFullyQualifiedClassNamePairs.groupBy(_.parentFullyQualifiedClassName)
               typesNotDumped = false
             } finally {
               lock.close()
@@ -63,17 +73,19 @@ class SerializerCheckCompilerPluginComponent(
             raf.close()
           }
         }
+
         unit.body
           .collect {
-            case x: ImplDef => (x, x.symbol.annotations)
+            case implDef: ImplDef => (implDef, implDef.symbol.annotations)
           }
-          .map(x => (x._1, x._2.filter(_.tpe.toString == serializerType)))
+          .map(implDefAnnotationsTuple =>
+            (implDefAnnotationsTuple._1, implDefAnnotationsTuple._2.filter(_.tpe.toString == serializerType)))
           .filter(_._2.nonEmpty)
-          .foreach { x =>
-            val (implDef, annotations) = x
+          .foreach { implDefAnnotationsTuple =>
+            val (implDef, annotations) = implDefAnnotationsTuple
             if (annotations.size > 1) {
               reporter.warning(
-                x._2.head.pos,
+                implDefAnnotationsTuple._2.head.pos,
                 s"Class can only have one @Serializer annotation. Currently it has ${annotations.size}. Using the one found first.")
             }
             processSerializerClass(implDef, annotations.head)
@@ -83,7 +95,7 @@ class SerializerCheckCompilerPluginComponent(
       private def processSerializerClass(serializerImplDef: ImplDef, serializerAnnotation: AnnotationInfo): Unit = {
         val (fullyQualifiedClassName, filterRegex) = serializerAnnotation.args match {
           case List(clazzTree, regexTree) =>
-            val fqcn = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
+            val fullyQualifiedClassNameOption = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
               if (tpe.typeSymbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType))
                 Some(tpe.typeSymbol.fullName)
               else {
@@ -93,15 +105,15 @@ class SerializerCheckCompilerPluginComponent(
                 None
               }
             }
-            val filterRegex =
+            val filterRegexOption =
               regexTree match {
                 case Select(_, TermName("$lessinit$greater$default$2")) => Some(".*")
                 case other                                              => extractValueOfLiteralConstantFromTree[String](other)
               }
 
-            (fqcn, filterRegex) match {
-              case (Some(tpe), Some(regex)) => (tpe, regex)
-              case _                        => return
+            (fullyQualifiedClassNameOption, filterRegexOption) match {
+              case (Some(fullyQualifiedClassName), Some(regex)) => (fullyQualifiedClassName, regex)
+              case _                                            => return
             }
 
           case _ => throw new IllegalStateException()
@@ -111,7 +123,7 @@ class SerializerCheckCompilerPluginComponent(
           try {
             serializerImplDef
               .collect {
-                case x: Tree if x.tpe != null => x.tpe
+                case tree: Tree if tree.tpe != null => tree.tpe
               }
               .distinct
               .filter(_.toString.matches(filterRegex))
@@ -119,24 +131,25 @@ class SerializerCheckCompilerPluginComponent(
             case e: PatternSyntaxException =>
               reporter.error(serializerImplDef.pos, "Exception throw during the use of filter regex: " + e.getMessage)
               return
-
           }
         }
 
         @tailrec
-        def typeArgsBfs(current: Set[Type], prev: Set[Type] = Set.empty): Set[Type] = {
+        def collectTypeArgs(current: Set[Type], prev: Set[Type] = Set.empty): Set[Type] = {
           val next = current.flatMap(_.typeArgs)
           val acc = prev | current
           if ((next &~ acc).isEmpty)
             acc
           else
-            typeArgsBfs(next, acc)
+            collectTypeArgs(next, acc)
         }
 
-        val fullyQualifiedClassNamesOfFoundTypes = typeArgsBfs(foundTypes.toSet).map(_.typeSymbol.fullName)
+        val fullyQualifiedClassNamesFromFoundTypes = collectTypeArgs(foundTypes.toSet).map(_.typeSymbol.fullName)
 
         val missingFullyQualifiedClassNames =
-          typesToCheck(fullyQualifiedClassName).map(_._2).filterNot(fullyQualifiedClassNamesOfFoundTypes)
+          typeNamesToCheck(fullyQualifiedClassName)
+            .map(_.childFullyQualifiedClassName)
+            .filterNot(fullyQualifiedClassNamesFromFoundTypes)
         if (missingFullyQualifiedClassNames.nonEmpty) {
           reporter.error(
             serializerImplDef.pos,
