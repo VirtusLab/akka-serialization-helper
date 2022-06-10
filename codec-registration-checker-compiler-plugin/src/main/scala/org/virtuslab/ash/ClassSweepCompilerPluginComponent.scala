@@ -15,20 +15,20 @@ class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions
   override val runsAfter: List[String] = List("refchecks")
   override def description: String = s"searches for direct descendants of classes annotated with serializability trait"
 
-  val foundParentChildFullyQualifiedClassNamePairs: mutable.Buffer[ParentChildFullyQualifiedClassNamePair] =
+  val foundParentChildFQCNPairs: mutable.Buffer[ParentChildFQCNPair] =
     mutable.ListBuffer()
-  val parentChildFullyQualifiedClassNamePairsToUpdate: mutable.Buffer[ParentChildFullyQualifiedClassNamePair] =
+  val parentChildFQCNPairsToUpdate: mutable.Buffer[ParentChildFQCNPair] =
     mutable.ListBuffer()
 
   override def newPhase(prev: Phase): Phase =
     new StdPhase(prev) {
       private val parentChildClassNamesFromPreviousCompilation =
-        options.oldParentChildFullyQualifiedClassNamePairs.groupBy(_.childFullyQualifiedClassName)
+        options.oldParentChildFQCNPairs.groupBy(_.childFQCN)
 
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
 
-        foundParentChildFullyQualifiedClassNamePairs ++= body
+        foundParentChildFQCNPairs ++= body
           .collect {
             case classDef: ClassDef => classDef.impl
           }
@@ -39,12 +39,10 @@ class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions
           }
           .map {
             case (parentTypeTree, childTypeTree) =>
-              ParentChildFullyQualifiedClassNamePair(
-                parentTypeTree.tpe.typeSymbol.fullName,
-                childTypeTree.tpe.typeSymbol.fullName)
+              ParentChildFQCNPair(parentTypeTree.tpe.typeSymbol.fullName, childTypeTree.tpe.typeSymbol.fullName)
           }
 
-        parentChildFullyQualifiedClassNamePairsToUpdate ++= body
+        parentChildFQCNPairsToUpdate ++= body
           .collect {
             case classDef: ClassDef => classDef.impl.tpe.typeSymbol.fullName
           }

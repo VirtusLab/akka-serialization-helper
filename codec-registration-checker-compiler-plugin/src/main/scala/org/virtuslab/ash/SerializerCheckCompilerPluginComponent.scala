@@ -31,10 +31,10 @@ class SerializerCheckCompilerPluginComponent(
 
   private var typesNotDumped = true
   private val typeNamesToCheck =
-    mutable.Map[String, List[ParentChildFullyQualifiedClassNamePair]]().withDefaultValue(Nil)
+    mutable.Map[String, List[ParentChildFQCNPair]]().withDefaultValue(Nil)
 
-  private lazy val classSweepFoundTypeNamePairs = classSweep.foundParentChildFullyQualifiedClassNamePairs.toSet
-  private lazy val classSweepTypeNamePairsToUpdate = classSweep.parentChildFullyQualifiedClassNamePairsToUpdate.toSet
+  private lazy val classSweepFoundFQCNPairs = classSweep.foundParentChildFQCNPairs.toSet
+  private lazy val classSweepFQCNPairsToUpdate = classSweep.parentChildFQCNPairsToUpdate.toSet
 
   override def newPhase(prev: Phase): Phase = {
     new StdPhase(prev) {
@@ -48,22 +48,18 @@ class SerializerCheckCompilerPluginComponent(
               val buffer = ByteBuffer.allocate(channel.size().toInt)
               channel.read(buffer)
 
-              val parentChildFullyQualifiedClassNamePairsFromCacheFile =
+              val parentChildFQCNPairsFromCacheFile =
                 CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
-              val outParentChildFullyQualifiedClassNamePairs =
-                ((parentChildFullyQualifiedClassNamePairsFromCacheFile -- classSweepTypeNamePairsToUpdate) |
-                classSweepFoundTypeNamePairs).toList
+              val outParentChildFQCNPairs =
+                ((parentChildFQCNPairsFromCacheFile -- classSweepFQCNPairsToUpdate) |
+                classSweepFoundFQCNPairs).toList
 
               val outData: String =
-                outParentChildFullyQualifiedClassNamePairs
-                  .map(pair => pair.parentFullyQualifiedClassName + "," + pair.childFullyQualifiedClassName)
-                  .sorted
-                  .reduceOption(_ + "\n" + _)
-                  .getOrElse("")
+                outParentChildFQCNPairs.map(pair => pair.parentFQCN + "," + pair.childFQCN).sorted.mkString("\n")
               channel.truncate(0)
               channel.write(ByteBuffer.wrap(outData.getBytes(StandardCharsets.UTF_8)))
 
-              typeNamesToCheck ++= outParentChildFullyQualifiedClassNamePairs.groupBy(_.parentFullyQualifiedClassName)
+              typeNamesToCheck ++= outParentChildFQCNPairs.groupBy(_.parentFQCN)
               typesNotDumped = false
             } finally {
               lock.close()
@@ -93,9 +89,9 @@ class SerializerCheckCompilerPluginComponent(
       }
 
       private def processSerializerClass(serializerImplDef: ImplDef, serializerAnnotation: AnnotationInfo): Unit = {
-        val (fullyQualifiedClassName, filterRegex) = serializerAnnotation.args match {
+        val (fqcn, filterRegex) = serializerAnnotation.args match {
           case List(clazzTree, regexTree) =>
-            val fullyQualifiedClassNameOption = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
+            val fqcnOption = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
               if (tpe.typeSymbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType))
                 Some(tpe.typeSymbol.fullName)
               else {
@@ -111,9 +107,9 @@ class SerializerCheckCompilerPluginComponent(
                 case other                                              => extractValueOfLiteralConstantFromTree[String](other)
               }
 
-            (fullyQualifiedClassNameOption, filterRegexOption) match {
-              case (Some(fullyQualifiedClassName), Some(regex)) => (fullyQualifiedClassName, regex)
-              case _                                            => return
+            (fqcnOption, filterRegexOption) match {
+              case (Some(fqcn), Some(regex)) => (fqcn, regex)
+              case _                         => return
             }
 
           case _ => throw new IllegalStateException()
@@ -147,9 +143,7 @@ class SerializerCheckCompilerPluginComponent(
         val fullyQualifiedClassNamesFromFoundTypes = collectTypeArgs(foundTypes.toSet).map(_.typeSymbol.fullName)
 
         val missingFullyQualifiedClassNames =
-          typeNamesToCheck(fullyQualifiedClassName)
-            .map(_.childFullyQualifiedClassName)
-            .filterNot(fullyQualifiedClassNamesFromFoundTypes)
+          typeNamesToCheck(fqcn).map(_.childFQCN).filterNot(fullyQualifiedClassNamesFromFoundTypes)
         if (missingFullyQualifiedClassNames.nonEmpty) {
           reporter.error(
             serializerImplDef.pos,

@@ -33,7 +33,7 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
           val cacheFile = new File(path + File.separator + directClassDescendantsCacheFileName)
           cacheFile.getCanonicalPath
           pluginOptions.directClassDescendantsCacheFile = cacheFile
-          pluginOptions.oldParentChildFullyQualifiedClassNamePairs = {
+          pluginOptions.oldParentChildFQCNPairs = {
             val raf = new RandomAccessFile(cacheFile, "rw")
             try {
               val channel = raf.getChannel
@@ -52,7 +52,7 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
           true
         } catch {
           case _: FileNotFoundException =>
-            pluginOptions.oldParentChildFullyQualifiedClassNamePairs = Nil
+            pluginOptions.oldParentChildFQCNPairs = Nil
             true
           case e @ (_: IOException | _: RuntimeException) =>
             error(s"Exception thrown, message: ${e.getMessage}")
@@ -76,9 +76,9 @@ object CodecRegistrationCheckerCompilerPlugin {
   val serializabilityTraitType = "org.virtuslab.ash.annotation.SerializabilityTrait"
   val serializerType = "org.virtuslab.ash.annotation.Serializer"
 
-  def parseCacheFile(buffer: ByteBuffer): Seq[ParentChildFullyQualifiedClassNamePair] = {
+  def parseCacheFile(buffer: ByteBuffer): Seq[ParentChildFQCNPair] = {
     StandardCharsets.UTF_8.decode(buffer).toString.split("\n").toSeq.filterNot(_.isBlank).map(_.split(",")).map {
-      case Array(a, b) => ParentChildFullyQualifiedClassNamePair(a, b)
+      case Array(a, b) => ParentChildFQCNPair(a, b)
       case other =>
         throw new RuntimeException(s"Invalid line in $directClassDescendantsCacheFileName file: ${other.mkString(",")}")
     }
