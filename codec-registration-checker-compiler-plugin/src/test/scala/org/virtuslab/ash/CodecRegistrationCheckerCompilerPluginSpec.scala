@@ -92,7 +92,8 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
         val out =
           CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
-        val cacheFile = (directory / CodecRegistrationCheckerCompilerPlugin.cacheFileName).contentAsString
+        val cacheFile =
+          (directory / CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName).contentAsString
         cacheFile should be("""org.random.project.SerializableTrait,org.random.project.GenericData
                               |org.random.project.SerializableTrait,org.random.project.IndirectData
                               |org.random.project.SerializableTrait,org.random.project.StdData""".stripMargin)
@@ -101,7 +102,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
 
     "use existing from cache file" in {
       File.usingTemporaryDirectory() { directory =>
-        val cacheFile = directory / CodecRegistrationCheckerCompilerPlugin.cacheFileName
+        val cacheFile = directory / CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName
         cacheFile < "org.random.project.SerializableTrait,org.random.project.MissingData"
         val out =
           CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
@@ -118,7 +119,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
       "integrity of cache file is compromised" in {
         assertThrows[RuntimeException] {
           File.usingTemporaryDirectory() { directory =>
-            val cacheFile = directory / CodecRegistrationCheckerCompilerPlugin.cacheFileName
+            val cacheFile = directory / CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName
             cacheFile < "org.random.project.SerializableTrait"
             CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
           }

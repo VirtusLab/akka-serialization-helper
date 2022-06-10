@@ -11,7 +11,7 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.Plugin
 import scala.tools.nsc.plugins.PluginComponent
 
-import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.cacheFileName
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName
 
 class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extends Plugin {
   override val name: String = "codec-registration-checker-plugin"
@@ -30,11 +30,11 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
     options.filterNot(_.startsWith("-")).headOption match {
       case Some(path) =>
         try {
-          val f = new File(path + File.separator + cacheFileName)
-          f.getCanonicalPath
-          pluginOptions.cacheFile = f
-          pluginOptions.oldTypes = {
-            val raf = new RandomAccessFile(f, "rw")
+          val cacheFile = new File(path + File.separator + directClassDescendantsCacheFileName)
+          cacheFile.getCanonicalPath
+          pluginOptions.directClassDescendantsCacheFile = cacheFile
+          pluginOptions.oldParentChildFQCNPairs = {
+            val raf = new RandomAccessFile(cacheFile, "rw")
             try {
               val channel = raf.getChannel
               val lock = channel.lock()
@@ -52,7 +52,7 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
           true
         } catch {
           case _: FileNotFoundException =>
-            pluginOptions.oldTypes = Nil
+            pluginOptions.oldParentChildFQCNPairs = Nil
             true
           case e @ (_: IOException | _: RuntimeException) =>
             error(s"Exception thrown, message: ${e.getMessage}")
@@ -72,15 +72,15 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
 object CodecRegistrationCheckerCompilerPlugin {
   val classSweepPhaseName = "codec-registration-class-sweep"
   val serializerCheckPhaseName = "codec-registration-serializer-check"
-  val cacheFileName = "codec-registration-checker-cache.csv"
+  val directClassDescendantsCacheFileName = "codec-registration-checker-cache.csv"
   val serializabilityTraitType = "org.virtuslab.ash.annotation.SerializabilityTrait"
   val serializerType = "org.virtuslab.ash.annotation.Serializer"
 
-  def parseCacheFile(buffer: ByteBuffer): Seq[(String, String)] = {
+  def parseCacheFile(buffer: ByteBuffer): Seq[ParentChildFQCNPair] = {
     StandardCharsets.UTF_8.decode(buffer).toString.split("\n").toSeq.filterNot(_.isBlank).map(_.split(",")).map {
-      case Array(a, b) => (a, b)
+      case Array(a, b) => ParentChildFQCNPair(a, b)
       case other =>
-        throw new RuntimeException(s"Invalid line in $cacheFileName file: ${other.mkString(",")}")
+        throw new RuntimeException(s"Invalid line in $directClassDescendantsCacheFileName file: ${other.mkString(",")}")
     }
   }
 
