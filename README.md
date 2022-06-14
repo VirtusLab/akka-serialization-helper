@@ -49,7 +49,7 @@ akka.actor {
 }
 ```
 
-The [problem](#appendix-b-what-happens-with-serialization-of-messages--events--states-that-do-not-extend-the-base-trait-bound-to-the-serializer) occurs if a class is not extended with the base trait bound to the serializer:
+The [problem](#appendix-b-what-happens-with-serialization-of-messages--events--states-that-do-not-extend-a-base-trait-bound-to-a-serializer) occurs if a class is not extended with the base trait bound to the serializer:
 
 ```scala
 trait MySer
