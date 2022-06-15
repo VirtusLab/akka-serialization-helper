@@ -139,7 +139,7 @@ lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(betterFiles % Test))
+    libraryDependencies ++= Seq(betterFiles % Provided))
   .dependsOn(annotation, circeAkkaSerializer % Test)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 

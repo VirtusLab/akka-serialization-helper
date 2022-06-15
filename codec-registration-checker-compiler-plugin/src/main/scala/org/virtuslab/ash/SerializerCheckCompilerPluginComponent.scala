@@ -4,7 +4,6 @@ import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.regex.PatternSyntaxException
-
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.reflect.ClassTag
@@ -12,7 +11,7 @@ import scala.reflect.classTag
 import scala.tools.nsc.Global
 import scala.tools.nsc.Phase
 import scala.tools.nsc.plugins.PluginComponent
-
+import better.files.File
 import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.classSweepPhaseName
 import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.serializabilityTraitType
 import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.serializerCheckPhaseName
@@ -141,16 +140,20 @@ class SerializerCheckCompilerPluginComponent(
         }
 
         val fullyQualifiedClassNamesFromFoundTypes = collectTypeArgs(foundTypes.toSet).map(_.typeSymbol.fullName)
-
-        val missingFullyQualifiedClassNames =
+        val possibleMissingFullyQualifiedClassNames =
           typeNamesToCheck(fqcn).map(_.childFQCN).filterNot(fullyQualifiedClassNamesFromFoundTypes)
-        if (missingFullyQualifiedClassNames.nonEmpty) {
-          reporter.error(
-            serializerImplDef.pos,
-            s"""No codecs for ${missingFullyQualifiedClassNames
-              .mkString(", ")} are registered in class annotated with @$serializerType.
-               |This will lead to a missing codec for Akka serialization in the runtime.
-               |Current filtering regex: $filterRegex""".stripMargin)
+
+        if (possibleMissingFullyQualifiedClassNames.nonEmpty) {
+          val actuallyMissingFullyQualifiedClassNames = collectMissingClassNames(
+            possibleMissingFullyQualifiedClassNames)
+          if (actuallyMissingFullyQualifiedClassNames.nonEmpty) {
+            reporter.error(
+              serializerImplDef.pos,
+              s"""No codecs for ${actuallyMissingFullyQualifiedClassNames
+                .mkString(", ")} are registered in class annotated with @$serializerType.
+                 |This will lead to a missing codec for Akka serialization in the runtime.
+                 |Current filtering regex: $filterRegex""".stripMargin)
+          }
         }
       }
 
@@ -175,6 +178,27 @@ class SerializerCheckCompilerPluginComponent(
               s"Annotation argument must be a literal constant. Currently: ${other.summaryString}")
             None
         }
+      }
+
+      private def collectMissingClassNames(fullyQualifiedClassNames: List[String]): List[String] = {
+        val sourceCodeDir = File(options.sourceCodeDirectoryToCheck)
+        val sourceCodeFilesAsStrings =
+          (for (file <- sourceCodeDir.collectChildren(_.name.endsWith(".scala"))) yield file.contentAsString).toList
+        println(
+          s"sourceCodeFiles filenames are: ${sourceCodeDir.collectChildren(_.name.endsWith(".scala")).map(_.name)}")
+
+        def typeIsDefinedInScalaFiles(fqcn: String): Boolean = {
+          val indexOfLastDotInFQCN = fqcn.lastIndexOf('.')
+          val packageName = fqcn.substring(0, indexOfLastDotInFQCN)
+          val typeName = fqcn.substring(indexOfLastDotInFQCN + 1)
+          sourceCodeFilesAsStrings.exists(fileAsString => {
+            fileAsString.startsWith(s"package $packageName") &&
+            (fileAsString.contains(s"class $typeName") || fileAsString.contains(s"trait $typeName") || fileAsString
+              .contains(s"object $typeName"))
+          })
+        }
+
+        for (fqcn <- fullyQualifiedClassNames if typeIsDefinedInScalaFiles(fqcn)) yield fqcn
       }
     }
   }
