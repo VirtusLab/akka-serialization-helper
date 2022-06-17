@@ -6,14 +6,14 @@ import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
+
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.Plugin
 import scala.tools.nsc.plugins.PluginComponent
-import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.{
-  directClassDescendantsCacheFileName,
-  disableFlag,
-  sourceCodeDirectoryFlag
-}
+
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.disableFlag
+import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.sourceCodeDirectoryFlag
 
 class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extends Plugin {
   override val name: String = "codec-registration-checker-plugin"

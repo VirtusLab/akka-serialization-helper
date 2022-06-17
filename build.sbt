@@ -61,10 +61,10 @@ lazy val assemblySettings = Seq(
   Compile / packageBin / artifactPath := crossTarget.value / "packageBinPlaceholder.jar", //this ensures that normal jar doesn't override fat jar
   assembly / assemblyMergeStrategy := {
     case PathList(
-    "scala",
-    "annotation",
-    "nowarn.class" | "nowarn$.class"
-    ) => //scala-collection-compat duplicates no-warn.class, as it was added to scala 2.12 after its release
+          "scala",
+          "annotation",
+          "nowarn.class" | "nowarn$.class"
+        ) => //scala-collection-compat duplicates no-warn.class, as it was added to scala 2.12 after its release
       MergeStrategy.first
     case x =>
       (assembly / assemblyMergeStrategy).value.apply(x)
@@ -74,8 +74,7 @@ lazy val assemblySettings = Seq(
     art.withClassifier(None)
   },
   assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar", //Warning: this is a default name for packageBin artefact. Without explicit rename of packageBin will result in race condition
-  addArtifact(Compile / assembly / artifact, assembly)
-)
+  addArtifact(Compile / assembly / artifact, assembly))
 
 publish / skip := true
 
