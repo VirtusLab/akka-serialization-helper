@@ -304,12 +304,12 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem)
 Note that as with Serializability Checker and Dump Persistence Schema,
 this compiler plugin only runs in the sbt modules where `AkkaSerializationHelperPlugin` is explicitly enabled.
 
-To make this plugin work correctly, path to the source code directory where codecs are registered has to be set in ths sbt project settings - just add settings like below:
+To make this plugin work correctly, path to the source code directory where codecs are registered has to be set in sbt project settings - just add settings like below:
 ```
 .settings(scalacOptions ++=
     Seq(s"-P:codec-registration-checker-plugin:--source-code-directory=${baseDirectory.value.file.getAbsolutePath}/path/to/your/code/directory"))
 ```
-where `${baseDirectory.value.file.getAbsolutePath}` is the root directory for the whole repository. Replace "path/to/your/code/directory" with a valid path (parent directory to .scala files which could contain codecs registrations).
+where `${baseDirectory.value.file.getAbsolutePath}` gets evaluated to the root directory for the whole repository by sbt. Replace "path/to/your/code/directory" with a valid path (parent directory to .scala files which could contain codecs registrations).
 
 For more information, read [`@Serializer` scaladoc](https://github.com/VirtusLab/akka-serialization-helper/blob/main/annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala).
 
