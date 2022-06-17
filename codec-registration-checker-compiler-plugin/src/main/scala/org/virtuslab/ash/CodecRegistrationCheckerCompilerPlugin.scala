@@ -29,8 +29,6 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
     if (options.contains(disableFlag))
       return false
 
-    println(s"\noptions are: $options\n")
-
     options.find(flag => flag.contains(sourceCodeDirectoryFlag)) match {
       case Some(directoryFlag) =>
         pluginOptions.sourceCodeDirectoryToCheck =
