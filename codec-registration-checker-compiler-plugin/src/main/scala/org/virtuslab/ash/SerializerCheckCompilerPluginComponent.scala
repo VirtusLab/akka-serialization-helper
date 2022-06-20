@@ -177,7 +177,7 @@ class SerializerCheckCompilerPluginComponent(
           })
         }
 
-        for (fqcn <- fullyQualifiedClassNames if typeIsDefinedInScalaFiles(fqcn)) yield fqcn
+        fullyQualifiedClassNames.filter(typeIsDefinedInScalaFiles)
       }
 
       private def interactWithTheCacheFile(

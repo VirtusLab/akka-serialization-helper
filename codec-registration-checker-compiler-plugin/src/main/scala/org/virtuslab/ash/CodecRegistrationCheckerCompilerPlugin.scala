@@ -31,8 +31,7 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
 
     options.find(flag => flag.contains(sourceCodeDirectoryFlag)) match {
       case Some(directoryFlag) =>
-        pluginOptions.sourceCodeDirectoryToCheck =
-          directoryFlag.substring(24) // as --source-code-directory= is exactly 24 chars long
+        pluginOptions.sourceCodeDirectoryToCheck = directoryFlag.replace(s"$sourceCodeDirectoryFlag=", "")
       case None =>
         error(
           s"Required $sourceCodeDirectoryFlag option has not been set. Please, specify the $sourceCodeDirectoryFlag and retry compilation")
