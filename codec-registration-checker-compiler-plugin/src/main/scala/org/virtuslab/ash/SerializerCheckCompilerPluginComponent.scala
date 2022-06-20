@@ -45,7 +45,7 @@ class SerializerCheckCompilerPluginComponent(
     new StdPhase(prev) {
       override def apply(unit: global.CompilationUnit): Unit = {
         if (typesNotDumped) {
-          interactWithTheCacheFile(DumpTypesIntoCacheFile())
+          dumpTypesIntoCacheFile()
         }
 
         unit.body
@@ -133,7 +133,7 @@ class SerializerCheckCompilerPluginComponent(
                  |This will lead to a missing codec for Akka serialization in the runtime.
                  |Current filtering regex: $filterRegex""".stripMargin)
           } else {
-            interactWithTheCacheFile(RemoveOutdatedTypesFromCacheFile(), possibleMissingFullyQualifiedClassNames)
+            removeOutdatedTypesFromCacheFile(possibleMissingFullyQualifiedClassNames)
           }
         }
       }
@@ -180,48 +180,46 @@ class SerializerCheckCompilerPluginComponent(
         fullyQualifiedClassNames.filter(typeIsDefinedInScalaFiles)
       }
 
-      private def interactWithTheCacheFile(
-          mode: CacheFileInteractionMode,
-          typeNamesToRemove: List[String] = List.empty): Unit =
-        mode match {
-          case _: DumpTypesIntoCacheFile =>
-            val raf = new RandomAccessFile(options.directClassDescendantsCacheFile, "rw")
-            try {
-              val channel = raf.getChannel
-              val lock = channel.lock()
-              try {
-                val buffer = ByteBuffer.allocate(channel.size().toInt)
-                channel.read(buffer)
-                val parentChildFQCNPairsFromCacheFile =
-                  CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
-                val outParentChildFQCNPairs =
-                  ((parentChildFQCNPairsFromCacheFile -- classSweepFQCNPairsToUpdate) |
-                  classSweepFoundFQCNPairs).toList
-                val outData: String =
-                  outParentChildFQCNPairs.map(pair => pair.parentFQCN + "," + pair.childFQCN).sorted.mkString("\n")
-                channel.truncate(0)
-                channel.write(ByteBuffer.wrap(outData.getBytes(StandardCharsets.UTF_8)))
+      private def dumpTypesIntoCacheFile(): Unit = {
+        val raf = new RandomAccessFile(options.directClassDescendantsCacheFile, "rw")
+        try {
+          val channel = raf.getChannel
+          val lock = channel.lock()
+          try {
+            val buffer = ByteBuffer.allocate(channel.size().toInt)
+            channel.read(buffer)
+            val parentChildFQCNPairsFromCacheFile =
+              CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
+            val outParentChildFQCNPairs =
+              ((parentChildFQCNPairsFromCacheFile -- classSweepFQCNPairsToUpdate) |
+              classSweepFoundFQCNPairs).toList
+            val outData: String =
+              outParentChildFQCNPairs.map(pair => pair.parentFQCN + "," + pair.childFQCN).sorted.mkString("\n")
+            channel.truncate(0)
+            channel.write(ByteBuffer.wrap(outData.getBytes(StandardCharsets.UTF_8)))
 
-                typeNamesToCheck ++= outParentChildFQCNPairs.groupBy(_.parentFQCN)
-                typesNotDumped = false
-              } finally {
-                lock.close()
-              }
-            } finally {
-              raf.close()
-            }
-          case _: RemoveOutdatedTypesFromCacheFile =>
-            val cacheFile = options.directClassDescendantsCacheFile.toScala
-            val contentWithoutOutdatedTypes =
-              cacheFile.contentAsString
-                .split("\n")
-                .toList
-                .filterNot(line => typeNamesToRemove.exists(typeName => line.contains(typeName)))
-                .mkString("\n")
-                .stripMargin
-            cacheFile.clear()
-            cacheFile.write(contentWithoutOutdatedTypes)
+            typeNamesToCheck ++= outParentChildFQCNPairs.groupBy(_.parentFQCN)
+            typesNotDumped = false
+          } finally {
+            lock.close()
+          }
+        } finally {
+          raf.close()
         }
+      }
+
+      private def removeOutdatedTypesFromCacheFile(typeNamesToRemove: List[String]): Unit = {
+        val cacheFile = options.directClassDescendantsCacheFile.toScala
+        val contentWithoutOutdatedTypes =
+          cacheFile.contentAsString
+            .split("\n")
+            .toList
+            .filterNot(line => typeNamesToRemove.exists(typeName => line.contains(typeName)))
+            .mkString("\n")
+            .stripMargin
+        cacheFile.clear()
+        cacheFile.write(contentWithoutOutdatedTypes)
+      }
 
     }
   }

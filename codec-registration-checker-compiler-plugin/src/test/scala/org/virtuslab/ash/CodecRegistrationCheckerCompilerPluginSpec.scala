@@ -151,6 +151,14 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
           CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, Nil)
         }
       }
+
+      "--source-code-directory option is not specified" in {
+        assertThrows[RuntimeException] {
+          File.usingTemporaryDirectory() { directory =>
+            CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
+          }
+        }
+      }
     }
 
     "compile with REGISTRATION_REGEX macro" in {
@@ -178,5 +186,6 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
                                               |org.random.project.SerializableTrait,org.random.project.StdData""".stripMargin)
       }
     }
+
   }
 }

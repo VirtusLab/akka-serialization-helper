@@ -56,6 +56,7 @@ lazy val commonSettings = Seq(
       if (sys.env.getOrElse("CI", "false") == "true") "-Xfatal-warnings" else ""),
   libraryDependencies ++= commonDeps)
 
+// as we need to build fat jars for two plugins - see https://github.com/sbt/sbt/issues/2255 for details
 lazy val assemblySettings = Seq(
   packageBin / publishArtifact := false, //we want to publish fat jar
   Compile / packageBin / artifactPath := crossTarget.value / "packageBinPlaceholder.jar", //this ensures that normal jar doesn't override fat jar
