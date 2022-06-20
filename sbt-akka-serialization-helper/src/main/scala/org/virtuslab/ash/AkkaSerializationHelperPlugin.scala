@@ -3,8 +3,8 @@ package org.virtuslab.ash
 import java.io.File
 
 import sbt.Def
-import sbt.Keys.*
-import sbt.*
+import sbt.Keys._
+import sbt._
 
 object AkkaSerializationHelperPlugin extends AutoPlugin {
 
