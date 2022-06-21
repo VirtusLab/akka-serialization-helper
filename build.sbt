@@ -56,6 +56,29 @@ lazy val commonSettings = Seq(
       if (sys.env.getOrElse("CI", "false") == "true") "-Xfatal-warnings" else ""),
   libraryDependencies ++= commonDeps)
 
+// As usage of https://github.com/pathikrit/better-files has been added to the runtime logic of codec-registration-checker-compiler-plugin
+// and dump-persistence-schema-compiler-plugin - this dependency has to be provided within a fat jar when ASH gets published.
+// For reasons described in https://github.com/sbt/sbt/issues/2255 - without using fat-jar we would have java.lang.NoClassDefFoundErrors
+lazy val assemblySettings = Seq(
+  packageBin / publishArtifact := false, //we want to publish fat jar
+  Compile / packageBin / artifactPath := crossTarget.value / "packageBinPlaceholder.jar", //this ensures that normal jar doesn't override fat jar
+  assembly / assemblyMergeStrategy := {
+    case PathList(
+          "scala",
+          "annotation",
+          "nowarn.class" | "nowarn$.class"
+        ) => //scala-collection-compat duplicates no-warn.class, as it was added to scala 2.12 after its release
+      MergeStrategy.first
+    case x =>
+      (assembly / assemblyMergeStrategy).value.apply(x)
+  },
+  Compile / assembly / artifact := {
+    val art = (Compile / assembly / artifact).value
+    art.withClassifier(None)
+  },
+  assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar", //Warning: this is a default name for packageBin artefact. Without explicit rename of packageBin will result in race condition
+  addArtifact(Compile / assembly / artifact, assembly))
+
 publish / skip := true
 
 lazy val scalaVersionAxis = settingKey[Option[String]]("Project scala version")
@@ -127,6 +150,7 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-registration-checker-compiler-plugin"))
+  .enablePlugins(AssemblyPlugin)
   .settings(name := "codec-registration-checker-compiler-plugin")
   .settings(commonSettings)
   .settings(
@@ -139,7 +163,8 @@ lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(betterFiles % Test))
+    libraryDependencies += betterFiles)
+  .settings(assemblySettings: _*)
   .dependsOn(annotation, circeAkkaSerializer % Test)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
@@ -189,23 +214,6 @@ lazy val dumpPersistenceSchemaCompilerPlugin = (projectMatrix in file("dump-pers
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(sprayJson, betterFiles, akkaActorTyped % Test, akkaPersistenceTyped % Test),
-    packageBin / publishArtifact := false, //we want to publish fat jar
-    Compile / packageBin / artifactPath := crossTarget.value / "packageBinPlaceholder.jar", //this ensures that normal jar doesn't override fat jar
-    assembly / assemblyMergeStrategy := {
-      case PathList(
-            "scala",
-            "annotation",
-            "nowarn.class" | "nowarn$.class"
-          ) => //scala-collection-compat duplicates no-warn.class, as it was added to scala 2.12 after its release
-        MergeStrategy.first
-      case x =>
-        (assembly / assemblyMergeStrategy).value.apply(x)
-    },
-    Compile / assembly / artifact := {
-      val art = (Compile / assembly / artifact).value
-      art.withClassifier(None)
-    },
-    assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar", //Warning: this is a default name for packageBin artefact. Without explicit rename of packageBin will result in race condition
-    addArtifact(Compile / assembly / artifact, assembly))
+    libraryDependencies ++= Seq(sprayJson, betterFiles, akkaActorTyped % Test, akkaPersistenceTyped % Test))
+  .settings(assemblySettings: _*)
   .jvmPlatform(scalaVersions = supportedScalaVersions)

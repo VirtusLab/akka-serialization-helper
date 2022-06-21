@@ -37,8 +37,8 @@ object Dependencies {
   val scalaReflect = "org.scala-lang" % "scala-reflect"
 
   private val scalaPluginDeps = Seq(scalaCompiler, scalaReflect)
-  val scalaPluginDeps213: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion213)
-  val scalaPluginDeps212: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion212)
+  val scalaPluginDeps213: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion213 % Provided)
+  val scalaPluginDeps212: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion212 % Provided)
 
   val commonDeps = Seq(scalaTest % Test, logger % Test)
 }

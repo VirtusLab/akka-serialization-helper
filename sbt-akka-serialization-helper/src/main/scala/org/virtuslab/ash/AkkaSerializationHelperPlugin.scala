@@ -1,5 +1,7 @@
 package org.virtuslab.ash
 
+import java.io.File
+
 import sbt.Def
 import sbt.Keys._
 import sbt._
@@ -30,7 +32,8 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
         compilerPlugin(ashSerializabilityCheckerCompilerPlugin.value)),
     Compile / scalacOptions ++= Seq(
         s"-P:dump-persistence-schema-plugin:${(ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginCacheDirectory).value}",
-        s"-P:codec-registration-checker-plugin:${(ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value}"),
+        s"-P:codec-registration-checker-plugin:${(ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value}",
+        s"-P:codec-registration-checker-plugin:${(ashCodecRegistrationCheckerCompilerPlugin / sourceCodeDirectory).value}"),
     cleanFiles ++= Seq(
         (ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginCacheDirectory).value / "dump-persistence-schema-cache",
         (ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value / "codec-registration-checker-cache.csv"),
@@ -51,7 +54,9 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
         new File(
           (ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath).value) / (ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFilename).value,
       ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFilename := s"${name.value}-dump-persistence-schema-${version.value}.yaml",
-      ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath := ashCompilerPluginCacheDirectory.value.getPath) ++
+      ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath := ashCompilerPluginCacheDirectory.value.getPath,
+      ashCodecRegistrationCheckerCompilerPlugin / sourceCodeDirectory := // unfortunately ${scalaSource.value.getAbsolutePath} causes errors, hence long string below
+        s"--source-code-directory=${sourceDirectory.value.getAbsolutePath}${File.separator}main${File.separator}scala") ++
     Seq(Compile, Test).flatMap(ashScalacOptionsInConfig)
 
   private lazy val ashVersion = getClass.getPackage.getImplementationVersion
