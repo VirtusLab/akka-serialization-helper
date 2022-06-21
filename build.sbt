@@ -56,7 +56,9 @@ lazy val commonSettings = Seq(
       if (sys.env.getOrElse("CI", "false") == "true") "-Xfatal-warnings" else ""),
   libraryDependencies ++= commonDeps)
 
-// as we need to build fat jars for two plugins - see https://github.com/sbt/sbt/issues/2255 for details
+// As usage of https://github.com/pathikrit/better-files has been added to the runtime logic of codec-registration-checker-compiler-plugin
+// and dump-persistence-schema-compiler-plugin - this dependency has to be provided within a fat jar when ASH gets published.
+// For reasons described in https://github.com/sbt/sbt/issues/2255 - without using fat-jar we would have java.lang.NoClassDefFoundErrors
 lazy val assemblySettings = Seq(
   packageBin / publishArtifact := false, //we want to publish fat jar
   Compile / packageBin / artifactPath := crossTarget.value / "packageBinPlaceholder.jar", //this ensures that normal jar doesn't override fat jar
