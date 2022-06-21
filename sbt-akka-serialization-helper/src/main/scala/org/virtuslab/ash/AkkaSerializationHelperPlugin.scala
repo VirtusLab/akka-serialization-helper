@@ -55,7 +55,8 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
           (ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath).value) / (ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFilename).value,
       ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFilename := s"${name.value}-dump-persistence-schema-${version.value}.yaml",
       ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath := ashCompilerPluginCacheDirectory.value.getPath,
-      ashCodecRegistrationCheckerCompilerPlugin / sourceCodeDirectory := s"--source-code-directory=${sourceDirectory.value.getAbsolutePath}${File.separator}main${File.separator}scala") ++
+      ashCodecRegistrationCheckerCompilerPlugin / sourceCodeDirectory := // unfortunately ${scalaSource.value.getAbsolutePath} causes errors, hence long string below
+        s"--source-code-directory=${sourceDirectory.value.getAbsolutePath}${File.separator}main${File.separator}scala") ++
     Seq(Compile, Test).flatMap(ashScalacOptionsInConfig)
 
   private lazy val ashVersion = getClass.getPackage.getImplementationVersion
