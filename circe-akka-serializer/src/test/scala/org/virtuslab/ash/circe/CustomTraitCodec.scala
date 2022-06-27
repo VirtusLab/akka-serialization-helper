@@ -13,5 +13,4 @@ object CustomTraitCodec extends CirceTraitCodec[NotSealedTrait] {
   override lazy val packagePrefix: String = "org.virtuslab.ash"
   override lazy val classTagEvidence: ClassTag[NotSealedTrait] = implicitly[ClassTag[NotSealedTrait]]
   override lazy val errorCallback: String => Unit = x => throw new RuntimeException(x)
-  override lazy val shouldDoMissingCodecsCheck: Boolean = false
 }
