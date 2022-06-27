@@ -35,6 +35,11 @@ class SerializerCheckCompilerPluginComponent(
     s"Checks marked serializer for references to classes found in $serializerCheckPhaseName"
 
   private var typesNotDumped = true
+
+  /*
+  `typeNamesToCheck` gets filled within `dumpTypesIntoCacheFile()` call. Afterwards, `typeNamesToCheck` contains
+  ParentChildFQCNPairs grouped by the `parentFQCN` of each pair. This Map is the base data for the plugin's check.
+   */
   private val typeNamesToCheck =
     mutable.Map[String, List[ParentChildFQCNPair]]().withDefaultValue(Nil)
 
@@ -44,6 +49,12 @@ class SerializerCheckCompilerPluginComponent(
   override def newPhase(prev: Phase): Phase = {
     new StdPhase(prev) {
       override def apply(unit: global.CompilationUnit): Unit = {
+        /*
+        As dumpTypesIntoCacheFile() relies only on:
+        a) results of previous phase (codec-registration-class-sweep)
+        b) results of previous compilation stored in `CodecRegistrationCheckerOptions.directClassDescendantsCacheFile`
+        - it should be invoked only once - on the first `apply` call. That's why we use `typesNotDumped` flag.
+         */
         if (typesNotDumped) {
           dumpTypesIntoCacheFile()
         }
@@ -54,7 +65,9 @@ class SerializerCheckCompilerPluginComponent(
           }
           .map(implDefAnnotationsTuple =>
             (implDefAnnotationsTuple._1, implDefAnnotationsTuple._2.filter(_.tpe.toString == serializerType)))
-          .filter(_._2.nonEmpty)
+          .filter(
+            _._2.nonEmpty // as we are interested in checking only these types, where @Serializer annotation has been used
+          )
           .foreach { implDefAnnotationsTuple =>
             val (implDef, annotations) = implDefAnnotationsTuple
             if (annotations.size > 1) {
@@ -66,7 +79,13 @@ class SerializerCheckCompilerPluginComponent(
           }
       }
 
+      // `processSerializerClass` contains the core validation logic for one currently checked type
       private def processSerializerClass(serializerImplDef: ImplDef, serializerAnnotation: AnnotationInfo): Unit = {
+        /*
+         * fqcn is the FQCN of top-level serializable type (trait / class) used by currently checked Serializer.
+         * filterRegex is the `typeRegexPattern` defined for this Serializer.
+         * See org.virtuslab.ash.annotation.Serializer javadoc for more details.
+         */
         val (fqcn, filterRegex) = serializerAnnotation.args match {
           case List(clazzTree, regexTree) =>
             val fqcnOption = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
@@ -93,6 +112,18 @@ class SerializerCheckCompilerPluginComponent(
           case _ => throw new IllegalStateException()
         }
 
+        /*
+         * foundTypes are Types from checked Type's AST (abstract syntax tree) that do contain the filterRegex
+         * defined for currently checked Serializer. These are the types that are considered
+         * properly registered for serialization / deserialization. foundTypes are later used to create
+         * a sequence of FQCNs for types, which have proper codecs registration.
+         *
+         * ( In case of Circe Akka Serializer usage - these are types that contain
+         * `org.virtuslab.ash.circe.Register.apply` invocation - i.e. foundTypes are in fact types
+         * that have been registered for serialization with encoder and decoder.
+         * Example string representation of an element from `foundTypes` could be:
+         * org.virtuslab.ash.circe.Registration[org.example.SerializableImplementation] )
+         */
         val foundTypes = {
           try {
             serializerImplDef
@@ -108,6 +139,7 @@ class SerializerCheckCompilerPluginComponent(
           }
         }
 
+        // helper method used to collect all nested Types from `current`
         @tailrec
         def collectTypeArgs(current: Set[Type], prev: Set[Type] = Set.empty): Set[Type] = {
           val next = current.flatMap(_.typeArgs)
@@ -118,11 +150,16 @@ class SerializerCheckCompilerPluginComponent(
             collectTypeArgs(next, acc)
         }
 
+        // FQCNs for all nested Types from `foundTypes` list - i.e. the ones that are considered properly registered
         val fullyQualifiedClassNamesFromFoundTypes = collectTypeArgs(foundTypes.toSet).map(_.typeSymbol.fullName)
+
+        // List[String] that holds FQCNs of types that could have not been registered (missing codec registrations).
         val possibleMissingFullyQualifiedClassNames =
           typeNamesToCheck(fqcn).map(_.childFQCN).filterNot(fullyQualifiedClassNamesFromFoundTypes)
 
         if (possibleMissingFullyQualifiedClassNames.nonEmpty) {
+          // Due to the way how incremental compilation works - `possibleMissingFullyQualifiedClassNames` could contain
+          // "false-positives" - that's why a check against the source code in `collectMissingClassNames` is needed.
           val actuallyMissingFullyQualifiedClassNames = collectMissingClassNames(
             possibleMissingFullyQualifiedClassNames)
           if (actuallyMissingFullyQualifiedClassNames.nonEmpty) {
