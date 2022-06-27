@@ -76,6 +76,8 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
     .toMap
     .withDefaultValue("")
 
+  protected lazy val shouldDoMissingCodecsCheck: Boolean = false
+
   /**
    * Decoder apply method - decodes from Json into an object of type Ser
    */
@@ -120,7 +122,9 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
 
   private def doNeededChecksOnStart(): Unit = {
     checkImplementationForInvalidMemberDeclarations()
-    checkSerializableTypesForMissingCodec(packagePrefix)
+    if (shouldDoMissingCodecsCheck) {
+      checkSerializableTypesForMissingCodec(packagePrefix)
+    }
     checkCodecsForNull()
     checkCodecsForDuplication()
   }
