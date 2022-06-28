@@ -88,6 +88,10 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
         testCode("AskHigherOrderClassicTest.scala", detectionType = 4)
       }
 
+      "RecipientRef type is used instead of ActorRef to reference an Actor" in {
+        testCode("AskRecipientRefTest.scala", detectionType = 1)
+      }
+
     }
 
     "whitelist all akka types from checks" in {

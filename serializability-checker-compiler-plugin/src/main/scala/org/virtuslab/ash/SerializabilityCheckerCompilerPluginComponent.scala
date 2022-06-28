@@ -16,6 +16,7 @@ class SerializabilityCheckerCompilerPluginComponent(
   override val phaseName: String = "serializability-checker"
   override val runsAfter: List[String] = List("refchecks")
 
+  // switch from var to a ListBuffer ... ?
   var annotatedTraitsCache: List[Type] = List()
 
   override def newPhase(prev: Phase): Phase =
@@ -99,10 +100,10 @@ class SerializabilityCheckerCompilerPluginComponent(
         val concreteUntypedMethods = concreteUntypedMethodsToTypes.keySet
         val concreteHigherOrderFunctions = concreteHigherOrderFunctionsToTypes.keySet
 
-        def extractTypes(args: List[Tree], x: Tree) =
+        def extractTypes(args: List[Tree], x: Tree): List[(Type, ClassType, Position)] =
           args.map(_.tpe).zip(combinedMap(x.symbol.fullName)).map(y => (y._1, y._2, x.pos))
 
-        val foundTypes = body
+        val foundTypes: Iterable[(Type, ClassType, Position)] = body
           .collect {
             case _: ApplyToImplicitArgs => Nil
             case x: TypeTree if genericsNames.contains(x.tpe.typeSymbol.fullName) && pluginOptions.detectFromGenerics =>
