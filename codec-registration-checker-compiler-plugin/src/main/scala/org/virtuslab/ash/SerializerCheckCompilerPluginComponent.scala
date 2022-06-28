@@ -95,13 +95,13 @@ class SerializerCheckCompilerPluginComponent(
                 None
               }
             }
-            val filterRegexOption =
+            val typeRegexPatternOption =
               regexTree match {
                 case Select(_, TermName("$lessinit$greater$default$2")) => Some(".*")
                 case other                                              => extractValueOfLiteralConstantFromTree[String](other)
               }
 
-            (fqcnOption, filterRegexOption) match {
+            (fqcnOption, typeRegexPatternOption) match {
               case (Some(fqcn), Some(regex)) => (fqcn, regex)
               case _                         => return
             }
@@ -110,7 +110,7 @@ class SerializerCheckCompilerPluginComponent(
         }
 
         /*
-         * detectedTypes are Types from checked Type's AST (abstract syntax tree) that do contain the filterRegex
+         * detectedTypes are Types from checked Type's AST (abstract syntax tree) that do contain the typeRegexPattern
          * defined for currently checked Serializer. These are the types that are considered
          * properly registered for serialization / deserialization. detectedTypes are later used to create
          * a sequence of FQCNs for types, which have proper codecs registration.
