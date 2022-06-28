@@ -16,7 +16,6 @@ class SerializabilityCheckerCompilerPluginComponent(
   override val phaseName: String = "serializability-checker"
   override val runsAfter: List[String] = List("refchecks")
 
-  // switch from var to a ListBuffer ... ?
   var annotatedTraitsCache: List[Type] = List()
 
   override def newPhase(prev: Phase): Phase =
