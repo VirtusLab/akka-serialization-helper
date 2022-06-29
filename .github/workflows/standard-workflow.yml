@@ -137,7 +137,7 @@ jobs:
         run: sbt test
         working-directory: examples/event-migration
 
-  publish:
+  publish-maven-artifacts:
     needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-20.04
@@ -152,7 +152,7 @@ jobs:
         with:
           java-version: adopt@1.11
 
-      - name: Publish from CI
+      - name: Publish Maven artifacts
         run: sbt ci-release
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
