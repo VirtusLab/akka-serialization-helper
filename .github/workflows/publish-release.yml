@@ -8,6 +8,7 @@ on:
 jobs:
   run-scala-ci-release:
     uses: ./.github/workflows/standard-workflow.yml
+    secrets: inherit
 
   publish-github-release:
     needs: [run-scala-ci-release]
