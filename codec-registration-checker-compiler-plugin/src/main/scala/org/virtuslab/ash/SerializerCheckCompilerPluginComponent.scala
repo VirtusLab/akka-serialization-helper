@@ -63,16 +63,16 @@ class SerializerCheckCompilerPluginComponent(
           .collect {
             case implDef: ImplDef => (implDef, implDef.symbol.annotations)
           }
-          .foreach { implDefAnnotationsTuple =>
-            val (implDef, annotations) = implDefAnnotationsTuple
-            val serializerTypeAnnotations = annotations.filter(_.tpe.toString == serializerType)
-            if (serializerTypeAnnotations.size > 1) {
-              reporter.warning(
-                implDefAnnotationsTuple._2.head.pos,
-                s"Class can only have one @Serializer annotation. Currently it has ${annotations.size}. Using the one found first.")
-            }
-            if (serializerTypeAnnotations.nonEmpty)
-              processSerializerClass(implDef, serializerTypeAnnotations.head)
+          .foreach {
+            case (implDef, annotations) =>
+              val serializerTypeAnnotations = annotations.filter(_.tpe.toString == serializerType)
+              if (serializerTypeAnnotations.size > 1) {
+                reporter.warning(
+                  annotations.head.pos,
+                  s"Class can only have one @Serializer annotation. Currently it has ${annotations.size}. Using the one found first.")
+              }
+              if (serializerTypeAnnotations.nonEmpty)
+                processSerializerClass(implDef, serializerTypeAnnotations.head)
           }
       }
 
@@ -131,7 +131,9 @@ class SerializerCheckCompilerPluginComponent(
               .filter(_.toString.matches(typeRegexPattern))
           } catch {
             case e: PatternSyntaxException =>
-              reporter.error(serializerImplDef.pos, "Exception throw during the use of filter regex: " + e.getMessage)
+              reporter.error(
+                serializerImplDef.pos,
+                "Exception throw during the use of type regex pattern: " + e.getMessage)
               return
           }
         }
@@ -165,7 +167,7 @@ class SerializerCheckCompilerPluginComponent(
               s"""No codecs for ${actuallyMissingFullyQualifiedClassNames
                 .mkString(", ")} are registered in class annotated with @$serializerType.
                  |This will lead to a missing codec for Akka serialization in the runtime.
-                 |Current filtering regex: $typeRegexPattern""".stripMargin)
+                 |Current type regex pattern: $typeRegexPattern""".stripMargin)
           } else {
             removeOutdatedTypesFromCacheFile(possibleMissingFullyQualifiedClassNames)
           }
