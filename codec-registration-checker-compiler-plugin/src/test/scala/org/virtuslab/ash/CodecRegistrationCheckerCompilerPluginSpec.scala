@@ -43,7 +43,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
     }
 
     "raise an error" when {
-      "types don't match filter regex" in {
+      "types don't match type regex pattern" in {
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
             serializersCode(1) :: dataSourceCode,
