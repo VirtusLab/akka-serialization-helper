@@ -35,6 +35,11 @@ class SerializerCheckCompilerPluginComponent(
     s"Checks marked serializer for references to classes found in $serializerCheckPhaseName"
 
   private var typesNotDumped = true
+
+  /*
+  `typeNamesToCheck` gets filled within `dumpTypesIntoCacheFile()` call. Afterwards, `typeNamesToCheck` contains
+  ParentChildFQCNPairs grouped by the `parentFQCN` of each pair. This Map is the base data for the plugin's check.
+   */
   private val typeNamesToCheck =
     mutable.Map[String, List[ParentChildFQCNPair]]().withDefaultValue(Nil)
 
@@ -44,6 +49,12 @@ class SerializerCheckCompilerPluginComponent(
   override def newPhase(prev: Phase): Phase = {
     new StdPhase(prev) {
       override def apply(unit: global.CompilationUnit): Unit = {
+        /*
+        As dumpTypesIntoCacheFile() relies only on:
+        a) results of previous phase (codec-registration-class-sweep)
+        b) results of previous compilation stored in `CodecRegistrationCheckerOptions.directClassDescendantsCacheFile`
+        - it should be invoked only once - on the first `apply` call. That's why we use `typesNotDumped` flag.
+         */
         if (typesNotDumped) {
           dumpTypesIntoCacheFile()
         }
@@ -52,22 +63,27 @@ class SerializerCheckCompilerPluginComponent(
           .collect {
             case implDef: ImplDef => (implDef, implDef.symbol.annotations)
           }
-          .map(implDefAnnotationsTuple =>
-            (implDefAnnotationsTuple._1, implDefAnnotationsTuple._2.filter(_.tpe.toString == serializerType)))
-          .filter(_._2.nonEmpty)
-          .foreach { implDefAnnotationsTuple =>
-            val (implDef, annotations) = implDefAnnotationsTuple
-            if (annotations.size > 1) {
-              reporter.warning(
-                implDefAnnotationsTuple._2.head.pos,
-                s"Class can only have one @Serializer annotation. Currently it has ${annotations.size}. Using the one found first.")
-            }
-            processSerializerClass(implDef, annotations.head)
+          .foreach {
+            case (implDef, annotations) =>
+              val serializerTypeAnnotations = annotations.filter(_.tpe.toString == serializerType)
+              if (serializerTypeAnnotations.size > 1) {
+                reporter.warning(
+                  annotations.head.pos,
+                  s"Class can only have one @Serializer annotation. Currently it has ${annotations.size}. Using the one found first.")
+              }
+              if (serializerTypeAnnotations.nonEmpty)
+                processSerializerClass(implDef, serializerTypeAnnotations.head)
           }
       }
 
+      // `processSerializerClass` contains the core validation logic for one currently checked type
       private def processSerializerClass(serializerImplDef: ImplDef, serializerAnnotation: AnnotationInfo): Unit = {
-        val (fqcn, filterRegex) = serializerAnnotation.args match {
+        /*
+         * fqcn is the FQCN of top-level serializable type (trait / class) used by currently checked Serializer.
+         * typeRegexPattern is the `typeRegexPattern` defined for this Serializer.
+         * See org.virtuslab.ash.annotation.Serializer javadoc for more details.
+         */
+        val (fqcn, typeRegexPattern) = serializerAnnotation.args match {
           case List(clazzTree, regexTree) =>
             val fqcnOption = extractValueOfLiteralConstantFromTree[Type](clazzTree).flatMap { tpe =>
               if (tpe.typeSymbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType))
@@ -79,13 +95,13 @@ class SerializerCheckCompilerPluginComponent(
                 None
               }
             }
-            val filterRegexOption =
+            val typeRegexPatternOption =
               regexTree match {
                 case Select(_, TermName("$lessinit$greater$default$2")) => Some(".*")
                 case other                                              => extractValueOfLiteralConstantFromTree[String](other)
               }
 
-            (fqcnOption, filterRegexOption) match {
+            (fqcnOption, typeRegexPatternOption) match {
               case (Some(fqcn), Some(regex)) => (fqcn, regex)
               case _                         => return
             }
@@ -93,21 +109,36 @@ class SerializerCheckCompilerPluginComponent(
           case _ => throw new IllegalStateException()
         }
 
-        val foundTypes = {
+        /*
+         * detectedTypes are Types from checked Type's AST (abstract syntax tree) that do contain the typeRegexPattern
+         * defined for currently checked Serializer. These are the types that are considered
+         * properly registered for serialization / deserialization. detectedTypes are later used to create
+         * a sequence of FQCNs for types, which have proper codecs registration.
+         *
+         * ( In case of Circe Akka Serializer usage - these are types that contain
+         * `org.virtuslab.ash.circe.Register.apply` invocation - i.e. detectedTypes are in fact types
+         * that have been registered for serialization with encoder and decoder.
+         * Example string representation of an element from `detectedTypes` could be:
+         * org.virtuslab.ash.circe.Registration[org.example.SerializableImplementation] )
+         */
+        val detectedTypes = {
           try {
             serializerImplDef
               .collect {
                 case tree: Tree if tree.tpe != null => tree.tpe
               }
               .distinct
-              .filter(_.toString.matches(filterRegex))
+              .filter(_.toString.matches(typeRegexPattern))
           } catch {
             case e: PatternSyntaxException =>
-              reporter.error(serializerImplDef.pos, "Exception throw during the use of filter regex: " + e.getMessage)
+              reporter.error(
+                serializerImplDef.pos,
+                "Exception throw during the use of type regex pattern: " + e.getMessage)
               return
           }
         }
 
+        // helper method used to collect all nested Types from `current`
         @tailrec
         def collectTypeArgs(current: Set[Type], prev: Set[Type] = Set.empty): Set[Type] = {
           val next = current.flatMap(_.typeArgs)
@@ -118,11 +149,16 @@ class SerializerCheckCompilerPluginComponent(
             collectTypeArgs(next, acc)
         }
 
-        val fullyQualifiedClassNamesFromFoundTypes = collectTypeArgs(foundTypes.toSet).map(_.typeSymbol.fullName)
+        // FQCNs for all nested Types from `detectedTypes` list - i.e. the ones that are considered properly registered
+        val fullyQualifiedClassNamesFromDetectedTypes = collectTypeArgs(detectedTypes.toSet).map(_.typeSymbol.fullName)
+
+        // List[String] that holds FQCNs of types that could have not been registered (missing codec registrations).
         val possibleMissingFullyQualifiedClassNames =
-          typeNamesToCheck(fqcn).map(_.childFQCN).filterNot(fullyQualifiedClassNamesFromFoundTypes)
+          typeNamesToCheck(fqcn).map(_.childFQCN).filterNot(fullyQualifiedClassNamesFromDetectedTypes)
 
         if (possibleMissingFullyQualifiedClassNames.nonEmpty) {
+          // Due to the way how incremental compilation works - `possibleMissingFullyQualifiedClassNames` could contain
+          // "false-positives" - that's why a check against the source code in `collectMissingClassNames` is needed.
           val actuallyMissingFullyQualifiedClassNames = collectMissingClassNames(
             possibleMissingFullyQualifiedClassNames)
           if (actuallyMissingFullyQualifiedClassNames.nonEmpty) {
@@ -131,7 +167,7 @@ class SerializerCheckCompilerPluginComponent(
               s"""No codecs for ${actuallyMissingFullyQualifiedClassNames
                 .mkString(", ")} are registered in class annotated with @$serializerType.
                  |This will lead to a missing codec for Akka serialization in the runtime.
-                 |Current filtering regex: $filterRegex""".stripMargin)
+                 |Current type regex pattern: $typeRegexPattern""".stripMargin)
           } else {
             removeOutdatedTypesFromCacheFile(possibleMissingFullyQualifiedClassNames)
           }

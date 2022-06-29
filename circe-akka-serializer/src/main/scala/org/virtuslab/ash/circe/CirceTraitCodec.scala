@@ -140,10 +140,15 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
     }
   }
 
+  /*
+   * Some types from `detectedSerializables` might have not been added to `codecs` sequence.
+   * Such mistakes could lead to runtime errors (as `codecs` sequence is in fact used to define how objects
+   * should be encoded and decoded). That's the reason for this check.
+   */
   private def checkSerializableTypesForMissingCodec(packagePrefix: String): Unit = {
     val reflections = new Reflections(packagePrefix)
-    val foundSerializables = reflections.getSubTypesOf(classTag[Ser].runtimeClass).asScala.filterNot(_.isInterface)
-    foundSerializables.foreach { clazz =>
+    val detectedSerializables = reflections.getSubTypesOf(classTag[Ser].runtimeClass).asScala.filterNot(_.isInterface)
+    detectedSerializables.foreach { clazz =>
       try {
         codecsMap(parentsUpToRegisteredTypeMap(clazz.getName))
       } catch {
