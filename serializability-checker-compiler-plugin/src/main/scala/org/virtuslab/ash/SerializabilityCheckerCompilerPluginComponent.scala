@@ -102,7 +102,7 @@ class SerializabilityCheckerCompilerPluginComponent(
         def extractTypes(args: List[Tree], x: Tree): List[(Type, ClassType, Position)] =
           args.map(_.tpe).zip(combinedMap(x.symbol.fullName)).map(y => (y._1, y._2, x.pos))
 
-        val foundTypes: Iterable[(Type, ClassType, Position)] = body
+        val detectedTypes: Iterable[(Type, ClassType, Position)] = body
           .collect {
             case _: ApplyToImplicitArgs => Nil
             case x: TypeTree if genericsNames.contains(x.tpe.typeSymbol.fullName) && pluginOptions.detectFromGenerics =>
@@ -131,12 +131,12 @@ class SerializabilityCheckerCompilerPluginComponent(
           .groupBy(_._1)
           .map(_._2.head)
 
-        if (pluginOptions.verbose && foundTypes.nonEmpty) {
-          val fqcns = foundTypes.map(_._1.typeSymbol.fullName)
+        if (pluginOptions.verbose && detectedTypes.nonEmpty) {
+          val fqcns = detectedTypes.map(_._1.typeSymbol.fullName)
           reporter.echo(body.pos, s"Found serializable types: ${fqcns.mkString(", ")}")
         }
 
-        annotatedTraitsCache = foundTypes.foldRight(annotatedTraitsCache) { (next, annotatedTraits) =>
+        annotatedTraitsCache = detectedTypes.foldRight(annotatedTraitsCache) { (next, annotatedTraits) =>
           val (tpe, classType, detectedPosition) = next
           val ignore = {
             val fullName = tpe.dealias.typeSymbol.fullName

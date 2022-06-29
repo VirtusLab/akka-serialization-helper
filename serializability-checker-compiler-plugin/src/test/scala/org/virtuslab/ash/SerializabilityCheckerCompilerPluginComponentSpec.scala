@@ -4,6 +4,7 @@ import better.files.File
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpecLike
 
+import org.virtuslab.ash.SerializabilityCheckerCompilerPlugin.Flags._
 import org.virtuslab.ash.compiler.SerializabilityCheckerCompiler
 
 class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike with should.Matchers {
@@ -13,11 +14,13 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
   private val serYesCode = getResourceAsString("MySerializableYes.scala")
   private val serNoCode = getResourceAsString("MySerializableNo.scala")
 
-  private def testCode(resourceName: String, errorTypes: ClassType = ClassType.Message, detectionType: Int = 0) = {
-    import SerializabilityCheckerCompilerPlugin.Flags._
+  private def testCode(
+      resourceName: String,
+      errorTypes: ClassType = ClassType.Message,
+      disableFlag: String = disableGenerics) = {
     val disableFlags =
       List(disableGenerics, disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions)
-    val pluginArgs = disableFlags.filter(_ != disableFlags(detectionType))
+    val pluginArgs = disableFlags.filter(_ != disableFlag)
     val code = getResourceAsString(resourceName)
     SerializabilityCheckerCompiler.compileCode(List(code, serYesCode), pluginArgs) should be("")
     val noOut = SerializabilityCheckerCompiler.compileCode(List(code, serNoCode), pluginArgs)
@@ -49,47 +52,47 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
       }
 
       "given ask pattern" in {
-        testCode("AskTest.scala", detectionType = 1)
+        testCode("AskTest.scala", disableFlag = disableGenericMethods)
       }
 
       "given tell pattern" in {
-        testCode("TellTest.scala", detectionType = 2)
+        testCode("TellTest.scala", disableFlag = disableMethods)
       }
 
       "given ask pattern with sign" in {
-        testCode("AskSignTest.scala", detectionType = 1)
+        testCode("AskSignTest.scala", disableFlag = disableGenericMethods)
       }
 
       "given tell pattern with sign" in {
-        testCode("TellSignTest.scala", detectionType = 2)
+        testCode("TellSignTest.scala", disableFlag = disableMethods)
       }
 
       "given pipe pattern" in {
-        testCode("PipeTest.scala", detectionType = 1)
+        testCode("PipeTest.scala", disableFlag = disableGenericMethods)
       }
 
       "given classic tell pattern" in {
-        testCode("TellClassicTest.scala", detectionType = 3)
+        testCode("TellClassicTest.scala", disableFlag = disableMethodsUntyped)
       }
 
       "given classic tell sing pattern" in {
-        testCode("TellSignClassicTest.scala", detectionType = 3)
+        testCode("TellSignClassicTest.scala", disableFlag = disableMethodsUntyped)
       }
 
       "given classic ask pattern" in {
-        testCode("AskClassicTest.scala", detectionType = 3)
+        testCode("AskClassicTest.scala", disableFlag = disableMethodsUntyped)
       }
 
       "given classic ask pattern with sign" in {
-        testCode("AskSignClassicTest.scala", detectionType = 3)
+        testCode("AskSignClassicTest.scala", disableFlag = disableMethodsUntyped)
       }
 
       "given classic ask pattern with higher order function" in {
-        testCode("AskHigherOrderClassicTest.scala", detectionType = 4)
+        testCode("AskHigherOrderClassicTest.scala", disableFlag = disableHigherOrderFunctions)
       }
 
       "RecipientRef type is used instead of ActorRef to reference an Actor" in {
-        testCode("AskRecipientRefTest.scala", detectionType = 1)
+        testCode("AskRecipientRefTest.scala", disableFlag = disableGenericMethods)
       }
 
     }

@@ -22,11 +22,11 @@ object AskRecipientRefTest {
     sealed trait Command extends NoTest
     private case class Back(message: String) extends Command
 
-    def apply(hal: RecipientRef[Tell.Command]): Behavior[Command] =
+    def apply(actorRef: RecipientRef[Tell.Command]): Behavior[Command] =
       Behaviors.setup[Command] { context =>
         implicit val timeout: Timeout = 3.seconds
 
-        context.ask(hal, Tell.Syn) {
+        context.ask(actorRef, Tell.Syn) {
           case Success(Tell.Ack(message)) => Back(message)
           case Failure(_)                 => Back("Request failed")
         }
