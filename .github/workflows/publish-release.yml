@@ -1,4 +1,4 @@
-name: Publish Release
+name: Publish GitHub Release
 
 on:
   push:
@@ -6,7 +6,12 @@ on:
       - 'v*'
 
 jobs:
+  run-scala-ci-release:
+    uses: ./.github/workflows/standard-workflow.yml
+    secrets: inherit
+
   publish-github-release:
+    needs: [run-scala-ci-release]
     if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
