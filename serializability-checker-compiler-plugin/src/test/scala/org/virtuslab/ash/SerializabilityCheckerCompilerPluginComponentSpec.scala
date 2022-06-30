@@ -18,12 +18,9 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
       resourceName: String,
       errorTypes: ClassType = ClassType.Message,
       chosenDisableFlags: List[String]) = {
-    val possibleDisableFlags =
-      List(disableGenerics, disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions)
-    val pluginArgs = possibleDisableFlags.intersect(chosenDisableFlags)
     val code = getResourceAsString(resourceName)
-    SerializabilityCheckerCompiler.compileCode(List(code, serYesCode), pluginArgs) should be("")
-    val noOut = SerializabilityCheckerCompiler.compileCode(List(code, serNoCode), pluginArgs)
+    SerializabilityCheckerCompiler.compileCode(List(code, serYesCode), chosenDisableFlags) should be("")
+    val noOut = SerializabilityCheckerCompiler.compileCode(List(code, serNoCode), chosenDisableFlags)
     noOut should include("error")
     noOut should include(errorTypes.name)
   }
