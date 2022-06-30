@@ -17,10 +17,10 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
   private def testCode(
       resourceName: String,
       errorTypes: ClassType = ClassType.Message,
-      disableFlag: String = disableGenerics) = {
-    val disableFlags =
+      chosenDisableFlags: List[String]) = {
+    val possibleDisableFlags =
       List(disableGenerics, disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions)
-    val pluginArgs = disableFlags.filter(_ != disableFlag)
+    val pluginArgs = possibleDisableFlags.intersect(chosenDisableFlags)
     val code = getResourceAsString(resourceName)
     SerializabilityCheckerCompiler.compileCode(List(code, serYesCode), pluginArgs) should be("")
     val noOut = SerializabilityCheckerCompiler.compileCode(List(code, serNoCode), pluginArgs)
@@ -32,67 +32,118 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
 
     "correctly detect and traverse to serialization marker trait" when {
       "given Behavior" in {
-        testCode("BehaviorTest.scala")
+        testCode(
+          "BehaviorTest.scala",
+          chosenDisableFlags =
+            List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given EventEnvelope" in {
-        testCode("EventEnvelopeTest.scala", ClassType.PersistentEvent)
+        testCode(
+          "EventEnvelopeTest.scala",
+          ClassType.PersistentEvent,
+          chosenDisableFlags =
+            List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given Persistent State in ReplyEffect" in {
-        testCode("ReplyEffectTestState.scala", ClassType.PersistentState)
+        testCode(
+          "ReplyEffectTestState.scala",
+          ClassType.PersistentState,
+          chosenDisableFlags =
+            List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "give Persistent Event in ReplyEffect" in {
-        testCode("ReplyEffectTestEvent.scala", ClassType.PersistentEvent)
+        testCode(
+          "ReplyEffectTestEvent.scala",
+          ClassType.PersistentEvent,
+          chosenDisableFlags =
+            List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given Effect" in {
-        testCode("EffectTest.scala", ClassType.PersistentEvent)
+        testCode(
+          "EffectTest.scala",
+          ClassType.PersistentEvent,
+          chosenDisableFlags =
+            List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given ask pattern" in {
-        testCode("AskTest.scala", disableFlag = disableGenericMethods)
+        testCode(
+          "AskTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given tell pattern" in {
-        testCode("TellTest.scala", disableFlag = disableMethods)
+        testCode(
+          "TellTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableGenericMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given ask pattern with sign" in {
-        testCode("AskSignTest.scala", disableFlag = disableGenericMethods)
+        testCode(
+          "AskSignTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given tell pattern with sign" in {
-        testCode("TellSignTest.scala", disableFlag = disableMethods)
+        testCode(
+          "TellSignTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableGenericMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given pipe pattern" in {
-        testCode("PipeTest.scala", disableFlag = disableGenericMethods)
+        testCode(
+          "PipeTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given classic tell pattern" in {
-        testCode("TellClassicTest.scala", disableFlag = disableMethodsUntyped)
+        testCode(
+          "TellClassicTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
       }
 
       "given classic tell sing pattern" in {
-        testCode("TellSignClassicTest.scala", disableFlag = disableMethodsUntyped)
+        testCode(
+          "TellSignClassicTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
       }
 
       "given classic ask pattern" in {
-        testCode("AskClassicTest.scala", disableFlag = disableMethodsUntyped)
+        testCode(
+          "AskClassicTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
       }
 
       "given classic ask pattern with sign" in {
-        testCode("AskSignClassicTest.scala", disableFlag = disableMethodsUntyped)
+        testCode(
+          "AskSignClassicTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
       }
 
       "given classic ask pattern with higher order function" in {
-        testCode("AskHigherOrderClassicTest.scala", disableFlag = disableHigherOrderFunctions)
+        testCode(
+          "AskHigherOrderClassicTest.scala",
+          chosenDisableFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableMethodsUntyped))
       }
 
       "RecipientRef type is used instead of ActorRef to reference an Actor" in {
-        testCode("AskRecipientRefTest.scala", disableFlag = disableGenericMethods)
+        testCode(
+          "AskRecipientRefTest.scala",
+          chosenDisableFlags =
+            List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
     }
@@ -105,7 +156,10 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
     }
 
     "be able to detect serializer trait in generics" in {
-      testCode("GenericsTest.scala")
+      testCode(
+        "GenericsTest.scala",
+        chosenDisableFlags =
+          List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
     }
 
     "detect lack of upper bounds in generics" in {
@@ -114,7 +168,10 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
     }
 
     "ignore Any and Nothing" in {
-      testCode("AnyNothingTest.scala")
+      testCode(
+        "AnyNothingTest.scala",
+        chosenDisableFlags =
+          List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
     }
 
     "respect akka serializers" in {
