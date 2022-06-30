@@ -8,3 +8,4 @@ on:
 jobs:
   run-scala-ci-standard:
     uses: ./.github/workflows/standard-workflow.yml
+    secrets: inherit
