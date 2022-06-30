@@ -47,6 +47,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
   private lazy val log = Logging(system, getClass)
   private lazy val conf = system.settings.config.getConfig("org.virtuslab.ash.circe")
   private lazy val isDebugEnabled = conf.getBoolean("verbose-debug-logging") && log.isDebugEnabled
+  override lazy val shouldDoMissingCodecsCheck: Boolean = conf.getBoolean("enable-missing-codecs-check")
   private lazy val compressionAlgorithm: Compression.Algorithm = conf.getString("compression.algorithm") match {
     case "off" =>
       Compression.Off
