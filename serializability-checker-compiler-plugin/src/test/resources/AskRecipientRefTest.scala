@@ -1,20 +1,20 @@
 package org.random.project
 
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.{Behavior, RecipientRef}
 import akka.util.Timeout
 import org.virtuslab.ash.annotation.SerializabilityTrait
 
 import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success}
 
-object AskTest {
+object AskRecipientRefTest {
   @SerializabilityTrait
   trait NoTest
 
   object Tell {
     trait Command extends MySerializable
-    case class Syn(replyTo: ActorRef[Ack]) extends Command
+    case class Syn(replyTo: RecipientRef[Ack]) extends Command
     case class Ack(message: String) extends NoTest
   }
 
@@ -22,7 +22,7 @@ object AskTest {
     sealed trait Command extends NoTest
     private case class Back(message: String) extends Command
 
-    def apply(actorRef: ActorRef[Tell.Command]): Behavior[Command] =
+    def apply(actorRef: RecipientRef[Tell.Command]): Behavior[Command] =
       Behaviors.setup[Command] { context =>
         implicit val timeout: Timeout = 3.seconds
 

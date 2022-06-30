@@ -23,11 +23,11 @@ object AskSignTest {
     sealed trait Command extends NoTest
     private case class Back(message: String) extends Command
 
-    def apply(hal: ActorRef[Tell.Command]): Behavior[Command] =
+    def apply(actorRef: ActorRef[Tell.Command]): Behavior[Command] =
       Behaviors.setup[Command] { context =>
         implicit val timeout: Timeout = 3.seconds
         implicit val act: ActorSystem[Nothing] = context.system
-        val fut = hal ? Tell.Syn
+        val fut = actorRef ? Tell.Syn
 
         Behaviors.receiveMessage {
           case Back(message) =>
