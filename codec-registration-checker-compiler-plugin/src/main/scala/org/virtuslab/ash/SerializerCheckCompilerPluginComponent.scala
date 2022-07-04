@@ -204,12 +204,11 @@ class SerializerCheckCompilerPluginComponent(
 
         def typeIsDefinedInScalaFiles(fqcn: String): Boolean = {
           val indexOfLastDotInFQCN = fqcn.lastIndexOf('.')
-          val packageName = fqcn.substring(0, indexOfLastDotInFQCN)
           val typeName = fqcn.substring(indexOfLastDotInFQCN + 1)
           sourceCodeFilesAsStrings.exists(fileAsString => {
-            fileAsString.startsWith(s"package $packageName") &&
-            (fileAsString.contains(s"class $typeName") || fileAsString.contains(s"trait $typeName") || fileAsString
-              .contains(s"object $typeName"))
+            fileAsString.contains(s"class $typeName") ||
+            fileAsString.contains(s"trait $typeName") ||
+            fileAsString.contains(s"object $typeName")
           })
         }
 

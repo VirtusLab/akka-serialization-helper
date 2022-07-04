@@ -14,20 +14,20 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
 
   private val sourceCodeDirectory = File(getClass.getClassLoader.getResource(".")).path.toString
 
-  private val serializersCode = Array(
-    "CorrectSerializer",
-    "EmptySerializer",
-    "IncompleteSerializer",
-    "InvalidAnnotationSerializer",
-    "InvalidClassSerializer",
-    "ObjectSerializer",
-    "MacroRegexSerializer").map(getSerializerAsString)
+  private val CORRECT_SERIALIZER_CODE = getSerializerAsString("CorrectSerializer")
+  private val EMPTY_SERIALIZER_CODE = getSerializerAsString("EmptySerializer")
+  private val INCOMPLETE_SERIALIZER_ONE_CODE = getSerializerAsString("IncompleteSerializer")
+  private val INCOMPLETE_SERIALIZER_TWO_CODE = getSerializerAsString("IncompleteSerializerTwo")
+  private val INVALID_ANNOTATION_SERIALIZER_CODE = getSerializerAsString("InvalidAnnotationSerializer")
+  private val INVALID_CLASS_SERIALIZER_CODE = getSerializerAsString("InvalidClassSerializer")
+  private val OBJECT_SERIALIZER_CODE = getSerializerAsString("ObjectSerializer")
+  private val MACRO_REGEX_SERIALIZER_CODE = getSerializerAsString("MacroRegexSerializer")
 
   "Codec registration checker compiler plugin" should {
     "detect correct registration for all kinds of classes" in {
       File.usingTemporaryDirectory() { directory =>
         val out = CodecRegistrationCheckerCompiler.compileCode(
-          serializersCode(0) :: dataSourceCode,
+          CORRECT_SERIALIZER_CODE :: dataSourceCode,
           List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
         out should be("")
       }
@@ -36,7 +36,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
     "detect serializer as object" in {
       File.usingTemporaryDirectory() { directory =>
         val out = CodecRegistrationCheckerCompiler.compileCode(
-          serializersCode(5) :: dataSourceCode,
+          OBJECT_SERIALIZER_CODE :: dataSourceCode,
           List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
         out should include("error")
       }
@@ -46,7 +46,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
       "types don't match type regex pattern" in {
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
-            serializersCode(1) :: dataSourceCode,
+            EMPTY_SERIALIZER_CODE :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
           out should include("error")
         }
@@ -55,7 +55,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
       "types are missing in serializer definition" in {
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
-            serializersCode(2) :: dataSourceCode,
+            INCOMPLETE_SERIALIZER_ONE_CODE :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
           out should include("error")
           (out should not).include("literal")
@@ -65,7 +65,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
       "annotation value is not a compile time literal" in {
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
-            serializersCode(3) :: dataSourceCode,
+            INVALID_ANNOTATION_SERIALIZER_CODE :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
           out should include("error")
         }
@@ -74,9 +74,19 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
       "class in annotation is not annotated with @SerializabilityTrait" in {
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
-            serializersCode(4) :: dataSourceCode,
+            INVALID_CLASS_SERIALIZER_CODE :: dataSourceCode,
             List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
           out should include("error")
+        }
+      }
+
+      "type that is missing in serializer definition is wrapped in an object" in {
+        File.usingTemporaryDirectory() { directory =>
+          val out = CodecRegistrationCheckerCompiler.compileCode(
+            INCOMPLETE_SERIALIZER_TWO_CODE :: dataSourceCode,
+            List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+          out should include("error")
+          (out should not).include("literal")
         }
       }
     }
@@ -102,7 +112,8 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
           (directory / CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName).contentAsString
         cacheFile should be("""org.random.project.SerializableTrait,org.random.project.GenericData
                               |org.random.project.SerializableTrait,org.random.project.IndirectData
-                              |org.random.project.SerializableTrait,org.random.project.StdData""".stripMargin)
+                              |org.random.project.SerializableTrait,org.random.project.StdData
+                              |org.random.project.SerializableTrait,org.random.project.Wrapper.NestedData""".stripMargin)
       }
     }
 
@@ -119,7 +130,8 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
         cacheFileAfter should be("""org.random.project.SerializableTrait,org.random.project.GenericData
                                    |org.random.project.SerializableTrait,org.random.project.IndirectData
                                    |org.random.project.SerializableTrait,org.random.project.MissingData
-                                   |org.random.project.SerializableTrait,org.random.project.StdData""".stripMargin)
+                                   |org.random.project.SerializableTrait,org.random.project.StdData
+                                   |org.random.project.SerializableTrait,org.random.project.Wrapper.NestedData""".stripMargin)
       }
     }
 
@@ -164,7 +176,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
     "compile with REGISTRATION_REGEX macro" in {
       File.usingTemporaryDirectory() { directory =>
         val out = CodecRegistrationCheckerCompiler.compileCode(
-          List(serializersCode(6), dataSourceCode.find(_.contains("@SerializabilityTrait")).get),
+          List(MACRO_REGEX_SERIALIZER_CODE, dataSourceCode.find(_.contains("@SerializabilityTrait")).get),
           List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
         out should be("")
       }
@@ -178,12 +190,13 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
           "org.random.project.SerializableTrait,hydra.test.TestAkkaSerializable\n" +
           "hydra.test.TestAkkaSerializable,hydra.test.ConcreteClasses")
         val out = CodecRegistrationCheckerCompiler.compileCode(
-          serializersCode(0) :: dataSourceCode,
+          CORRECT_SERIALIZER_CODE :: dataSourceCode,
           List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
         out should be("")
         cacheFile.contentAsString should be("""org.random.project.SerializableTrait,org.random.project.GenericData
                                               |org.random.project.SerializableTrait,org.random.project.IndirectData
-                                              |org.random.project.SerializableTrait,org.random.project.StdData""".stripMargin)
+                                              |org.random.project.SerializableTrait,org.random.project.StdData
+                                              |org.random.project.SerializableTrait,org.random.project.Wrapper.NestedData""".stripMargin)
       }
     }
 
