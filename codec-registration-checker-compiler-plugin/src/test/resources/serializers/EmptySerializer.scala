@@ -4,5 +4,5 @@ import org.virtuslab.ash.annotation.Serializer
 
 @Serializer(classOf[SerializableTrait], ".*Option.*")
 class EmptySerializer {
-  val r: (StdData, GenericData[Int, Int], IndirectData) = ???
+  val r: (StdData, GenericData[Int, Int], IndirectData, Wrapper.NestedData) = ???
 }
