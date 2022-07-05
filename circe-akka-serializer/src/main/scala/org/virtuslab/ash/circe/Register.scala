@@ -35,7 +35,7 @@ object Register {
    * and trailing `.*` - so that it matches both single Registration and multiple Registrations in a collection.
    * It is used by the codec-registration-checker-plugin to collect properly registered codecs.
    *
-   * As codec-registration-checker-plugin searches for `circeRegex` occurrences in the generate AST - and detects
+   * As codec-registration-checker-plugin searches for `circeRegex` occurrences in the generated AST - and detects
    * proper registrations if detected type contains the regex - there might be some rare corner cases, where
    * something like `Option[Register[User_Defined_Type]]` is in the AST and codec-registration-checker-plugin would
    * still treat it as proper registration. However, such situations have not been encountered in real usages.
