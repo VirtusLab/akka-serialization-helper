@@ -13,7 +13,6 @@ import scala.tools.nsc.plugins.PluginComponent
 
 import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName
 import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.disableFlag
-import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.sourceCodeDirectoryFlag
 
 class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extends Plugin {
   override val name: String = "codec-registration-checker-plugin"
@@ -28,15 +27,6 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
   override def init(options: List[String], error: String => Unit): Boolean = {
     if (options.contains(disableFlag))
       return false
-
-    options.find(flag => flag.contains(sourceCodeDirectoryFlag)) match {
-      case Some(directoryFlag) =>
-        pluginOptions.sourceCodeDirectoryToCheck = directoryFlag.replace(s"$sourceCodeDirectoryFlag=", "")
-      case None =>
-        error(
-          s"Required $sourceCodeDirectoryFlag option has not been set. Please, specify the $sourceCodeDirectoryFlag and retry compilation")
-        return false
-    }
 
     options.filterNot(_.startsWith("-")).headOption match {
       case Some(path) =>
@@ -77,7 +67,6 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
   override val optionsHelp: Option[String] = Some(s"""
       |. - directory where cache file will be saved, required
       |$disableFlag - disables the plugin
-      |$sourceCodeDirectoryFlag - path of the source code directory, which has to be checked with this plugin
       |""".stripMargin)
 
 }
@@ -90,7 +79,6 @@ object CodecRegistrationCheckerCompilerPlugin {
   val serializerType = "org.virtuslab.ash.annotation.Serializer"
 
   val disableFlag = "--disable"
-  val sourceCodeDirectoryFlag = "--source-code-directory"
 
   def parseCacheFile(buffer: ByteBuffer): Seq[ParentChildFQCNPair] = {
     StandardCharsets.UTF_8.decode(buffer).toString.split("\n").toSeq.filterNot(_.isBlank).map(_.split(",")).map {

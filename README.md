@@ -299,7 +299,7 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem)
     // ...
     override lazy val codecs = Seq(Register[CommandOne]) // WHOOPS someone forgot to register CommandTwo...
     // ... but Codec Registration Checker will throw a compilation error here:
-    // `No codec for `CommandOne` is registered in class annotated with @org.virtuslab.ash.annotation.Serializer`
+    // `No codec for `CommandOne` is registered in a class annotated with @org.virtuslab.ash.annotation.Serializer`
 }
 ```
 

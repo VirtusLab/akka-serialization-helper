@@ -17,8 +17,6 @@ trait AkkaSerializationHelperKeys {
   lazy val ashCompilerPluginVerbose = settingKey[Boolean]("Prints additional information during compilation")
   lazy val ashCompilerPluginCacheDirectory =
     settingKey[File]("Sets the directory for plugins to store their information")
-  lazy val sourceCodeDirectory =
-    settingKey[String]("Sets the directory for codec-registration-checker-plugin to do additional code check if needed")
 
   lazy val ashDumpPersistenceSchema = taskKey[File]("Dumps schema of classes that are persisted")
   lazy val ashDumpPersistenceSchemaOutputFile = settingKey[File]("Output file to dump persistence schema to")
