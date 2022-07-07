@@ -150,7 +150,6 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 
 lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-registration-checker-compiler-plugin"))
-  .enablePlugins(AssemblyPlugin)
   .settings(name := "codec-registration-checker-compiler-plugin")
   .settings(commonSettings)
   .settings(
@@ -163,8 +162,7 @@ lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies += betterFiles)
-  .settings(assemblySettings: _*)
+    libraryDependencies += betterFiles % Test)
   .dependsOn(annotation, circeAkkaSerializer % Test)
   .jvmPlatform(scalaVersions = supportedScalaVersions)
 

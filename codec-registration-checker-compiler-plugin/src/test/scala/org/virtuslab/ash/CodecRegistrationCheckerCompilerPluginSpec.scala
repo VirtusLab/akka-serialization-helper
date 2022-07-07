@@ -12,8 +12,6 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
   private val dataSourceCode =
     (for (f <- File(getClass.getClassLoader.getResource("data")).children) yield f.contentAsString).toList
 
-  private val sourceCodeDirectory = File(getClass.getClassLoader.getResource(".")).path.toString
-
   private val CORRECT_SERIALIZER_CODE = getSerializerAsString("CorrectSerializer")
   private val EMPTY_SERIALIZER_CODE = getSerializerAsString("EmptySerializer")
   private val INCOMPLETE_SERIALIZER_ONE_CODE = getSerializerAsString("IncompleteSerializer")
@@ -28,7 +26,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
       File.usingTemporaryDirectory() { directory =>
         val out = CodecRegistrationCheckerCompiler.compileCode(
           CORRECT_SERIALIZER_CODE :: dataSourceCode,
-          List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+          List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
       }
     }
@@ -37,7 +35,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
       File.usingTemporaryDirectory() { directory =>
         val out = CodecRegistrationCheckerCompiler.compileCode(
           OBJECT_SERIALIZER_CODE :: dataSourceCode,
-          List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+          List(s"${directory.toJava.getAbsolutePath}"))
         out should include("error")
       }
     }
@@ -47,7 +45,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
             EMPTY_SERIALIZER_CODE :: dataSourceCode,
-            List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+            List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
         }
       }
@@ -56,7 +54,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
             INCOMPLETE_SERIALIZER_ONE_CODE :: dataSourceCode,
-            List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+            List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
           (out should not).include("literal")
         }
@@ -66,7 +64,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
             INVALID_ANNOTATION_SERIALIZER_CODE :: dataSourceCode,
-            List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+            List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
         }
       }
@@ -75,7 +73,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
             INVALID_CLASS_SERIALIZER_CODE :: dataSourceCode,
-            List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+            List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
         }
       }
@@ -84,7 +82,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
         File.usingTemporaryDirectory() { directory =>
           val out = CodecRegistrationCheckerCompiler.compileCode(
             INCOMPLETE_SERIALIZER_TWO_CODE :: dataSourceCode,
-            List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+            List(s"${directory.toJava.getAbsolutePath}"))
           out should include("error")
           (out should not).include("literal")
         }
@@ -94,9 +92,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
     "work with no serializer" in {
       File.usingTemporaryDirectory() { directory =>
         val out =
-          CodecRegistrationCheckerCompiler.compileCode(
-            dataSourceCode,
-            List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+          CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
       }
     }
@@ -104,9 +100,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
     "create cache file when missing" in {
       File.usingTemporaryDirectory() { directory =>
         val out =
-          CodecRegistrationCheckerCompiler.compileCode(
-            dataSourceCode,
-            List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+          CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
         val cacheFile =
           (directory / CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName).contentAsString
@@ -122,9 +116,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
         val cacheFile = directory / CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName
         cacheFile < "org.random.project.SerializableTrait,org.random.project.MissingData"
         val out =
-          CodecRegistrationCheckerCompiler.compileCode(
-            dataSourceCode,
-            List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+          CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
         val cacheFileAfter = cacheFile.contentAsString
         cacheFileAfter should be("""org.random.project.SerializableTrait,org.random.project.GenericData
@@ -141,9 +133,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
           File.usingTemporaryDirectory() { directory =>
             val cacheFile = directory / CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName
             cacheFile < "org.random.project.SerializableTrait"
-            CodecRegistrationCheckerCompiler.compileCode(
-              dataSourceCode,
-              List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+            CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
           }
         }
       }
@@ -153,7 +143,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
           File.usingTemporaryDirectory() { directory =>
             CodecRegistrationCheckerCompiler.compileCode(
               dataSourceCode,
-              List(s"${directory.toJava.getAbsolutePath}\u0000", s"--source-code-directory=$sourceCodeDirectory"))
+              List(s"${directory.toJava.getAbsolutePath}\u0000"))
           }
         }
       }
@@ -163,21 +153,13 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
           CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, Nil)
         }
       }
-
-      "--source-code-directory option is not specified" in {
-        assertThrows[RuntimeException] {
-          File.usingTemporaryDirectory() { directory =>
-            CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}"))
-          }
-        }
-      }
     }
 
     "compile with REGISTRATION_REGEX macro" in {
       File.usingTemporaryDirectory() { directory =>
         val out = CodecRegistrationCheckerCompiler.compileCode(
           List(MACRO_REGEX_SERIALIZER_CODE, dataSourceCode.find(_.contains("@SerializabilityTrait")).get),
-          List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+          List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
       }
     }
@@ -191,7 +173,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
           "hydra.test.TestAkkaSerializable,hydra.test.ConcreteClasses")
         val out = CodecRegistrationCheckerCompiler.compileCode(
           CORRECT_SERIALIZER_CODE :: dataSourceCode,
-          List(s"${directory.toJava.getAbsolutePath}", s"--source-code-directory=$sourceCodeDirectory"))
+          List(s"${directory.toJava.getAbsolutePath}"))
         out should be("")
         cacheFile.contentAsString should be("""org.random.project.SerializableTrait,org.random.project.GenericData
                                               |org.random.project.SerializableTrait,org.random.project.IndirectData

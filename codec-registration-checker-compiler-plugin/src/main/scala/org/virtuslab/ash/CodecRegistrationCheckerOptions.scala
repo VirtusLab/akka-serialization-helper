@@ -21,15 +21,9 @@ import java.io.File
  *   (when `sbt compile` was incremental). And if we can't detect it - this would lead to runtime errors (see README
  *   for more details). `oldParentChildFQCNPairs` gets declared on the plugin's init
  *   by invoking the `CodecRegistrationCheckerCompilerPlugin.parseCacheFile` method.
- *
- * @param sourceCodeDirectoryToCheck - path of the source code directory that hold files with traits and classes
- *   checked by this plugin (i.e. types that are saved into `directClassDescendantsCacheFile`). This parameter is
- *   needed to fix possible false-positives in certain situations.
- *   Check https://github.com/VirtusLab/akka-serialization-helper/issues/141 for details about such false-positives.
  */
 case class CodecRegistrationCheckerOptions(
     var directClassDescendantsCacheFile: File = null,
-    var oldParentChildFQCNPairs: Seq[ParentChildFQCNPair] = null,
-    var sourceCodeDirectoryToCheck: String = null)
+    var oldParentChildFQCNPairs: Seq[ParentChildFQCNPair] = null)
 
 case class ParentChildFQCNPair(parentFQCN: String, childFQCN: String)
