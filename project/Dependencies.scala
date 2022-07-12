@@ -8,7 +8,7 @@ object Dependencies {
   val borerVersion = "1.7.2"
   val circeVersion = "0.14.1"
 
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.11"
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.12"
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.36"
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
   val betterFiles = "com.github.pathikrit" %% "better-files" % "3.9.1"
