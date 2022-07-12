@@ -24,34 +24,34 @@ object AkkaSerializationHelperPlugin extends AutoPlugin {
 
   lazy val additionalSettings: Seq[Def.Setting[_]] = Seq(
     libraryDependencies ++= Seq(
-        ashAnnotationLibrary.value,
-        compilerPlugin(ashDumpPersistenceSchemaCompilerPlugin.value),
-        compilerPlugin(ashCodecRegistrationCheckerCompilerPlugin.value),
-        compilerPlugin(ashSerializabilityCheckerCompilerPlugin.value)),
+      ashAnnotationLibrary.value,
+      compilerPlugin(ashDumpPersistenceSchemaCompilerPlugin.value),
+      compilerPlugin(ashCodecRegistrationCheckerCompilerPlugin.value),
+      compilerPlugin(ashSerializabilityCheckerCompilerPlugin.value)),
     Compile / scalacOptions ++= Seq(
-        s"-P:dump-persistence-schema-plugin:${(ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginCacheDirectory).value}",
-        s"-P:codec-registration-checker-plugin:${(ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value}"),
+      s"-P:dump-persistence-schema-plugin:${(ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginCacheDirectory).value}",
+      s"-P:codec-registration-checker-plugin:${(ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value}"),
     cleanFiles ++= Seq(
-        (ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginCacheDirectory).value / "dump-persistence-schema-cache",
-        (ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value / "codec-registration-checker-cache.csv"),
+      (ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginCacheDirectory).value / "dump-persistence-schema-cache",
+      (ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginCacheDirectory).value / "codec-registration-checker-cache.csv"),
     Compile / scalacOptions ++= (Compile / ashScalacOptions).value,
     Test / scalacOptions --= (Compile / ashScalacOptions).value,
     Test / scalacOptions ++= (Test / ashScalacOptions).value)
 
   lazy val baseAshSettings: Seq[Def.Setting[_]] = Seq(
-      ashDumpPersistenceSchemaCompilerPlugin := component("dump-persistence-schema-compiler-plugin"),
-      ashCodecRegistrationCheckerCompilerPlugin := component("codec-registration-checker-compiler-plugin"),
-      ashSerializabilityCheckerCompilerPlugin := component("serializability-checker-compiler-plugin"),
-      ashAnnotationLibrary := annotation,
-      ashCompilerPluginEnable := true,
-      Test / ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginEnable := false,
-      ashCompilerPluginVerbose := false,
-      DumpPersistenceSchema.dumpPersistenceSchemaTask(ashDumpPersistenceSchema),
-      ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFile :=
-        new File(
-          (ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath).value) / (ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFilename).value,
-      ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFilename := s"${name.value}-dump-persistence-schema-${version.value}.yaml",
-      ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath := ashCompilerPluginCacheDirectory.value.getPath) ++
+    ashDumpPersistenceSchemaCompilerPlugin := component("dump-persistence-schema-compiler-plugin"),
+    ashCodecRegistrationCheckerCompilerPlugin := component("codec-registration-checker-compiler-plugin"),
+    ashSerializabilityCheckerCompilerPlugin := component("serializability-checker-compiler-plugin"),
+    ashAnnotationLibrary := annotation,
+    ashCompilerPluginEnable := true,
+    Test / ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginEnable := false,
+    ashCompilerPluginVerbose := false,
+    DumpPersistenceSchema.dumpPersistenceSchemaTask(ashDumpPersistenceSchema),
+    ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFile :=
+      new File(
+        (ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath).value) / (ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFilename).value,
+    ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputFilename := s"${name.value}-dump-persistence-schema-${version.value}.yaml",
+    ashDumpPersistenceSchema / ashDumpPersistenceSchemaOutputDirectoryPath := ashCompilerPluginCacheDirectory.value.getPath) ++
     Seq(Compile, Test).flatMap(ashScalacOptionsInConfig)
 
   private lazy val ashVersion = getClass.getPackage.getImplementationVersion

@@ -26,10 +26,9 @@ object PipeTest {
 
       val future: Future[Testing] = ???
       val c = pipe(future)(ec)
-      Behaviors.receiveMessage {
-        case Back(message) =>
-          context.log.info("Response: {}", message)
-          Behaviors.same
+      Behaviors.receiveMessage { case Back(message) =>
+        context.log.info("Response: {}", message)
+        Behaviors.same
       }
     }
 }
