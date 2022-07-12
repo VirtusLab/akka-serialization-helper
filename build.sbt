@@ -35,7 +35,7 @@ ThisBuild / semanticdbVersion := {
     case _                   => "4.4.28"
   }
 }
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 
 lazy val commonSettings = Seq(
   sonatypeProfileName := "org.virtuslab",
