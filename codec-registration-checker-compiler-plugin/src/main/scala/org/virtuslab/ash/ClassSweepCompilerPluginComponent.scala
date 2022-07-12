@@ -29,22 +29,20 @@ class ClassSweepCompilerPluginComponent(options: CodecRegistrationCheckerOptions
         val body = unit.body
 
         foundParentChildFQCNPairs ++= body
-          .collect {
-            case classDef: ClassDef => classDef.impl
+          .collect { case classDef: ClassDef =>
+            classDef.impl
           }
           .flatMap(template => template.parents.map((_, template)))
-          .filter {
-            case (parentTypeTree, _) =>
-              parentTypeTree.symbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType)
+          .filter { case (parentTypeTree, _) =>
+            parentTypeTree.symbol.annotations.map(_.tpe.toString()).contains(serializabilityTraitType)
           }
-          .map {
-            case (parentTypeTree, childTypeTree) =>
-              ParentChildFQCNPair(parentTypeTree.tpe.typeSymbol.fullName, childTypeTree.tpe.typeSymbol.fullName)
+          .map { case (parentTypeTree, childTypeTree) =>
+            ParentChildFQCNPair(parentTypeTree.tpe.typeSymbol.fullName, childTypeTree.tpe.typeSymbol.fullName)
           }
 
         parentChildFQCNPairsToUpdate ++= body
-          .collect {
-            case classDef: ClassDef => classDef.impl.tpe.typeSymbol.fullName
+          .collect { case classDef: ClassDef =>
+            classDef.impl.tpe.typeSymbol.fullName
           }
           .flatMap(parentChildClassNamesFromPreviousCompilation.get)
           .flatten

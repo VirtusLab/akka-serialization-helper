@@ -29,10 +29,9 @@ object AskSignTest {
         implicit val act: ActorSystem[Nothing] = context.system
         val fut = actorRef ? Tell.Syn
 
-        Behaviors.receiveMessage {
-          case Back(message) =>
-            context.log.info("Response: {}", message)
-            Behaviors.same
+        Behaviors.receiveMessage { case Back(message) =>
+          context.log.info("Response: {}", message)
+          Behaviors.same
         }
       }
   }

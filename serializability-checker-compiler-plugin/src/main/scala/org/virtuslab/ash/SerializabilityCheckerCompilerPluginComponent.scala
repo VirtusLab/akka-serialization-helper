@@ -121,7 +121,7 @@ class SerializabilityCheckerCompilerPluginComponent(
 
             case x @ Apply(_, args)
                 if (concreteMethods.contains(x.symbol.fullName) && pluginOptions.detectFromMethods) ||
-                (concreteUntypedMethods.contains(x.symbol.fullName) && pluginOptions.detectFromUntypedMethods) =>
+                  (concreteUntypedMethods.contains(x.symbol.fullName) && pluginOptions.detectFromUntypedMethods) =>
               extractTypes(args, x)
 
             case x @ Apply(_, args)
