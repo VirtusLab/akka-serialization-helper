@@ -126,7 +126,7 @@ class SerializabilityCheckerCompilerPluginComponent(
 
             case x @ Apply(_, args)
                 if concreteHigherOrderFunctions.contains(x.symbol.fullName) &&
-                pluginOptions.detectFromHigherOrderFunctions =>
+                  pluginOptions.detectFromHigherOrderFunctions =>
               extractTypes(args, x).flatMap { resultTuple =>
                 resultTuple._1.typ.typeArguments match {
                   case List(_, out) => Some(resultTuple.copy(_1 = TypeWithClassType(out, resultTuple._1.classType)))
