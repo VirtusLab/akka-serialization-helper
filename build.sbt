@@ -31,8 +31,8 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := {
   scalaVersion.value match {
-    case "2.13.7" | "2.13.8" => "4.4.32"
-    case _                   => "4.4.28"
+    case "2.12.16" | "2.13.7" | "2.13.8" => "4.5.9"
+    case _                               => "4.4.28"
   }
 }
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
