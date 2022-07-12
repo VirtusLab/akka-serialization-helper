@@ -58,19 +58,18 @@ class SerializerCheckCompilerPluginComponent(
         }
 
         unit.body
-          .collect {
-            case implDef: ImplDef => (implDef, implDef.symbol.annotations)
+          .collect { case implDef: ImplDef =>
+            (implDef, implDef.symbol.annotations)
           }
-          .foreach {
-            case (implDef, annotations) =>
-              val serializerTypeAnnotations = annotations.filter(_.tpe.toString == serializerType)
-              if (serializerTypeAnnotations.size > 1) {
-                reporter.warning(
-                  annotations.head.pos,
-                  s"Class can only have one @Serializer annotation. Currently it has ${annotations.size}. Using the one found first.")
-              }
-              if (serializerTypeAnnotations.nonEmpty)
-                processSerializerClass(implDef, serializerTypeAnnotations.head)
+          .foreach { case (implDef, annotations) =>
+            val serializerTypeAnnotations = annotations.filter(_.tpe.toString == serializerType)
+            if (serializerTypeAnnotations.size > 1) {
+              reporter.warning(
+                annotations.head.pos,
+                s"Class can only have one @Serializer annotation. Currently it has ${annotations.size}. Using the one found first.")
+            }
+            if (serializerTypeAnnotations.nonEmpty)
+              processSerializerClass(implDef, serializerTypeAnnotations.head)
           }
       }
 
@@ -221,7 +220,7 @@ class SerializerCheckCompilerPluginComponent(
             mode match {
               case DumpTypesIntoFile =>
                 outParentChildFQCNPairs = ((parentChildFQCNPairsFromCacheFile -- classSweepFQCNPairsToUpdate) |
-                classSweepFoundFQCNPairs).toList
+                  classSweepFoundFQCNPairs).toList
                 typeNamesToCheck ++= outParentChildFQCNPairs.groupBy(_.parentFQCN)
                 typesNotDumped = false
               case RemoveOutdatedTypesFromFile =>

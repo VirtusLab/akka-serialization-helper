@@ -16,10 +16,9 @@ object TellTest {
     case class Ack(message: String) extends MySerializable
 
     def apply(): Behaviors.Receive[Command] =
-      Behaviors.receiveMessage[Command] {
-        case Syn(replyTo) =>
-          replyTo.tell(Ack("Response"))
-          Behaviors.same
+      Behaviors.receiveMessage[Command] { case Syn(replyTo) =>
+        replyTo.tell(Ack("Response"))
+        Behaviors.same
       }
   }
 
