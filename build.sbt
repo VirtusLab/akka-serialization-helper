@@ -43,22 +43,21 @@ lazy val commonSettings = Seq(
   sonatypeProfileName := "org.virtuslab",
   scalafmtOnCompile := true,
   scalacOptions ++= Seq(
-      "-deprecation",
-      "-encoding",
-      "UTF-8",
-      "-feature",
-      "-language:_",
-      "-Xlog-reflective-calls",
-      "-Xlint:_",
-      "-Ybackend-parallelism",
-      "8",
-      "-Ywarn-dead-code",
-      "-Ywarn-unused",
-      "-unchecked",
-      if (sys.env.getOrElse("CI", "false") == "true") "-Xfatal-warnings" else ""),
+    "-deprecation",
+    "-encoding",
+    "UTF-8",
+    "-feature",
+    "-language:_",
+    "-Xlog-reflective-calls",
+    "-Xlint:_",
+    "-Ybackend-parallelism",
+    "8",
+    "-Ywarn-dead-code",
+    "-Ywarn-unused",
+    "-unchecked",
+    if (sys.env.getOrElse("CI", "false") == "true") "-Xfatal-warnings" else ""),
   libraryDependencies ++= commonDeps,
   crossScalaVersions := testScalaVersions)
-
 
 // As usage of https://github.com/pathikrit/better-files and https://github.com/spray/spray-json
 // has been added to the runtime logic of dump-persistence-schema-compiler-plugin -
