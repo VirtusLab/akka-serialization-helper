@@ -4,22 +4,23 @@ object Dependencies {
   val scalaVersion213 = "2.13.8"
   val scalaVersion212 = "2.12.15"
 
-  val akkaVersion = "2.6.18"
+  val akkaVersion = "2.6.19"
   val borerVersion = "1.7.2"
-  val circeVersion = "0.14.1"
+  val circeYamlVersion = "0.14.1"
+  val circeVersion = "0.14.2"
 
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.11"
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.12"
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.36"
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
   val betterFiles = "com.github.pathikrit" %% "better-files" % "3.9.1"
   val sprayJson = "io.spray" %% "spray-json" % "1.3.6"
-  val scalaCollectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.6.0"
+  val scalaCollectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.8.0"
 
   val akkaActor = "com.typesafe.akka" %% "akka-actor" % akkaVersion
   val akkaActorTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
   val akkaStream = "com.typesafe.akka" %% "akka-stream" % akkaVersion
   val akkaPersistenceTyped = "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion
-  val akkaProjections = "com.lightbend.akka" %% "akka-projection-eventsourced" % "1.2.3"
+  val akkaProjections = "com.lightbend.akka" %% "akka-projection-eventsourced" % "1.2.4"
   val akkaTestKitTyped = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
   val akkaStreamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
 
@@ -31,7 +32,7 @@ object Dependencies {
   val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
   val circeGenericExtras = "io.circe" %% "circe-generic-extras" % circeVersion
   val circeParser = "io.circe" %% "circe-parser" % circeVersion
-  val circeYaml = "io.circe" %% "circe-yaml" % circeVersion
+  val circeYaml = "io.circe" %% "circe-yaml" % circeYamlVersion
 
   val scalaCompiler = "org.scala-lang" % "scala-compiler"
   val scalaReflect = "org.scala-lang" % "scala-reflect"

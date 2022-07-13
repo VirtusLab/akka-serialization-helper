@@ -31,10 +31,9 @@ object AskTest {
           case Failure(_)                 => Back("Request failed")
         }
 
-        Behaviors.receiveMessage {
-          case Back(message) =>
-            context.log.info("Response: {}", message)
-            Behaviors.same
+        Behaviors.receiveMessage { case Back(message) =>
+          context.log.info("Response: {}", message)
+          Behaviors.same
         }
       }
   }
