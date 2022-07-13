@@ -1,6 +1,13 @@
+import Dependencies._
+import sbt.VirtualAxis.ScalaVersionAxis
+
+lazy val supportedScalaVersions = List(scalaVersion213, scalaVersion212)
+lazy val testScalaVersions = supportedScalaVersions ++ List("2.12.13", "2.12.14", "2.13.2", "2.13.3", "2.13.4", "2.13.5", "2.13.6", "2.13.7")
+lazy val scalaVersionAxis = settingKey[Option[String]]("Project scala version")
+
 name := "event-migration"
 version := "0.1"
-scalaVersion := "2.13.6"
+crossScalaVersions := testScalaVersions
 
 val circeVersion = "0.14.1"
 val borerVersion = "1.7.2"
@@ -21,4 +28,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % Test
 
-scalacOptions += "-Ymacro-annotations"
+scalaVersionAxis := virtualAxes.value.collectFirst { case x: ScalaVersionAxis => x.value }
+scalacOptions += scalaVersionAxis.value.map {
+  case "2.13" => "-Ymacro-annotations"
+}

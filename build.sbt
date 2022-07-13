@@ -11,6 +11,8 @@ initialize ~= { _ =>
 }
 
 lazy val supportedScalaVersions = List(scalaVersion213, scalaVersion212)
+lazy val testScalaVersions =
+  supportedScalaVersions ++ List("2.12.13", "2.12.14", "2.13.2", "2.13.3", "2.13.4", "2.13.5", "2.13.6", "2.13.7")
 
 ThisBuild / scalaVersion := supportedScalaVersions.head
 ThisBuild / organization := "org.virtuslab.ash"
@@ -54,7 +56,8 @@ lazy val commonSettings = Seq(
       "-Ywarn-unused",
       "-unchecked",
       if (sys.env.getOrElse("CI", "false") == "true") "-Xfatal-warnings" else ""),
-  libraryDependencies ++= commonDeps)
+  libraryDependencies ++= commonDeps,
+  crossScalaVersions := testScalaVersions)
 
 // As usage of https://github.com/pathikrit/better-files and https://github.com/spray/spray-json
 // has been added to the runtime logic of dump-persistence-schema-compiler-plugin -
@@ -103,7 +106,7 @@ lazy val circeAkkaSerializer = (projectMatrix in file("circe-akka-serializer"))
       virtualAxes.value.collectFirst { case x: ScalaVersionAxis => x.value }
     })
   .settings(
-    resolvers += Resolver.sonatypeRepo("releases"),
+    resolvers += Resolver.sonatypeRepo("releases"), // TODO (#202): update to sonatypeOssRepos
     libraryDependencies ++=
       scalaVersionAxis.value.map {
         case "2.13" => Seq(scalaReflect % scalaVersion213)
