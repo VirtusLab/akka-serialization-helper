@@ -20,9 +20,9 @@ class DumpPersistenceSchemaCompilerPluginComponent(val options: DumpPersistenceS
 
       /**
        * All these types have three things in common:
-       *  - they have 2 or more type parameters
-       *  - the last type parameter corresponds to state type
-       *  - the last but one type parameter corresponds to event type
+       *   - they have 2 or more type parameters
+       *   - the last type parameter corresponds to state type
+       *   - the last but one type parameter corresponds to event type
        */
       private val genericsNames =
         Seq(

@@ -11,7 +11,7 @@ class SerializabilityCheckerCompilerPlugin(override val global: Global) extends 
   override val description: String =
     """checks whether a specified Akka serialization is applied to all messages, events and persistent state classes"""
 
-  //Placeholder options
+  // Placeholder options
   private val pluginOptions = new SerializabilityCheckerOptions()
 
   override val components: List[PluginComponent] = List(

@@ -170,7 +170,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
         // hydra.test.TestAkkaSerializable and hydra.test.ConcreteClasses do not exist in the code anymore (outdated types)
         cacheFile.write(
           "org.random.project.SerializableTrait,hydra.test.TestAkkaSerializable\n" +
-          "hydra.test.TestAkkaSerializable,hydra.test.ConcreteClasses")
+            "hydra.test.TestAkkaSerializable,hydra.test.ConcreteClasses")
         val out = CodecRegistrationCheckerCompiler.compileCode(
           CORRECT_SERIALIZER_CODE :: dataSourceCode,
           List(s"${directory.toJava.getAbsolutePath}"))

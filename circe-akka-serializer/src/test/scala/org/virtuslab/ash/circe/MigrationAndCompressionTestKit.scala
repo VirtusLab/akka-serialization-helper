@@ -8,8 +8,7 @@ import akka.serialization.Serializers
 import org.virtuslab.ash.circe.MigrationAndCompressionTestKit.SerializationData
 
 /**
- * Utilities to test serialization migration and compression.
- * To perform round trip:
+ * Utilities to test serialization migration and compression. To perform round trip:
  * {{{
  * val migrationTestKit = new MigrationTestKit(system)
  * val original = ???
