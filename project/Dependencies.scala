@@ -6,7 +6,8 @@ object Dependencies {
 
   val akkaVersion = "2.6.19"
   val borerVersion = "1.7.2"
-  val circeVersion = "0.14.1"
+  val circeYamlVersion = "0.14.1"
+  val circeVersion = "0.14.2"
 
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.12"
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.36"
@@ -31,7 +32,7 @@ object Dependencies {
   val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
   val circeGenericExtras = "io.circe" %% "circe-generic-extras" % circeVersion
   val circeParser = "io.circe" %% "circe-parser" % circeVersion
-  val circeYaml = "io.circe" %% "circe-yaml" % circeVersion
+  val circeYaml = "io.circe" %% "circe-yaml" % circeYamlVersion
 
   val scalaCompiler = "org.scala-lang" % "scala-compiler"
   val scalaReflect = "org.scala-lang" % "scala-reflect"
@@ -40,5 +41,5 @@ object Dependencies {
   val scalaPluginDeps213: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion213 % Provided)
   val scalaPluginDeps212: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion212 % Provided)
 
-  val commonDeps = Seq(scalaTest % Test, logger % Test)
+  val commonDeps: Seq[ModuleID] = Seq(scalaTest % Test, logger % Test)
 }
