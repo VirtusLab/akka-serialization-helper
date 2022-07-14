@@ -10,7 +10,7 @@ class DumpPersistenceSchemaCompilerPlugin(override val global: Global) extends P
   override val name: String = "dump-persistence-schema-plugin"
   override val description: String = ""
 
-  //Placeholder options
+  // Placeholder options
   private val pluginOptions = new DumpPersistenceSchemaOptions("/tmp", verbose = false)
 
   override val components: List[PluginComponent] = List(

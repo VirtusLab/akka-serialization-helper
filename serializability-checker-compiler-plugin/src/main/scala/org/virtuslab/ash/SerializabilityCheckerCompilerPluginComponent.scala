@@ -168,7 +168,7 @@ class SerializabilityCheckerCompilerPluginComponent(
                 reporter.error(
                   detectedPosition,
                   s"""${typeWithClassType.typ
-                    .toString()} is used as Akka ${typeWithClassType.classType.name} but does not extend a trait annotated with $serializabilityTraitType.
+                      .toString()} is used as Akka ${typeWithClassType.classType.name} but does not extend a trait annotated with $serializabilityTraitType.
                      |Passing an object of a class that does NOT extend a trait annotated with $serializabilityTraitType as a ${typeWithClassType.classType.name}
                      |may cause Akka to fall back to Java serialization during runtime.
                      |

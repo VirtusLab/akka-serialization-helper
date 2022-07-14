@@ -14,8 +14,8 @@ import io.circe.jawn.JawnParser
 /**
  * An abstract class that is extended to create a custom serializer.
  *
- * After creating your subclass, don't forget to add your serializer and base trait to `application.conf`
- * (for more info [[https://doc.akka.io/docs/akka/current/serialization.html]])
+ * After creating your subclass, don't forget to add your serializer and base trait to `application.conf` (for more info
+ * [[https://doc.akka.io/docs/akka/current/serialization.html]])
  *
  * Example subclass:
  * {{{
@@ -36,8 +36,10 @@ import io.circe.jawn.JawnParser
  *     override lazy val packagePrefix = "app"
  *   }
  * }}}
- * @param system ExtendedActorSystem that is provided by Akka
- * @tparam Ser base trait that is used to mark serialization
+ * @param system
+ *   ExtendedActorSystem that is provided by Akka
+ * @tparam Ser
+ *   base trait that is used to mark serialization
  */
 abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActorSystem)
     extends SerializerWithStringManifest
@@ -96,13 +98,19 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
   /**
    * The intended usage of this method is to provide any form of support for generic classes.
    *
-   * Because of type erasure, it's impossible to [[org.virtuslab.ash.circe.Register]] one generic class two times with different type parameters.
+   * Because of type erasure, it's impossible to [[org.virtuslab.ash.circe.Register]] one generic class two times with
+   * different type parameters.
    *
-   * The trick for combating type erasure is to register generic class only once with type parameter being its upper bound, and provide custom made [[io.circe.Codec]] that can serialize/deserialize all classes that are used as a type parameter.
+   * The trick for combating type erasure is to register generic class only once with type parameter being its upper
+   * bound, and provide custom made [[io.circe.Codec]] that can serialize/deserialize all classes that are used as a
+   * type parameter.
    *
-   * For example, if the upper bound is `Any`, but you know that only `Int` and `String` are used as a type parameter, then you can create a custom [[io.circe.Codec]] for `Any` that handles `Int` and `String` and throws `Exception` otherwise.
+   * For example, if the upper bound is `Any`, but you know that only `Int` and `String` are used as a type parameter,
+   * then you can create a custom [[io.circe.Codec]] for `Any` that handles `Int` and `String` and throws `Exception`
+   * otherwise.
    *
-   * To use this method correctly, set the upper bound for the type parameter of generic class to `Ser` and put the returned Codec as implicit in a place that can be seen by type derivation.
+   * To use this method correctly, set the upper bound for the type parameter of generic class to `Ser` and put the
+   * returned Codec as implicit in a place that can be seen by type derivation.
    *
    * Example of generic class:
    * {{{
@@ -113,7 +121,8 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
    *   Register[GenericClass[MySerializable, MySerializable]]
    * }}}
    *
-   * @return [[io.circe.Codec]] that can serialize all subtypes of `Ser`
+   * @return
+   *   [[io.circe.Codec]] that can serialize all subtypes of `Ser`
    */
   def genericCodec: Codec[Ser] = this
 

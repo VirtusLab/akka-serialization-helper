@@ -95,7 +95,7 @@ class SerializerCheckCompilerPluginComponent(
             val typeRegexPatternOption =
               regexTree match {
                 case Select(_, TermName("$lessinit$greater$default$2")) => Some(".*")
-                case other                                              => extractValueOfLiteralConstantFromTree[String](other)
+                case other => extractValueOfLiteralConstantFromTree[String](other)
               }
 
             (fqcnOption, typeRegexPatternOption) match {
@@ -161,8 +161,8 @@ class SerializerCheckCompilerPluginComponent(
           if (actuallyMissingFullyQualifiedClassNames.nonEmpty) {
             reporter.error(
               serializerImplDef.pos,
-              s"""No codecs for ${actuallyMissingFullyQualifiedClassNames
-                .mkString(", ")} are registered in class annotated with @$serializerType.
+              s"""No codecs for ${actuallyMissingFullyQualifiedClassNames.mkString(
+                  ", ")} are registered in class annotated with @$serializerType.
                  |This will lead to a missing codec for Akka serialization in the runtime.
                  |Current type regex pattern: $typeRegexPattern""".stripMargin)
           } else {
@@ -183,7 +183,7 @@ class SerializerCheckCompilerPluginComponent(
                 reporter.error(
                   literal.pos,
                   s"Annotation argument must have a type during compilation of [${classTag[
-                    A].runtimeClass.toString}]. Current type is [${other.getClass.toString}]")
+                      A].runtimeClass.toString}]. Current type is [${other.getClass.toString}]")
                 None
             }
           case other =>

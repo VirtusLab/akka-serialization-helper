@@ -74,6 +74,6 @@ object Compression {
    */
   private[circe] def isCompressedWithGzip(bytes: Array[Byte]): Boolean =
     (bytes != null) && (bytes.length >= 2) &&
-    (bytes(0) == GZIPInputStream.GZIP_MAGIC.toByte) &&
-    (bytes(1) == (GZIPInputStream.GZIP_MAGIC >> 8).toByte)
+      (bytes(0) == GZIPInputStream.GZIP_MAGIC.toByte) &&
+      (bytes(1) == (GZIPInputStream.GZIP_MAGIC >> 8).toByte)
 }
