@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   val scalaVersion213 = "2.13.8"
-  val scalaVersion212 = "2.12.15"
+  val scalaVersion212 = "2.12.16"
 
   val akkaVersion = "2.6.19"
   val borerVersion = "1.7.2"
@@ -41,5 +41,5 @@ object Dependencies {
   val scalaPluginDeps213: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion213 % Provided)
   val scalaPluginDeps212: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion212 % Provided)
 
-  val commonDeps = Seq(scalaTest % Test, logger % Test)
+  val commonDeps: Seq[ModuleID] = Seq(scalaTest % Test, logger % Test)
 }
