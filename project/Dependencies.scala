@@ -41,5 +41,5 @@ object Dependencies {
   val scalaPluginDeps213: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion213 % Provided)
   val scalaPluginDeps212: Seq[ModuleID] = scalaPluginDeps.map(_ % scalaVersion212 % Provided)
 
-  val commonDeps = Seq(scalaTest % Test, logger % Test)
+  val commonDeps: Seq[ModuleID] = Seq(scalaTest % Test, logger % Test)
 }
