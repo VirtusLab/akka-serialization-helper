@@ -148,7 +148,8 @@ class SerializabilityCheckerCompilerPluginComponent(
           val (typeWithClassType, detectedPosition) = next
           val ignore = {
             val fullName = typeWithClassType.typ.dealias.typeSymbol.fullName
-            ignoredTypes.contains(fullName) || ignoredTypePrefixes.exists(fullName.startsWith)
+            ignoredTypes.contains(fullName) || ignoredTypePrefixes.exists(fullName.startsWith) ||
+            typeArgsAreHiddenIgnoreTypes(typeWithClassType.typ)
           }
           if (ignore || annotatedTraits.exists(typeWithClassType.typ <:< _)) {
             annotatedTraits
@@ -196,5 +197,23 @@ class SerializabilityCheckerCompilerPluginComponent(
         else
           tp.parents.flatMap(findSuperclassAnnotatedWithSerializabilityTrait).headOption
       }
+
+      /*
+      It might happen that scala compiler translates the "[_]" wildcard from typeArgs
+      not to the "scala.Any" type, but to a temporary compiler-specific type.
+      String representation for such type ends with "._$<DIGIT>" (e.g. "._$2")
+      To catch such situations and not raise false error - we have to check it.
+      We should ignore scala.Any and other possible ignoredTypes in such cases.
+      In particular, mentioned problem might occur when using ActorSystem[_] implicitly as parameter.
+      For example, such scenario occurs when using object of type ActorSystem[_] in method calls
+      that in fact require akka.actor.ClassicActorSystemProvider (which is a supertype for ActorSystem).
+       */
+      private def typeArgsAreHiddenIgnoreTypes(typ: global.Type): Boolean =
+        if (typ.typeSymbol.fullName.matches(".+\\._\\$\\d"))
+          typ.typeArgs.forall { typeArg: Type =>
+            ignoredTypes.contains(typeArg.upperBound.typeSymbol.fullName)
+          }
+        else
+          false
     }
 }
