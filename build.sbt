@@ -158,7 +158,9 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
       akkaActorTyped % Test,
       akkaPersistenceTyped % Test,
       akkaProjections % Test,
-      betterFiles % Test))
+      betterFiles % Test,
+      akkaGrpc % Test,
+      akkaGrpcWebSupport % Test))
   .dependsOn(annotation)
   .jvmPlatform(scalaVersions = targetScalaVersions)
 

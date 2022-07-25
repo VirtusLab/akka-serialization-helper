@@ -175,5 +175,10 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
       val code = getResourceAsString("AkkaSerializabilityTraitsTest.scala")
       SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should be("")
     }
+
+    "recognize upper bound type for [_] wildcard usage as scala.Any for ._$<DIGIT> types" in {
+      val code = getResourceAsString("GenericsTest3.scala")
+      SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should be("")
+    }
   }
 }
