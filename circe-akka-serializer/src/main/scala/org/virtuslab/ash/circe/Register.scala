@@ -39,10 +39,10 @@ object Register {
    * `.*` - so that it matches both single Registration and multiple Registrations in a collection. It is used by the
    * codec-registration-checker-compiler-plugin to collect properly registered codecs.
    *
-   * As codec-registration-checker-compiler-plugin searches for `circeRegex` occurrences in the generated AST - and detects
-   * proper registrations if detected type contains the regex - there might be some rare corner cases, where something
-   * like `Option[Register[User_Defined_Type]]` is in the AST and codec-registration-checker-compiler-plugin would still
-   * treat it as proper registration. However, such situations have not been encountered in real usages.
+   * As codec-registration-checker-compiler-plugin searches for `circeRegex` occurrences in the generated AST - and
+   * detects proper registrations if detected type contains the regex - there might be some rare corner cases, where
+   * something like `Option[Register[User_Defined_Type]]` is in the AST and codec-registration-checker-compiler-plugin
+   * would still treat it as proper registration. However, such situations have not been encountered in real usages.
    */
   private val circeRegex = """.*org\.virtuslab\.ash\.circe\.Registration\[.*\].*"""
 
