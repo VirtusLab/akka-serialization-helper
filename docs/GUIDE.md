@@ -1,5 +1,5 @@
 # Step-by-step guide for Akka Serialization Helper usage
-This document is a guide on how to use Akka Serialization Helper in your project. If you want to get a more general view of this toolbox, go to [README](../README.md).
+This document is a guide on how to use Akka Serialization Helper in your project. If you want to get a more general view of this toolbox, see [README](../README.md).
 
 Akka Serialization Helper (ASH) consists of two major parts:
 1. Circe Akka Serializer
@@ -10,7 +10,6 @@ You might use ASH in a few ways:
 - Use Circe Akka Serializer but without enabling Compiler Plugins
 - Use Compiler Plugins but not Circe Akka Serializer (if you need to stick to your current Serializer)
 
-Moreover, there are three Compiler Plugins (listed in [How to use](#hot-to-use) section). They are enabled by default, but you can choose to disable some of them if you want.<br><br>
 To use ASH (hole or chosen part), you need to first add Akka Serialization Helper in the `project/plugins.sbt` file and enable it in `build.sbt` - this is the standard way of using the toolbox. Just follow short instructions from [install part of README](https://github.com/VirtusLab/akka-serialization-helper#install).<br><br>
 Alternatively - if you want to use only Circe Akka Serializer (without enabling compiler plugins) - you can add it as a standard library dependency (find new available versions under [releases](https://github.com/VirtusLab/akka-serialization-helper/releases)):
 ```sbt
@@ -26,7 +25,7 @@ libraryDependencies += "org.virtuslab.ash" %% "circe-akka-serializer" % "Version
 6. [ashDumpPersistenceSchema sbt task](#ashDumpPersistenceSchema-sbt-task)
 
 ### Circe Akka Serializer Guide
-The [CirceAkkaSerializer](../circe-akka-serializer/src/main/scala/org/virtuslab/ash/circe/CirceAkkaSerializer.scala) is the main abstract class that you have to extend to use as the Serializer in your application. Before extending it, read excellent Javadoc comments available in following files:
+[CirceAkkaSerializer](../circe-akka-serializer/src/main/scala/org/virtuslab/ash/circe/CirceAkkaSerializer.scala) is the main abstract class that you have to extend to use as the Serializer in your application. Before extending it, read Javadoc comments available in following files:
 - [CirceAkkaSerializer.scala](../circe-akka-serializer/src/main/scala/org/virtuslab/ash/circe/CirceAkkaSerializer.scala) (the most important starting point / main abstraction)
 - [CirceTraitCodec.scala](../circe-akka-serializer/src/main/scala/org/virtuslab/ash/circe/CirceTraitCodec.scala) (a trait that is extended by CirceAkkaSerializer and has some important `val`s that should be overridden in your code)
 - [Register.scala](../circe-akka-serializer/src/main/scala/org/virtuslab/ash/circe/Register.scala) (helper object with `apply` method that needs to be used in order to register Codecs for serializable type)
@@ -77,7 +76,7 @@ Serializability Checker Compiler Plugin does not need additional configuration, 
 The Plugin is enabled by default in each project / module where `AkkaSerializationHelperPlugin` is enabled. If you want to disable this particular plugin (but want to keep on using other ASH compiler plugins) - add following setting inside `build.sbt` for chosen project / module:<br>
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--disable"`<br><br>
 - `--verbose`<br>
-Verbose mode enables verbose logs from the plugin. These logs contain detailed info about detected serializable types and annotated traits. This mode is disabled by default. If you want to enable `verbose` mode, add following setting:<br>
+Verbose mode enables additional logs from the plugin. These logs contain detailed info about detected serializable types and annotated traits. This mode is disabled by default. If you want to enable `verbose` mode, add following setting:<br>
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--verbose"`<br><br>
 - `--disable-detection-generics`<br>
 This option disables detection of messages/events/states based on their usage as a type parameter of certain classes - e.g. akka.actor.typed.Behavior or akka.persistence.typed.scaladsl.Effect. It is disabled by default. If you want to use it, add following setting:<br>
@@ -112,8 +111,9 @@ Dump Persistence Schema Compiler Plugin does not need additional configuration, 
 The Plugin is enabled by default in each project / module where `AkkaSerializationHelperPlugin` is enabled. If you want to disable this particular plugin (but want to keep on using other ASH compiler plugins) - add following setting inside `build.sbt` for chosen project / module:<br>
 `Compile / scalacOptions += "-P:dump-persistence-schema-plugin:--disable"`<br><br>
 - `--verbose`<br>
-Verbose mode enables verbose logs from the plugin. These logs contain detailed info about detected persistence schema. This mode is disabled by default. If you want to enable `verbose` mode, add following setting:<br>
+Verbose mode enables additional logs from the plugin. These logs contain detailed info about detected persistence schema. This mode is disabled by default. If you want to enable `verbose` mode, add following setting:<br>
 `Compile / scalacOptions += "-P:dump-persistence-schema-plugin:--verbose"`<br><br>
+
 Dump Persistence Schema Compiler Plugin prepares data for the `ashDumpPersistenceSchema` sbt task, which creates the final output for user.<br>
 
 ### ashDumpPersistenceSchema sbt task
