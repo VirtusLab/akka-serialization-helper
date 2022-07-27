@@ -7,7 +7,7 @@
 ![logo_ash_horizontal@4x](https://user-images.githubusercontent.com/25779550/135059025-4cfade5b-bfcb-47e8-872f-8a3d78ce0c25.png)
 
 Serialization toolbox for Akka messages, events and persistent state that helps achieve compile-time guarantee on
-serializability. There're some Akka serialization caveats this tool can help with:
+serializability. There are some Akka serialization caveats this tool can help with:
 1. [Missing serialization binding](#missing-serialization-binding)
 2. [Incompatibility of persistent data](#incompatibility-of-persistent-data)
 3. [Jackson Akka Serializer](#jackson-akka-serializer)
