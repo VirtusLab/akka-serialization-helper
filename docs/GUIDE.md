@@ -10,7 +10,7 @@ You might use ASH in a few ways:
 - Use Circe Akka Serializer but without enabling Compiler Plugins
 - Use Compiler Plugins but not Circe Akka Serializer (if you need to stick to your current Serializer)
 
-To use ASH (whole or a selected part), you need to first add Akka Serialization Helper in the `project/plugins.sbt` file and enable it in `build.sbt` &mdash; this is the standard way of using the toolbox. Just follow short instructions from [install part of README](https://github.com/VirtusLab/akka-serialization-helper#install).<br>
+To use ASH (whole or a selected part), you need to first add Akka Serialization Helper in the `project/plugins.sbt` file and enable it in `build.sbt` &mdash; this is the standard way of using the toolbox. Just follow short instructions from [install part of README](https://github.com/VirtusLab/akka-serialization-helper#install).
 
 Alternatively &mdash; if you want to use only Circe Akka Serializer (without enabling compiler plugins) &mdash; you can add it as a standard library dependency (find new available versions under [releases](https://github.com/VirtusLab/akka-serialization-helper/releases)):
 ```sbt
@@ -18,14 +18,14 @@ libraryDependencies += "org.virtuslab.ash" %% "circe-akka-serializer" % "Version
 ```
 
 ## How to use:
-1. [Circe Akka Serializer](#circe-akka-serializer-guide)
-2. [Annotations](#annotations-guide)
-3. [Serializability Checker Compiler Plugin](#serializability-checker-compiler-plugin-guide)
-4. [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin-guide)
-5. [Dump Persistence Schema Compiler Plugin](#dump-persistence-schema-compiler-plugin-guide)
+1. [Circe Akka Serializer](#circe-akka-serializer)
+2. [Annotations](#annotations)
+3. [Serializability Checker Compiler Plugin](#serializability-checker-compiler-plugin)
+4. [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin)
+5. [Dump Persistence Schema Compiler Plugin](#dump-persistence-schema-compiler-plugin)
 6. [ashDumpPersistenceSchema sbt task](#ashdumppersistenceschema-sbt-task)
 
-### Circe Akka Serializer Guide
+### Circe Akka Serializer
 [CirceAkkaSerializer](../circe-akka-serializer/src/main/scala/org/virtuslab/ash/circe/CirceAkkaSerializer.scala) is the main abstract class that you have to extend to use as the Serializer in your application. Before extending it, read Scaladoc comments available in following files:
 - [CirceAkkaSerializer.scala](../circe-akka-serializer/src/main/scala/org/virtuslab/ash/circe/CirceAkkaSerializer.scala) (the most important starting point / main abstraction)
 - [CirceTraitCodec.scala](../circe-akka-serializer/src/main/scala/org/virtuslab/ash/circe/CirceTraitCodec.scala) (a trait that is extended by CirceAkkaSerializer and has some important `val`s that should be overridden in your code)
@@ -54,7 +54,7 @@ Also, there are few optional configurations that you can set if you want to chan
 
 - `org.virtuslab.ash.circe.enable-missing-codecs-check` = `true` / `false`
 
-`true` enables additional check for possible missing codec registrations (more info about this problem in [README](../README.md)). This is in general checked by the [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin-guide) during compilation, so the default is `false`. However, if you use only Circe Akka Serializer without compiler plugins - this check should be enabled. Be aware that enabling this check might have a slight negative impact on Serializer's performance.<br><br>
+`true` enables additional runtime check for possible missing codec registrations (more info about this problem in [README](../README.md)). This is in general checked by the [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin-guide) during compilation, so the default is `false`. However, if you use only Circe Akka Serializer without compiler plugins - this check should be enabled. Be aware that enabling this check might have a slight negative impact on Serializer's performance.<br><br>
 
 - `org.virtuslab.ash.circe.compression.algorithm` = `gzip` / `off`
 
@@ -63,21 +63,21 @@ Also, there are few optional configurations that you can set if you want to chan
 - `org.virtuslab.ash.circe.compression.compress-larger-than` = `64 KiB` _(example value)_
 
 If `org.virtuslab.ash.circe.compression.algorithm` = `gzip` and `compress-larger-than` **value** is larger than `0 KiB` &mdash; each payload greater than the **value** will be compressed before serialization. Default **value** is `32 KiB`. If `org.virtuslab.ash.circe.compression.algorithm` = `off` &mdash; payloads will not be compressed, regardless of the chosen `compress-larger-than` value.<br><br>
-**Note** &mdash; Circe Akka Serializer will perform **deserialization** properly for both compressed and not compressed payloads regardless of both `org.virtuslab.ash.circe.compression` configurations (Serializer will recognize whether the payload has been compressed programmatically). These settings matter only for choosing type of serialization.
+**Note** &mdash; Circe Akka Serializer will perform **deserialization** properly for both compressed and uncompressed payloads regardless of both `org.virtuslab.ash.circe.compression` configurations (Serializer will recognize whether the payload has been compressed). These settings matter only for choosing type of serialization.
 
-### Annotations Guide
-ASH compiler plugins are based on usages of two annotations: [@SerializabilityTrait](#SerializabilityTrait) and [@Serializer](#Serializer). Thus, before enabling compiler plugins, make sure that you are using these two annotations properly in the project / module where plugins will do their work. In order to have access to these annotations, add this part of ASH to library dependencies:
+### Annotations
+ASH compiler plugins are based on usages of two annotations: [@SerializabilityTrait](#SerializabilityTrait) and [@Serializer](#Serializer). Thus, before running compilation with ASH compiler plugins, make sure that you are using these two annotations properly in the project / module where plugins will do their work. Annotations are available on the classpath for each project / module where ASH sbt plugin [is enabled](https://github.com/VirtusLab/akka-serialization-helper#install). If you want to use annotations in some other project / module (but do not need to enable whole ASH sbt plugin there), add this part of ASH to library dependencies:
 ```sbt
 import org.virtuslab.ash.AkkaSerializationHelperPlugin
 (...)
 libraryDependencies += AkkaSerializationHelperPlugin.annotation
 ```
 #### SerializabilityTrait
-[@SerializabilityTrait](../annotation/src/main/scala/org/virtuslab/ash/annotation/SerializabilityTrait.scala) is an annotation that should be added to your top-level serializable type (trait mentioned in the `akka.actor.serialization-bindings` part of akka config) that is extended by Messages / Events / States. Moreover, if your top-level serializable type is extended by another **trait** &mdash; this trait should also be annotated with this annotation. Concrete classes extending "serializability traits" (i.e. classes that define Messages/Events/States) should not be marked with this annotation. See examples in [README.md](../README.md)
+[@SerializabilityTrait](../annotation/src/main/scala/org/virtuslab/ash/annotation/SerializabilityTrait.scala) is an annotation that should be added to your top-level serializable type (trait mentioned in the `akka.actor.serialization-bindings` part of Akka config). Moreover, if your top-level serializable type is extended by another **trait** (i.e. another, more specific marker trait that is later extended by concrete classes representing messages / events / states) &mdash; this trait should also be annotated with this annotation. These are "serializability traits". Each serializability trait that is used as a type parameter in a `@Serializer` annotation should be marked with `@SerializabilityTrait`. Concrete classes extending "serializability traits" (i.e. classes that define Messages/Events/States) should not be marked with this annotation. See examples in [README.md](https://github.com/VirtusLab/akka-serialization-helper#missing-serialization-binding)
 #### Serializer
-[@Serializer](../annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala) is an annotation used by the [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin-guide) to check if there are any missing codec registrations. Add the `@Serializer` annotation to each serializer listed in the `akka.actor.serializers` part of the akka config. Moreover, to achieve full assurance that all codecs will be registered properly &mdash; add `@Serializer` annotation to each class/object/trait that contains code responsible for codec registration. See [Serializer Scaladoc](../annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala) for more details.
+[@Serializer](../annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala) is an annotation used by the [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin-guide) to check if there are any missing codec registrations. Add the `@Serializer` annotation to each serializer listed in the `akka.actor.serializers` part of the Akka config. Moreover, to achieve full assurance that all codecs will be registered properly &mdash; add `@Serializer` annotation to each class/object/trait that contains code responsible for codec registration. See [Serializer Scaladoc](../annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala) for more details.
 
-### Serializability Checker Compiler Plugin Guide
+### Serializability Checker Compiler Plugin
 Before using this compiler plugin, make sure that you are using the [@SerializabilityTrait](../annotation/src/main/scala/org/virtuslab/ash/annotation/SerializabilityTrait.scala) annotation properly in code (instructions in previous [section](#SerializabilityTrait)). This plugin searches for all possible Akka Messages, Events and States and checks if their supertypes are properly marked with the `@SerializabilityTrait` annotation.<br><br>
 Serializability Checker Compiler Plugin does not need additional configuration, but if you want to change its default behavior (or disable it) &mdash; you can add optional configurations as explained below:
 - `--disable`
@@ -90,15 +90,15 @@ Verbose mode enables additional logs from the plugin. These logs contain detaile
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--verbose"`<br><br>
 - `--disable-detection-generics`
 
-This option disables detection of messages/events/states based on their usage as a type parameter of certain classes &mdash; e.g. akka.actor.typed.Behavior or akka.persistence.typed.scaladsl.Effect. It is disabled by default. If you want to use it, add following setting:<br>
+This option disables detection of messages/events/states based on their usage as a type parameter of certain classes &mdash; e.g. `akka.actor.typed.Behavior` or `akka.persistence.typed.scaladsl.Effect`. It is disabled by default. If you want to use it, add following setting:<br>
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--disable-detection-generics"`<br><br>
 - `--disable-detection-generic-methods`
 
-This option disables detection of messages/events/state based on their usage as generic argument to a method, e.g. akka.actor.typed.scaladsl.ActorContext.ask. It is disabled by default. If you want to use it, add following setting:<br>
+This option disables detection of messages/events/state based on their usage as generic argument to a method, e.g. `akka.actor.typed.scaladsl.ActorContext.ask`. It is disabled by default. If you want to use it, add following setting:<br>
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--disable-detection-generic-methods"`<br><br>
 - `--disable-detection-methods`
 
-This option disables detection of messages/events/state based on type of arguments to a method, e.g. akka.actor.typed.ActorRef.tell. It is disabled by default. If you want to use it, add following setting:<br>
+This option disables detection of messages/events/state based on type of arguments to a method, e.g. `akka.actor.typed.ActorRef.tell`. It is disabled by default. If you want to use it, add following setting:<br>
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--disable-detection-methods"`<br><br>
 - `--disable-detection-untyped-methods`
 
@@ -109,7 +109,7 @@ This option disables detection of messages/events/state based on type of argumen
 This option disables detection of messages/events/state based on return type of the function given as argument to method. It is disabled by default. If you want to use it, add following setting:<br>
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--disable-detection-higher-order-function"`<br><br>
 
-### Codec Registration Checker Compiler Plugin Guide
+### Codec Registration Checker Compiler Plugin
 Before using this compiler plugin, make sure that you are using both [annotations](#annotations-guide) properly. If yes &mdash; plugin can be used right away. This plugin checks whether classes marked with serializability trait are being referenced in a marked serializer, which ensures that codecs will be registered in runtime.<br><br>
 Codec Registration Checker Compiler Plugin does not need additional configuration, but you can change default configurations as explained below:
 - `--disable`
@@ -122,7 +122,7 @@ This plugin uses a helper cache file named `codec-registration-checker-cache.csv
 `Compile / scalacOptions += "-P:codec-registration-checker-plugin:PATH_TO_CUSTOM_DIRECTORY"`<br><br>
 
 
-### Dump Persistence Schema Compiler Plugin Guide
+### Dump Persistence Schema Compiler Plugin
 Dump Persistence Schema Compiler Plugin does not need additional configuration, but you can change default configurations as explained below:
 - `--disable`
 
