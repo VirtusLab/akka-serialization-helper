@@ -332,6 +332,9 @@ Test / ashCompilerPluginEnable := false
 
 For full list of sbt keys, check [`org.virtuslab.ash.AkkaSerializationHelperKeys`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/sbt-akka-serialization-helper/src/main/scala/org/virtuslab/ash/AkkaSerializationHelperKeys.scala).
 
+## Step-by-step guide
+See [full step-by-step guide](docs/GUIDE.md) on Akka Serialization Helper usage.
+
 ## Contributing Guide
 
 If you want to contribute to this project, see [Contributing Guide](https://github.com/VirtusLab/akka-serialization-helper/blob/main/CONTRIBUTING.md)
