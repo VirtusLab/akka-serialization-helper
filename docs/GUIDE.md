@@ -54,7 +54,7 @@ Also, there are few optional configurations that you can set if you want to chan
 
 - `org.virtuslab.ash.circe.enable-missing-codecs-check` = `true` / `false`
 
-`true` enables additional runtime check for possible missing codec registrations (more info about this problem in [README](../README.md)). This is in general checked by the [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin-guide) during compilation, so the default is `false`. However, if you use only Circe Akka Serializer without compiler plugins - this check should be enabled. Be aware that enabling this check might have a slight negative impact on Serializer's performance.<br><br>
+`true` enables additional runtime check for possible missing codec registrations (more info about this problem in [README](../README.md)). This is in general checked by the [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin) during compilation, so the default is `false`. However, if you use only Circe Akka Serializer without compiler plugins - this check should be enabled. Be aware that enabling this check might have a slight negative impact on Serializer's performance.<br><br>
 
 - `org.virtuslab.ash.circe.compression.algorithm` = `gzip` / `off`
 
@@ -75,7 +75,7 @@ libraryDependencies += AkkaSerializationHelperPlugin.annotation
 #### SerializabilityTrait
 [@SerializabilityTrait](../annotation/src/main/scala/org/virtuslab/ash/annotation/SerializabilityTrait.scala) is an annotation that should be added to your top-level serializable type (trait mentioned in the `akka.actor.serialization-bindings` part of Akka config). Moreover, if your top-level serializable type is extended by another **trait** (i.e. another, more specific marker trait that is later extended by concrete classes representing messages / events / states) &mdash; this trait should also be annotated with this annotation. These are "serializability traits". Each serializability trait that is used as a type parameter in a `@Serializer` annotation should be marked with `@SerializabilityTrait`. Concrete classes extending "serializability traits" (i.e. classes that define Messages/Events/States) should not be marked with this annotation. See examples in [README.md](https://github.com/VirtusLab/akka-serialization-helper#missing-serialization-binding)
 #### Serializer
-[@Serializer](../annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala) is an annotation used by the [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin-guide) to check if there are any missing codec registrations. Add the `@Serializer` annotation to each serializer listed in the `akka.actor.serializers` part of the Akka config. Moreover, to achieve full assurance that all codecs will be registered properly &mdash; add `@Serializer` annotation to each class/object/trait that contains code responsible for codec registration. See [Serializer Scaladoc](../annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala) for more details.
+[@Serializer](../annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala) is an annotation used by the [Codec Registration Checker Compiler Plugin](#codec-registration-checker-compiler-plugin) to check if there are any missing codec registrations. Add the `@Serializer` annotation to each serializer listed in the `akka.actor.serializers` part of the Akka config. Moreover, to achieve full assurance that all codecs will be registered properly &mdash; add `@Serializer` annotation to each class/object/trait that contains code responsible for codec registration. See [Serializer Scaladoc](../annotation/src/main/scala/org/virtuslab/ash/annotation/Serializer.scala) for more details.
 
 ### Serializability Checker Compiler Plugin
 Before using this compiler plugin, make sure that you are using the [@SerializabilityTrait](../annotation/src/main/scala/org/virtuslab/ash/annotation/SerializabilityTrait.scala) annotation properly in code (instructions in previous [section](#SerializabilityTrait)). This plugin searches for all possible Akka Messages, Events and States and checks if their supertypes are properly marked with the `@SerializabilityTrait` annotation.<br><br>
@@ -110,7 +110,7 @@ This option disables detection of messages/events/state based on return type of 
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--disable-detection-higher-order-function"`<br><br>
 
 ### Codec Registration Checker Compiler Plugin
-Before using this compiler plugin, make sure that you are using both [annotations](#annotations-guide) properly. If yes &mdash; plugin can be used right away. This plugin checks whether classes marked with serializability trait are being referenced in a marked serializer, which ensures that codecs will be registered in runtime.<br><br>
+Before using this compiler plugin, make sure that you are using both [annotations](#annotations) properly. If yes &mdash; plugin can be used right away. This plugin checks whether classes marked with serializability trait are being referenced in a marked serializer, which ensures that codecs will be registered in runtime.<br><br>
 Codec Registration Checker Compiler Plugin does not need additional configuration, but you can change default configurations as explained below:
 - `--disable`
 
