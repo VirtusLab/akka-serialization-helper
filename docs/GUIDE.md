@@ -148,7 +148,7 @@ Verbose mode enables additional logs from the plugin. These logs contain detaile
 
 - `custom cache file path`
 
-This plugin creates a set of helper temporary Json files (used later by the [`ashDumpPersistenceSchema` task](#ashdumppersistenceschema-sbt-task)). These files are saved under a temporary directory - `dump-persistence-schema-cache`. The `dump-persistence-schema-cache` directory is created under `target/` directory of top-level project by default. If you want, you can change the default `target/` directory to a custom directory of your choice. So that the `dump-persistence-schema-cache` directory with json files would be created under the custom dir. To do so, add following configuration to the plugin:<br>
+This plugin creates a set of helper temporary Json files (used later by the [`ashDumpPersistenceSchema` task](#ashdumppersistenceschema-sbt-task)). These files are saved under a temporary directory - `dump-persistence-schema-cache/`. The `dump-persistence-schema-cache/` directory is created under `target/` directory of top-level project by default. If you want, you can change the default `target/` directory to a custom directory of your choice. So that the `dump-persistence-schema-cache/` directory with json files would be created under the custom dir. To do so, add following configuration to the plugin:<br>
 `Compile / scalacOptions += "-P:dump-persistence-schema-plugin:PATH_TO_CUSTOM_DIRECTORY"`<br><br>
 
 Dump Persistence Schema Compiler Plugin prepares data for the `ashDumpPersistenceSchema` sbt task, which creates the final output for user.<br>
