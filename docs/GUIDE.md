@@ -13,7 +13,7 @@ You might use ASH in a few ways:
 To use ASH (whole or a selected part), you need to first add Akka Serialization Helper in the `project/plugins.sbt` file and enable it in `build.sbt` &mdash; this is the standard way of using the toolbox. Just follow the [installation instructions from README](https://github.com/VirtusLab/akka-serialization-helper#install).
 
 Alternatively &mdash; if you want to use only Circe Akka Serializer (without enabling compiler plugins) &mdash; you can add it as a standard library dependency (find new available versions under [releases](https://github.com/VirtusLab/akka-serialization-helper/releases)):
-```
+```sbt
 libraryDependencies += "org.virtuslab.ash" %% "circe-akka-serializer" % "Version"
 ```
 
@@ -67,7 +67,7 @@ If `org.virtuslab.ash.circe.compression.algorithm` = `gzip` and `compress-larger
 
 ### Annotations
 ASH compiler plugins are driven by two annotations: [@SerializabilityTrait](#SerializabilityTrait) and [@Serializer](#Serializer). Thus, before running compilation with ASH compiler plugins, make sure that you are using these two annotations properly in the project/module where plugins will do their work. Annotations are available on the classpath for each project/module where ASH sbt plugin [is enabled](https://github.com/VirtusLab/akka-serialization-helper#install). If you want to use annotations in some other project/module without enabling ASH sbt plugin, add them directly to library dependencies:
-```
+```sbt
 import org.virtuslab.ash.AkkaSerializationHelperPlugin
 (...)
 val foo = project
