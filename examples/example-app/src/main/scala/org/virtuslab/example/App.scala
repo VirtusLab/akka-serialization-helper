@@ -9,6 +9,18 @@ import akka.actor.typed.scaladsl.Routers
 import akka.cluster.typed.Cluster
 import com.typesafe.config.ConfigFactory
 
+/**
+ * An example akka cluster application that uses Akka Serialization Helper. In order to run the application locally,
+ * run following commands in separate terminal windows (so that 3 separate processes run in parallel):
+ *
+ * sbt "runMain org.virtuslab.example.App compute 25251"
+ * sbt "runMain org.virtuslab.example.App compute 25252"
+ * sbt "runMain org.virtuslab.example.App client 0"
+ *
+ * Note: this example-app's logic is based on akka-sample-custer-scala code from the official Akka repository.
+ * If you want to check this, see https://github.com/akka/akka-samples/tree/2.6/akka-sample-cluster-scala
+ *
+ */
 object App {
 
   val StatsServiceKey = ServiceKey[StatsService.ProcessText]("StatsService")
@@ -28,7 +40,6 @@ object App {
               .withConsistentHashingRouting(1, _.word),
             "WorkerRouter"
           )
-        //val worker = ctx.spawn(StatsWorker(), "StatsWorker") // to be decided - if use this one or 'workers'
 
         val service = ctx.spawn(StatsService(workers), "StatsService")
 

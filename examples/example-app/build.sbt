@@ -8,40 +8,28 @@ scalaVersion := "2.13.6"
 
 val circeVersion = "0.14.2"
 val akkaVersion = "2.6.19"
+val logbackVersion = "1.2.11"
 
 lazy val `example-app` = project
   .in (file("."))
   .enablePlugins(AkkaSerializationHelperPlugin)
   .settings(multiJvmSettings: _*)
   .settings(
-    libraryDependencies ++= Seq(
-      akkaDeps,
-      circeDeps,
-      ashDeps
-    ).flatten :+ logbackDependency,
-    run / fork := false,
-    run / javaOptions ++= Seq("-Xms128m", "-Xmx1024m", "-Djava.library.path=./target/native"),
+    libraryDependencies ++= akkaDependencies ++ ashDependencies ++ Seq(logbackDependency, circeDependency),
+    fork :=  true,
     Global / cancelable := false
-  )
-  .settings(
-    Compile / scalacOptions += "-Ymacro-annotations" // TODO - REMOVE THIS ONE?
   )
   .configs(MultiJvm)
 
-lazy val akkaDeps = Seq(
+lazy val akkaDependencies = Seq(
   "com.typesafe.akka" %% "akka-actor-typed",
   "com.typesafe.akka" %% "akka-cluster-typed").map(_ % akkaVersion)
 
-// TODO - some of them not needed?
-lazy val circeDeps = Seq(
-  "io.circe" %% "circe-core",
-  "io.circe" %% "circe-generic",
-  "io.circe" %% "circe-generic-extras",
-  "io.circe" %% "circe-parser").map(_ % circeVersion)
+lazy val circeDependency = "io.circe" %% "circe-core" % circeVersion
 
-lazy val ashDeps = Seq(
+lazy val ashDependencies = Seq(
   AkkaSerializationHelperPlugin.annotation,
   AkkaSerializationHelperPlugin.circeAkkaSerializer
 )
 
-lazy val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.2.11"
+lazy val logbackDependency = "ch.qos.logback" % "logback-classic" % logbackVersion
