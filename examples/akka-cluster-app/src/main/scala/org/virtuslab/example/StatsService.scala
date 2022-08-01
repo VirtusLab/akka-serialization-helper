@@ -12,19 +12,19 @@ import org.virtuslab.ash.circe.AkkaCodecs
 
 object StatsService {
 
-  sealed trait Command extends CirceAkkaSerializable // extends is our code
+  sealed trait Command extends CirceAkkaSerializable
   final case class ProcessText(text: String, replyTo: ActorRef[Response]) extends Command {
     require(text.nonEmpty)
   }
   case object Stop extends Command
 
-  sealed trait Response extends CirceAkkaSerializable // extends is our code
+  sealed trait Response extends CirceAkkaSerializable
   final case class JobResult(meanWordLength: Double) extends Response
   final case class JobFailed(reason: String) extends Response
 
-  implicit lazy val codecResponse: Codec[Response] = deriveCodec // our code
-  implicit lazy val codecActorRefResponse: Codec[ActorRef[Response]] = new AkkaCodecs {}.actorRefCodec // our code
-  implicit lazy val codecCommand: Codec[Command] = deriveCodec // our code
+  implicit lazy val codecResponse: Codec[Response] = deriveCodec
+  implicit lazy val codecActorRefResponse: Codec[ActorRef[Response]] = new AkkaCodecs {}.actorRefCodec
+  implicit lazy val codecCommand: Codec[Command] = deriveCodec
 
   def apply(workers: ActorRef[StatsWorker.Process]): Behavior[Command] =
     Behaviors.setup { ctx =>
@@ -46,11 +46,11 @@ object StatsService {
 
 object StatsAggregator {
 
-  sealed trait Event extends CirceAkkaSerializable // extends is our code
+  sealed trait Event extends CirceAkkaSerializable
   private case object Timeout extends Event
   private case class CalculationComplete(length: Int) extends Event
 
-  implicit lazy val codecEvent: Codec[Event] = deriveCodec // our code
+  implicit lazy val codecEvent: Codec[Event] = deriveCodec
 
   def apply(
       words: Seq[String],

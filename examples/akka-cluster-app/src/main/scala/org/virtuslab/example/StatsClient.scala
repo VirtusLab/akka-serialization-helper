@@ -10,11 +10,11 @@ import io.circe.generic.semiauto.deriveCodec
 
 object StatsClient {
 
-  sealed trait Event extends CirceAkkaSerializable // extends is our code
+  sealed trait Event extends CirceAkkaSerializable
   private case object Tick extends Event
   private case class ServiceResponse(result: StatsService.Response) extends Event
 
-  implicit lazy val codecEvent: Codec[Event] = deriveCodec // our code
+  implicit lazy val codecEvent: Codec[Event] = deriveCodec
 
   def apply(service: ActorRef[StatsService.ProcessText]): Behavior[Event] =
     Behaviors.setup { ctx =>

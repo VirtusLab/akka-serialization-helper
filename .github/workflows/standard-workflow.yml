@@ -142,7 +142,7 @@ jobs:
         with:
           java-version: adopt@1.11
 
-      - name: Run event-migration-examples
+      - name: Test event-migration-examples
         run: sbt test
         working-directory: examples/event-migration
 

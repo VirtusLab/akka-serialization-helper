@@ -13,15 +13,15 @@ import org.virtuslab.ash.circe.AkkaCodecs
 
 object StatsWorker {
 
-  sealed trait Command extends CirceAkkaSerializable // extends is our code
+  sealed trait Command extends CirceAkkaSerializable
   final case class Process(word: String, replyTo: ActorRef[Processed]) extends Command
   private case object EvictCache extends Command
 
-  final case class Processed(word: String, length: Int) extends CirceAkkaSerializable // extends is our code
+  final case class Processed(word: String, length: Int) extends CirceAkkaSerializable
 
-  implicit lazy val codecProcessed: Codec[Processed] = deriveCodec // our code
-  implicit lazy val codecActorRefProcessed: Codec[ActorRef[Processed]] = new AkkaCodecs {}.actorRefCodec // our code
-  implicit lazy val codecCommand: Codec[Command] = deriveCodec // our code
+  implicit lazy val codecProcessed: Codec[Processed] = deriveCodec
+  implicit lazy val codecActorRefProcessed: Codec[ActorRef[Processed]] = new AkkaCodecs {}.actorRefCodec
+  implicit lazy val codecCommand: Codec[Command] = deriveCodec
 
   def apply(): Behavior[Command] = Behaviors.setup { ctx =>
     Behaviors.withTimers { timers =>
