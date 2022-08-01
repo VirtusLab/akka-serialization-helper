@@ -18,7 +18,10 @@ lazy val `example-app` = project
       akkaDeps,
       circeDeps,
       ashDeps
-    ).flatten :+ logbackDependency
+    ).flatten :+ logbackDependency,
+    run / fork := false,
+    run / javaOptions ++= Seq("-Xms128m", "-Xmx1024m", "-Djava.library.path=./target/native"),
+    Global / cancelable := false
   )
   .settings(
     Compile / scalacOptions += "-Ymacro-annotations" // TODO - REMOVE THIS ONE?

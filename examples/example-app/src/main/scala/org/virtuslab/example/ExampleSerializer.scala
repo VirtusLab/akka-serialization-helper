@@ -17,7 +17,7 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem) extends CirceAkkaSeria
     Register[StatsWorker.Processed]
   )
 
-  override lazy val manifestMigrations: Seq[(String, Class[_])] = Nil // TODO - will Nil work?
+  override lazy val manifestMigrations: Seq[(String, Class[_])] = Nil // TODO - apply some real logic? Or leave it as it is?
 
   override lazy val packagePrefix: String = "org.virtuslab.example"
 }

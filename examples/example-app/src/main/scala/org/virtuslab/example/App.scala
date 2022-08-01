@@ -19,7 +19,7 @@ object App {
       if (cluster.selfMember.hasRole("compute")) {
         // on every compute node there is one service instance that delegates to N local workers
         val numberOfWorkers =
-          ctx.system.settings.config.getInt("stats-service.workers-per-node")
+          ctx.system.settings.config.getInt("example-service.workers-per-node")
         val workers = ctx
           .spawn(
             Routers
@@ -28,6 +28,8 @@ object App {
               .withConsistentHashingRouting(1, _.word),
             "WorkerRouter"
           )
+        //val worker = ctx.spawn(StatsWorker(), "StatsWorker") // to be decided - if use this one or 'workers'
+
         val service = ctx.spawn(StatsService(workers), "StatsService")
 
         // published through the receptionist to the other nodes in the cluster
