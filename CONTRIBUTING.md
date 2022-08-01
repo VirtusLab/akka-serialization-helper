@@ -27,6 +27,15 @@ and using it in another project. Make sure that `mavenLocal` is added to the res
 sbt publishM2
 ```
 
+You can find a simple example application that uses Akka Serialization Helper [here](examples/example-app).
+This app can be used for basic runtime testing as well. Just invoke following commands in separate terminal
+windows so that three processes run in parallel:
+```shell
+sbt "runMain org.virtuslab.example.App compute 25251"
+sbt "runMain org.virtuslab.example.App compute 25252"
+sbt "runMain org.virtuslab.example.App client 0"
+```
+
 ### Testing
 
 To run unit tests, type
@@ -63,7 +72,11 @@ Before committing, don't forget to type
 ```shell
 sbt scalafmtAll scalafixAll scalafmtSbt
 ```
-to format the code, .sbt files and check imports. You can use `pre-commit` hook, provided in `./pre-commit`, to do formating and checking automatically.
+to format the code, .sbt files and check imports. Run this command in following directories:
+- the base directory ( `.` )
+- `examples/event-migration`
+- `examples/example-app`
+You can use `pre-commit` hook, provided in `./pre-commit`, to do formating and checking automatically.
 
 Additionally, all warnings locally are escalated to errors in CI, so make sure there are none.
 

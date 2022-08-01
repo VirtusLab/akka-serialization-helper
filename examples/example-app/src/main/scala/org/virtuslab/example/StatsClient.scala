@@ -11,11 +11,11 @@ import scala.concurrent.duration._
 
 object StatsClient {
 
-  sealed trait Event extends CirceAkkaSerializable
+  sealed trait Event extends CirceAkkaSerializable // extends is our code
   private case object Tick extends Event
   private case class ServiceResponse(result: StatsService.Response) extends Event
 
-  implicit lazy val codecEvent: Codec[Event] = deriveCodec
+  implicit lazy val codecEvent: Codec[Event] = deriveCodec // our code
 
   def apply(service: ActorRef[StatsService.ProcessText]): Behavior[Event] =
     Behaviors.setup { ctx =>

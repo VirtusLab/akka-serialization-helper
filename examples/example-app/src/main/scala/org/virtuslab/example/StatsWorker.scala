@@ -15,15 +15,15 @@ import scala.concurrent.duration._
 //#worker
 object StatsWorker {
 
-  sealed trait Command extends CirceAkkaSerializable
+  sealed trait Command extends CirceAkkaSerializable // extends is our code
   final case class Process(word: String, replyTo: ActorRef[Processed]) extends Command
   private case object EvictCache extends Command
 
-  final case class Processed(word: String, length: Int) extends CirceAkkaSerializable
+  final case class Processed(word: String, length: Int) extends CirceAkkaSerializable // extends is our code
 
-  implicit lazy val codecProcessed: Codec[Processed] = deriveCodec
-  implicit lazy val codecActorRefProcessed: Codec[ActorRef[Processed]] = new AkkaCodecs{}.actorRefCodec
-  implicit lazy val codecCommand: Codec[Command] = deriveCodec
+  implicit lazy val codecProcessed: Codec[Processed] = deriveCodec // our code
+  implicit lazy val codecActorRefProcessed: Codec[ActorRef[Processed]] = new AkkaCodecs{}.actorRefCodec // our code
+  implicit lazy val codecCommand: Codec[Command] = deriveCodec // our code
 
   def apply(): Behavior[Command] = Behaviors.setup { ctx =>
     Behaviors.withTimers { timers =>
