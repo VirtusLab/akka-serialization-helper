@@ -5,16 +5,16 @@ object Dependencies {
   val scalaVersion212 = "2.12.16"
 
   val akkaVersion = "2.6.19"
-  val borerVersion = "1.7.2"
+  val borerVersion = "1.8.0"
   val circeYamlVersion = "0.14.1"
   val circeVersion = "0.14.2"
 
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.12"
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.13"
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.36"
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
   val betterFiles = "com.github.pathikrit" %% "better-files" % "3.9.1"
   val sprayJson = "io.spray" %% "spray-json" % "1.3.6"
-  val scalaCollectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.8.0"
+  val scalaCollectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1"
 
   val akkaActor = "com.typesafe.akka" %% "akka-actor" % akkaVersion
   val akkaActorTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
