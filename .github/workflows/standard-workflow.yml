@@ -37,7 +37,7 @@ jobs:
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
         working-directory: examples/event-migration
 
-      - name: Check code style - examples/eakka-cluster-app
+      - name: Check code style - examples/akka-cluster-app
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
         working-directory: examples/akka-cluster-app
 
