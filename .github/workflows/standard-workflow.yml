@@ -33,6 +33,14 @@ jobs:
         # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
 
+      - name: Check code style - examples/event-migration
+        run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
+        working-directory: examples/event-migration
+
+      - name: Check code style - examples/akka-cluster-app
+        run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
+        working-directory: examples/akka-cluster-app
+
   test-212:
     runs-on: ubuntu-latest
 
@@ -134,9 +142,13 @@ jobs:
         with:
           java-version: adopt@1.11
 
-      - name: Run examples
+      - name: Test event-migration-examples
         run: sbt test
         working-directory: examples/event-migration
+
+      - name: Compile akka-cluster-app
+        run: sbt compile
+        working-directory: examples/akka-cluster-app
 
   publish-maven-artifacts:
     needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]

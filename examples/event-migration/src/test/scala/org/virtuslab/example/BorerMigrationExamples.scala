@@ -1,7 +1,10 @@
 package org.virtuslab.example
 
-import io.bullet.borer.derivation.MapBasedCodecs.{deriveAllCodecs, deriveCodec}
-import io.bullet.borer.{Codec, Dom, Json}
+import io.bullet.borer.Codec
+import io.bullet.borer.Dom
+import io.bullet.borer.Json
+import io.bullet.borer.derivation.MapBasedCodecs.deriveAllCodecs
+import io.bullet.borer.derivation.MapBasedCodecs.deriveCodec
 import org.scalatest.funsuite.AnyFunSuiteLike
 
 class BorerMigrationExamples extends AnyFunSuiteLike {

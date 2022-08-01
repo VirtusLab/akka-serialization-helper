@@ -4,4 +4,10 @@
 # ln -s ../../pre-commit .git/hooks/pre-commit
 # Make sure the file is executable.
 
-sbt "scalafmtCheckAll" "scalafixAll"
+sbt "scalafmtAll" "scalafixAll" "scalafmtSbt"
+
+cd examples/event-migration
+sbt "scalafmtAll" "scalafixAll" "scalafmtSbt"
+
+cd ../akka-cluster-app
+sbt "scalafmtAll" "scalafixAll" "scalafmtSbt"

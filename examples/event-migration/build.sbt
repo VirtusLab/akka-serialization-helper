@@ -1,6 +1,6 @@
 name := "event-migration"
 version := "0.1"
-scalaVersion := "2.13.6"
+scalaVersion := "2.13.8"
 
 val circeVersion = "0.14.2"
 val borerVersion = "1.8.0"
@@ -22,3 +22,8 @@ libraryDependencies ++= Seq(
 libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % Test
 
 scalacOptions += "-Ymacro-annotations"
+
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := "4.5.9"
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
+scalacOptions += "-Ywarn-unused"

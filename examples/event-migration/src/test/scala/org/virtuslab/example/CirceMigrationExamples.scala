@@ -1,10 +1,10 @@
 package org.virtuslab.example
 
-import org.scalatest.funsuite.AnyFunSuiteLike
 import io.circe.generic.auto._
 import io.circe.generic.extras._
 import io.circe.parser._
 import io.circe.syntax.EncoderOps
+import org.scalatest.funsuite.AnyFunSuiteLike
 
 class CirceMigrationExamples extends AnyFunSuiteLike {
 
