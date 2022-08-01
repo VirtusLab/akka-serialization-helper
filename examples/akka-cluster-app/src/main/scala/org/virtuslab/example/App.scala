@@ -10,16 +10,15 @@ import akka.cluster.typed.Cluster
 import com.typesafe.config.ConfigFactory
 
 /**
- * An example akka cluster application that uses Akka Serialization Helper. In order to run the application locally,
- * run following commands in separate terminal windows (so that 3 separate processes run in parallel):
+ * An example akka cluster application that uses Akka Serialization Helper. In order to run the application locally, run
+ * the following commands in separate terminal windows (so that 3 separate processes run in parallel):
  *
- * sbt "runMain org.virtuslab.example.App compute 25251"
- * sbt "runMain org.virtuslab.example.App compute 25252"
- * sbt "runMain org.virtuslab.example.App client 0"
+ *   - sbt "runMain org.virtuslab.example.App compute 25251"
+ *   - sbt "runMain org.virtuslab.example.App compute 25252"
+ *   - sbt "runMain org.virtuslab.example.App client 0"
  *
- * Note: this example-app's logic is based on akka-sample-custer-scala code from the official Akka repository.
- * If you want to check this, see https://github.com/akka/akka-samples/tree/2.6/akka-sample-cluster-scala
- *
+ * Note: this example-app's logic is based on akka-sample-custer-scala code from the official Akka repository. If you
+ * want to check this, see https://github.com/akka/akka-samples/tree/2.6/akka-sample-cluster-scala
  */
 object App {
 
@@ -32,22 +31,19 @@ object App {
         // on every compute node there is one service instance that delegates to N local workers
         val numberOfWorkers =
           ctx.system.settings.config.getInt("example-service.workers-per-node")
-        val workers = ctx
-          .spawn(
-            Routers
-              .pool(numberOfWorkers)(StatsWorker().narrow[StatsWorker.Process])
-              // the worker has a per word cache, so send the same word to the same local worker child
-              .withConsistentHashingRouting(1, _.word),
-            "WorkerRouter"
-          )
+        val workers = ctx.spawn(
+          Routers
+            .pool(numberOfWorkers)(StatsWorker().narrow[StatsWorker.Process])
+            // the worker has a per word cache, so send the same word to the same local worker child
+            .withConsistentHashingRouting(1, _.word),
+          "WorkerRouter")
 
         val service = ctx.spawn(StatsService(workers), "StatsService")
 
         // published through the receptionist to the other nodes in the cluster
-        ctx.system.receptionist ! Receptionist
-          .Register(StatsServiceKey, service)
+        ctx.system.receptionist ! Receptionist.Register(StatsServiceKey, service)
       }
-      if (cluster.selfMember.hasRole(("client"))) {
+      if (cluster.selfMember.hasRole("client")) {
         val serviceRouter =
           ctx.spawn(Routers.group(App.StatsServiceKey), "ServiceRouter")
         ctx.spawn(StatsClient(serviceRouter), "Client")

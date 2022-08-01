@@ -1,18 +1,16 @@
 package org.virtuslab.example
 
+import scala.concurrent.duration._
+
 import akka.actor.typed.ActorRef
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.ActorContext
 import akka.actor.typed.scaladsl.Behaviors
-
 import io.circe.Codec
 import io.circe.generic.semiauto.deriveCodec
 
 import org.virtuslab.ash.circe.AkkaCodecs
 
-import scala.concurrent.duration._
-
-//#worker
 object StatsWorker {
 
   sealed trait Command extends CirceAkkaSerializable // extends is our code
@@ -22,7 +20,7 @@ object StatsWorker {
   final case class Processed(word: String, length: Int) extends CirceAkkaSerializable // extends is our code
 
   implicit lazy val codecProcessed: Codec[Processed] = deriveCodec // our code
-  implicit lazy val codecActorRefProcessed: Codec[ActorRef[Processed]] = new AkkaCodecs{}.actorRefCodec // our code
+  implicit lazy val codecActorRefProcessed: Codec[ActorRef[Processed]] = new AkkaCodecs {}.actorRefCodec // our code
   implicit lazy val codecCommand: Codec[Command] = deriveCodec // our code
 
   def apply(): Behavior[Command] = Behaviors.setup { ctx =>
@@ -34,8 +32,7 @@ object StatsWorker {
     }
   }
 
-  private def withCache(ctx: ActorContext[Command],
-                        cache: Map[String, Int]): Behavior[Command] =
+  private def withCache(ctx: ActorContext[Command], cache: Map[String, Int]): Behavior[Command] =
     Behaviors.receiveMessage {
       case Process(word, replyTo) =>
         ctx.log.info("Worker processing request [{}]", word)
@@ -53,4 +50,3 @@ object StatsWorker {
         withCache(ctx, Map.empty)
     }
 }
-//#worker

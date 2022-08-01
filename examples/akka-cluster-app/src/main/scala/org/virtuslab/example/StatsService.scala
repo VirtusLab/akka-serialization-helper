@@ -1,17 +1,15 @@
 package org.virtuslab.example
 
+import scala.concurrent.duration._
+
 import akka.actor.typed.ActorRef
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-
 import io.circe.Codec
 import io.circe.generic.semiauto.deriveCodec
 
-import scala.concurrent.duration._
-
 import org.virtuslab.ash.circe.AkkaCodecs
 
-//#service
 object StatsService {
 
   sealed trait Command extends CirceAkkaSerializable // extends is our code
@@ -25,7 +23,7 @@ object StatsService {
   final case class JobFailed(reason: String) extends Response
 
   implicit lazy val codecResponse: Codec[Response] = deriveCodec // our code
-  implicit lazy val codecActorRefResponse: Codec[ActorRef[Response]] = new AkkaCodecs{}.actorRefCodec // our code
+  implicit lazy val codecActorRefResponse: Codec[ActorRef[Response]] = new AkkaCodecs {}.actorRefCodec // our code
   implicit lazy val codecCommand: Codec[Command] = deriveCodec // our code
 
   def apply(workers: ActorRef[StatsWorker.Process]): Behavior[Command] =
@@ -54,12 +52,14 @@ object StatsAggregator {
 
   implicit lazy val codecEvent: Codec[Event] = deriveCodec // our code
 
-  def apply(words: Seq[String], workers: ActorRef[StatsWorker.Process], replyTo: ActorRef[StatsService.Response]): Behavior[Event] =
+  def apply(
+      words: Seq[String],
+      workers: ActorRef[StatsWorker.Process],
+      replyTo: ActorRef[StatsService.Response]): Behavior[Event] =
     Behaviors.setup { ctx =>
       ctx.setReceiveTimeout(3.seconds, Timeout)
-      val responseAdapter = ctx.messageAdapter[StatsWorker.Processed](processed =>
-        CalculationComplete(processed.length)
-      )
+      val responseAdapter =
+        ctx.messageAdapter[StatsWorker.Processed](processed => CalculationComplete(processed.length))
 
       words.foreach { word =>
         workers ! StatsWorker.Process(word, responseAdapter)
@@ -67,7 +67,10 @@ object StatsAggregator {
       waiting(replyTo, words.size, Nil)
     }
 
-  private def waiting(replyTo: ActorRef[StatsService.Response], expectedResponses: Int, results: List[Int]): Behavior[Event] =
+  private def waiting(
+      replyTo: ActorRef[StatsService.Response],
+      expectedResponses: Int,
+      results: List[Int]): Behavior[Event] =
     Behaviors.receiveMessage {
       case CalculationComplete(length) =>
         val newResults = results :+ length
@@ -84,4 +87,3 @@ object StatsAggregator {
     }
 
 }
-//#service

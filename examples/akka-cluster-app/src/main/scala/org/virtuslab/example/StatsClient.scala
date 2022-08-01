@@ -1,13 +1,12 @@
 package org.virtuslab.example
 
+import scala.concurrent.duration._
+
 import akka.actor.typed.ActorRef
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-
 import io.circe.Codec
 import io.circe.generic.semiauto.deriveCodec
-
-import scala.concurrent.duration._
 
 object StatsClient {
 

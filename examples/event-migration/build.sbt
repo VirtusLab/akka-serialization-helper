@@ -22,3 +22,8 @@ libraryDependencies ++= Seq(
 libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % Test
 
 scalacOptions += "-Ymacro-annotations"
+
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := "4.5.9"
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
+scalacOptions += "-Ywarn-unused"

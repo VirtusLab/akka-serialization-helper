@@ -5,3 +5,9 @@
 # Make sure the file is executable.
 
 sbt "scalafmtCheckAll" "scalafixAll"
+
+cd examples/event-migration
+sbt "scalafmtCheckAll" "scalafixAll"
+
+cd ../akka-cluster-app
+sbt "scalafmtCheckAll" "scalafixAll"

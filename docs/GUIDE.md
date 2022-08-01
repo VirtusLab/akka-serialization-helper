@@ -1,5 +1,5 @@
 # Step-by-step guide for Akka Serialization Helper usage
-This document is a guide on how to use Akka Serialization Helper in your project. If you want to get a more general view of this toolbox, see [README](../README.md). Moreover, it could be a good idea to see the [example app](../examples/example-app) first as a code example of basic Akka Serialization Helper usage.
+This document is a guide on how to use Akka Serialization Helper in your project. If you want to get a more general view of this toolbox, see [README](../README.md). Moreover, it could be a good idea to see the [example akka-cluster-app](../examples/akka-cluster-app) first as a code example of basic Akka Serialization Helper usage.
 
 Akka Serialization Helper (ASH) has two major parts:
 1. Circe Akka Serializer

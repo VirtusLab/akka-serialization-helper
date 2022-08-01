@@ -333,7 +333,7 @@ Test / ashCompilerPluginEnable := false
 For full list of sbt keys, check [`org.virtuslab.ash.AkkaSerializationHelperKeys`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/sbt-akka-serialization-helper/src/main/scala/org/virtuslab/ash/AkkaSerializationHelperKeys.scala).
 
 ## Example application
-Check out simple akka-cluster application which uses Akka Serialization Helper: [ASH code example](examples/example-app).
+Check out simple akka-cluster application which uses Akka Serialization Helper: [ASH code example](examples/akka-cluster-app).
 
 ## Step-by-step guide
 See [full step-by-step guide](docs/GUIDE.md) on Akka Serialization Helper usage.
