@@ -5,14 +5,15 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
+import java.nio.channels.OverlappingFileLockException
 import java.nio.charset.StandardCharsets
+
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.Plugin
 import scala.tools.nsc.plugins.PluginComponent
+
 import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName
 import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.disableFlag
-
-import java.nio.channels.OverlappingFileLockException
 
 class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extends Plugin {
   override val name: String = "codec-registration-checker-plugin"
