@@ -32,10 +32,10 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
     options.filterNot(_.startsWith("-")).headOption match {
       case Some(path) =>
         /*
-        below retry-loop is needed because of possible OverlappingFileLockException that might
+        Below retry-loop is needed because of possible OverlappingFileLockException that might
         occur if codec-registration-checker-plugin is enabled in multiple projects (modules)
-        and these projects are compiled in parallel by `sbt compile` (as all projects/modules
-        share the same cache file - `channel.lock()` might cause mentioned exception).
+        and these projects are compiled in parallel by `sbt compile`. As all projects/modules
+        share the same cache file - `channel.lock()` might cause mentioned exception.
          */
         var shouldInitialize = false
         var loopCount = 0
@@ -72,9 +72,9 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
               else
                 Thread.sleep(20)
             case e: IOException =>
-              error(s"IO Exception thrown, message: ${e.getMessage}")
+              error(s"IOException thrown, message: ${e.getMessage}")
             case e: RuntimeException =>
-              error(s"Runtime Exception thrown, message: ${e.getMessage}")
+              error(s"RuntimeException thrown, message: ${e.getMessage}")
           }
           loopCount += 1
         }
