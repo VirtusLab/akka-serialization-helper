@@ -6,13 +6,13 @@ import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
-
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.Plugin
 import scala.tools.nsc.plugins.PluginComponent
-
 import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.directClassDescendantsCacheFileName
 import org.virtuslab.ash.CodecRegistrationCheckerCompilerPlugin.disableFlag
+
+import java.nio.channels.OverlappingFileLockException
 
 class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extends Plugin {
   override val name: String = "codec-registration-checker-plugin"
@@ -30,35 +30,54 @@ class CodecRegistrationCheckerCompilerPlugin(override val global: Global) extend
 
     options.filterNot(_.startsWith("-")).headOption match {
       case Some(path) =>
-        try {
-          val cacheFile = new File(path + File.separator + directClassDescendantsCacheFileName)
-          cacheFile.getCanonicalPath
-          pluginOptions.directClassDescendantsCacheFile = cacheFile
-          pluginOptions.oldParentChildFQCNPairs = {
-            val raf = new RandomAccessFile(cacheFile, "rw")
-            try {
-              val channel = raf.getChannel
-              val lock = channel.lock()
+        /*
+        below retry-loop is needed because of possible OverlappingFileLockException that might
+        occur if codec-registration-checker-plugin is enabled in multiple projects (modules)
+        and these projects are compiled in parallel by `sbt compile` (as all projects/modules
+        share the same cache file - `channel.lock()` might cause mentioned exception).
+         */
+        var shouldInitialize = false
+        var loopCount = 0
+        val maxTries = 5
+        while (loopCount < maxTries && !shouldInitialize) {
+          try {
+            val cacheFile = new File(path + File.separator + directClassDescendantsCacheFileName)
+            cacheFile.getCanonicalPath
+            pluginOptions.directClassDescendantsCacheFile = cacheFile
+            pluginOptions.oldParentChildFQCNPairs = {
+              val raf = new RandomAccessFile(cacheFile, "rw")
               try {
-                val buffer = ByteBuffer.allocate(channel.size().toInt)
-                channel.read(buffer)
-                CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind())
+                val channel = raf.getChannel
+                val lock = channel.lock()
+                try {
+                  val buffer = ByteBuffer.allocate(channel.size().toInt)
+                  channel.read(buffer)
+                  CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind())
+                } finally {
+                  lock.close()
+                }
               } finally {
-                lock.close()
+                raf.close()
               }
-            } finally {
-              raf.close()
             }
+            shouldInitialize = true
+          } catch {
+            case _: FileNotFoundException =>
+              pluginOptions.oldParentChildFQCNPairs = Nil
+              shouldInitialize = true
+            case e: OverlappingFileLockException =>
+              if (loopCount + 1 == maxTries)
+                error(s"OverlappingFileLockException thrown, message: ${e.getMessage}")
+              else
+                Thread.sleep(20)
+            case e: IOException =>
+              error(s"IO Exception thrown, message: ${e.getMessage}")
+            case e: RuntimeException =>
+              error(s"Runtime Exception thrown, message: ${e.getMessage}")
           }
-          true
-        } catch {
-          case _: FileNotFoundException =>
-            pluginOptions.oldParentChildFQCNPairs = Nil
-            true
-          case e @ (_: IOException | _: RuntimeException) =>
-            error(s"Exception thrown, message: ${e.getMessage}")
-            false
+          loopCount += 1
         }
+        shouldInitialize
       case None =>
         error("No directory for saving cache file specified")
         false

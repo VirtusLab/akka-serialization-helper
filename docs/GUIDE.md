@@ -119,7 +119,9 @@ This option disables detection of messages/events/state based on return type of 
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--disable-detection-higher-order-function"`<br><br>
 
 ### Codec Registration Checker Compiler Plugin
-Before using this compiler plugin, make sure that you are using both [annotations](#annotations) properly. If so &mdash; the plugin can be used right away. This plugin checks whether classes marked with serializability trait are being referenced in a marked serializer, which ensures that codecs will be registered in runtime.<br><br>
+Before using this compiler plugin, make sure that you are using both [annotations](#annotations) properly. If so &mdash; the plugin can be used right away. This plugin checks whether classes marked with serializability trait are being referenced in a marked serializer, which ensures that codecs will be registered in runtime.
+
+**Note** - Codec Registration Checker Compiler Plugin is useful only in projects (modules) where the [@Serializer](#Serializer) annotation is used. Therefore, if you are using Akka Serialization Helper in multiple modules but in fact use `@Serializer` annotation in only one module, you might disable this plugin in all other modules except the one where `@Serializer` annotation is used.<br><br>
 Codec Registration Checker Compiler Plugin does not need additional configuration, but you can change default configurations as explained below:
 
 - `--disable`
