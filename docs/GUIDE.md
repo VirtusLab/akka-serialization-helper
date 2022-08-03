@@ -86,12 +86,12 @@ Serializability Checker Compiler Plugin does not need additional configuration, 
 - `--disable`
 
 The Plugin is enabled by default in each project/module where `AkkaSerializationHelperPlugin` is enabled. If you want to disable this particular plugin (but want to keep on using other ASH compiler plugins) &mdash; add the following setting inside `build.sbt` for the selected project/module:<br>
-`Compile / scalacOptions += "-P:serializability-checker-plugin:--disable"`<br><br>
+`ashSerializabilityCheckerCompilerPlugin / ashCompilerPluginEnable := false`<br><br>
 
 - `--verbose`
 
 Verbose mode enables additional logs from the plugin. These logs contain detailed info about detected serializable types and annotated traits. This mode is disabled by default. If you want to enable `verbose` mode, add following setting:<br>
-`Compile / scalacOptions += "-P:serializability-checker-plugin:--verbose"`<br><br>
+`ashSerializabilityCheckerCompilerPlugin / ashCompilerPluginVerbose := true`<br><br>
 
 - `--disable-detection-generics`
 
@@ -127,7 +127,7 @@ Codec Registration Checker Compiler Plugin does not need additional configuratio
 - `--disable`
 
 The Plugin is enabled by default in each project/module where `AkkaSerializationHelperPlugin` is enabled. If you want to disable this particular plugin (but want to keep on using other ASH compiler plugins) &mdash; add the following setting inside `build.sbt` for the selected project/module:<br>
-`Compile / scalacOptions += "-P:codec-registration-checker-plugin:--disable"`<br><br>
+`ashCodecRegistrationCheckerCompilerPlugin / ashCompilerPluginEnable := false`<br><br>
 
 - `custom cache file path`
 
@@ -141,12 +141,12 @@ Dump Persistence Schema Compiler Plugin does not need additional configuration, 
 - `--disable`
 
 The Plugin is enabled by default in each project/module where `AkkaSerializationHelperPlugin` is enabled. If you want to disable this particular plugin (but want to keep on using other ASH compiler plugins) &mdash; add the following setting inside `build.sbt` for the selected project/module:<br>
-`Compile / scalacOptions += "-P:dump-persistence-schema-plugin:--disable"`<br><br>
+`ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginEnable := false`<br><br>
 
 - `--verbose`
 
 Verbose mode enables additional logs from the plugin. These logs contain detailed info about detected persistence schema. This mode is disabled by default. If you want to enable `verbose` mode, add following setting:<br>
-`Compile / scalacOptions += "-P:dump-persistence-schema-plugin:--verbose"`<br><br>
+`ashDumpPersistenceSchemaCompilerPlugin / ashCompilerPluginVerbose := true`<br><br>
 
 - `custom cache file path`
 
