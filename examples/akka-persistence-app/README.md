@@ -16,7 +16,7 @@ You can just invoke `sbt ashDumpPersistenceSchema` without `sbt compile` &mdash;
     ````
 
 2. Create database tables with:
-  
+
     ```
     docker exec -i akka-persistence-app_postgres-db_1 psql -U shopping-cart -t < ddl-scripts/create_tables.sql`
     ```
@@ -38,7 +38,7 @@ You can just invoke `sbt ashDumpPersistenceSchema` without `sbt compile` &mdash;
     ```
     curl http://localhost:9101/ready
     ```
-   
+
 6. Interact with the service using `grpcurl` - example request (put items in the cart):
 
     ```
