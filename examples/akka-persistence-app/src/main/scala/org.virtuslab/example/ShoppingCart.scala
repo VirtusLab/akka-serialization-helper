@@ -94,7 +94,7 @@ object ShoppingCart {
   }
 
   // codecs derivation for all types extending CirceAkkaSerializable
-  implicit lazy val codecActorRefResponse: Codec[ActorRef[StatusReply[Summary]]] = AkkaCodecs.actorRefCodec
+  implicit lazy val codecActorRefResponse: Codec[ActorRef[StatusReply[Summary]]] = new AkkaCodecs {}.actorRefCodec
   implicit lazy val codecCommand: Codec[Command] = deriveCodec
   implicit lazy val summaryCommand: Codec[Summary] = deriveCodec
   implicit lazy val codecEvent: Codec[Event] = deriveCodec

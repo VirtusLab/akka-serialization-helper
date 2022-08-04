@@ -20,7 +20,7 @@ object StatsWorker {
   final case class Processed(word: String, length: Int) extends CirceAkkaSerializable
 
   implicit lazy val codecProcessed: Codec[Processed] = deriveCodec
-  implicit lazy val codecActorRefProcessed: Codec[ActorRef[Processed]] = AkkaCodecs.actorRefCodec
+  implicit lazy val codecActorRefProcessed: Codec[ActorRef[Processed]] = new AkkaCodecs {}.actorRefCodec
   implicit lazy val codecCommand: Codec[Command] = deriveCodec
 
   def apply(): Behavior[Command] = Behaviors.setup { ctx =>
