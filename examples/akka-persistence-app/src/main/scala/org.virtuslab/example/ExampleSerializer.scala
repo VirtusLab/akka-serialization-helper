@@ -19,7 +19,7 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem)
     Register[ShoppingCart.Summary]
   )
 
-  override lazy val manifestMigrations: Seq[(String, Class[_])] = Nil // (TODO - add something maybe?)
+  override lazy val manifestMigrations: Seq[(String, Class[_])] = Nil
 
   override lazy val packagePrefix: String = "org.virtuslab.example"
 }
