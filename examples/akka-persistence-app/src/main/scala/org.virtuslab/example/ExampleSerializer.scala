@@ -16,8 +16,7 @@ class ExampleSerializer(actorSystem: ExtendedActorSystem)
     Register[ShoppingCart.Command],
     Register[ShoppingCart.Event],
     Register[ShoppingCart.State],
-    Register[ShoppingCart.Summary]
-  )
+    Register[ShoppingCart.Summary])
 
   override lazy val manifestMigrations: Seq[(String, Class[_])] = Nil
 
