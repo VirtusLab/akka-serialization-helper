@@ -23,7 +23,7 @@ object StatsService {
   final case class JobFailed(reason: String) extends Response
 
   implicit lazy val codecResponse: Codec[Response] = deriveCodec
-  implicit lazy val codecActorRefResponse: Codec[ActorRef[Response]] = new AkkaCodecs {}.actorRefCodec
+  implicit lazy val codecActorRefResponse: Codec[ActorRef[Response]] = AkkaCodecs.actorRefCodec
   implicit lazy val codecCommand: Codec[Command] = deriveCodec
 
   def apply(workers: ActorRef[StatsWorker.Process]): Behavior[Command] =

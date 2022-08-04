@@ -33,14 +33,21 @@ You can just invoke `sbt ashDumpPersistenceSchema` without `sbt compile` &mdash;
     sbt "run local2.conf"
     ```
 
-5. (Optional) Check for service readiness
+5. (Optional) Check for service readiness:
 
     ```
     curl http://localhost:9101/ready
     ```
 
-6. Interact with the service using `grpcurl` - example request (put items in the cart):
+6. Interact with the service using [grpcurl](https://github.com/fullstorydev/grpcurl) - example request (put items in the cart):
 
     ```
     grpcurl -d '{"cartId":"cart1", "itemId":"T-shirt", "quantity":3}' -plaintext 127.0.0.1:8101 shoppingcart.ShoppingCartService.AddItem
     ```
+
+7. Dump persistence schema with Akka Serialization Helper (after shutting down the application):
+
+    ```
+    `sbt ashDumpPersistenceSchema`
+    ```
+Output saved into the `target/akka-persistence-app-dump-persistence-schema-0.1.0-SNAPSHOT.yaml` file.
