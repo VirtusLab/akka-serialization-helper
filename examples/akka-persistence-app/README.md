@@ -48,6 +48,6 @@ You can just invoke `sbt ashDumpPersistenceSchema` without `sbt compile` &mdash;
 7. Dump persistence schema with Akka Serialization Helper (after shutting down the application):
 
     ```
-    `sbt ashDumpPersistenceSchema`
+    sbt ashDumpPersistenceSchema
     ```
 Output saved into the `target/akka-persistence-app-dump-persistence-schema-0.1.0-SNAPSHOT.yaml` file.
