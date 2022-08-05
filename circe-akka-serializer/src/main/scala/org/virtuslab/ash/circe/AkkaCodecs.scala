@@ -39,3 +39,5 @@ trait AkkaCodecs {
       Encoder.encodeString.contramap(resolver.toSerializationFormat(_: SourceRef[T])))
   }
 }
+
+object AkkaCodecs extends AkkaCodecs

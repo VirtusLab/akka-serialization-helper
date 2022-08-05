@@ -27,18 +27,18 @@ and using it in another project. Make sure that `mavenLocal` is added to the res
 sbt publishM2
 ```
 
-You can find a simple example application that uses Akka Serialization Helper [here](examples/akka-cluster-app).
-This app can be used for basic runtime testing as well. First, go to the app's directory:
+You can find two example applications that use Akka Serialization Helper:
+- [akka-cluster-app](examples/akka-cluster-app)
+- [akka-persistence-app](examples/akka-persistence-app)
+These apps can be used for basic runtime testing as well. First, go to the app's directory:
 ```shell
 cd examples/akka-cluster-app
 ```
-And then invoke following commands in separate terminal
-windows so that three processes run in parallel:
+or
 ```shell
-sbt "runMain org.virtuslab.example.App compute 25251"
-sbt "runMain org.virtuslab.example.App compute 25252"
-sbt "runMain org.virtuslab.example.App client 0"
+cd examples/akka-persistence-app
 ```
+And follow instructions from projects' README files.
 
 ### Testing
 
@@ -79,6 +79,7 @@ sbt scalafmtAll scalafixAll scalafmtSbt
 to format the code, .sbt files and check imports. Run this command in the following directories:
 - the base directory ( `.` )
 - `examples/akka-cluster-app`
+- `examples/akka-persistence-app`
 - `examples/event-migration`
 You can use `pre-commit` hook, provided in `./pre-commit`, to do formatting and checking automatically.
 

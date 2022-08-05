@@ -332,8 +332,10 @@ Test / ashCompilerPluginEnable := false
 
 For full list of sbt keys, check [`org.virtuslab.ash.AkkaSerializationHelperKeys`](https://github.com/VirtusLab/akka-serialization-helper/blob/main/sbt-akka-serialization-helper/src/main/scala/org/virtuslab/ash/AkkaSerializationHelperKeys.scala).
 
-## Example application
-Check out simple akka-cluster application which uses Akka Serialization Helper: [ASH code example](examples/akka-cluster-app).
+## Example applications
+The simplest example is the akka-cluster application which uses Akka Serialization Helper: [akka-cluster-app](examples/akka-cluster-app).
+
+The second example is the akka-persistence application which shows usage of the Dump Persistence Schema Compiler Plugin: [akka-persistence-app](examples/akka-persistence-app).
 
 ## Step-by-step guide
 See [full step-by-step guide](docs/GUIDE.md) on Akka Serialization Helper usage.
