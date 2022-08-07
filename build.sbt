@@ -105,7 +105,7 @@ lazy val circeAkkaSerializer = (projectMatrix in file("circe-akka-serializer"))
     reflections,
     scalaCollectionCompat))
   .settings(
-    resolvers += Resolver.sonatypeRepo("releases"), // TODO (#202): update to sonatypeOssRepos
+    resolvers ++= Resolver.sonatypeOssRepos("releases"),
     libraryDependencies ++=
       CrossVersion
         .partialVersion(scalaVersion.value)
