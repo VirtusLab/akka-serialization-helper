@@ -20,7 +20,7 @@ object Dependencies {
   val akkaActorTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
   val akkaStream = "com.typesafe.akka" %% "akka-stream" % akkaVersion
   val akkaPersistenceTyped = "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion
-  val akkaProjections = "com.lightbend.akka" %% "akka-projection-eventsourced" % "1.2.4"
+  val akkaProjections = "com.lightbend.akka" %% "akka-projection-eventsourced" % "1.2.5"
   val akkaTestKitTyped = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
   val akkaStreamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
 
