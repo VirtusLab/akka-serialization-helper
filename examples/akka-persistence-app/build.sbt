@@ -22,7 +22,7 @@ Global / cancelable := false // ctrl-c
 
 val AkkaVersion = "2.6.19"
 val AkkaHttpVersion = "10.2.9"
-val AkkaManagementVersion = "1.1.3"
+val AkkaManagementVersion = "1.1.4"
 val AkkaPersistenceJdbcVersion = "5.0.4"
 val AkkaProjectionVersion = "1.2.5"
 val ScalikeJdbcVersion = "3.5.0"
