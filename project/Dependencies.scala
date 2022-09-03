@@ -25,7 +25,7 @@ object Dependencies {
   val akkaStreamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
 
   val akkaGrpcWebSupport = "ch.megard" %% "akka-http-cors" % "1.1.3"
-  val akkaGrpc = "com.lightbend.akka.grpc" %% "akka-grpc-runtime" % "2.1.5"
+  val akkaGrpc = "com.lightbend.akka.grpc" %% "akka-grpc-runtime" % "2.1.6"
 
   val borerCore = "io.bullet" %% "borer-core" % borerVersion
   val borerDerivation = "io.bullet" %% "borer-derivation" % borerVersion
