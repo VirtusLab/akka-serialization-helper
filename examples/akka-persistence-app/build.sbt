@@ -21,7 +21,7 @@ fork := true // must be true due to https://discuss.lightbend.com/t/akka-project
 Global / cancelable := false // ctrl-c
 
 val AkkaVersion = "2.6.20"
-val AkkaHttpVersion = "10.2.9"
+val AkkaHttpVersion = "10.2.10"
 val AkkaManagementVersion = "1.1.4"
 val AkkaPersistenceJdbcVersion = "5.1.0"
 val AkkaProjectionVersion = "1.2.5"
