@@ -4,7 +4,7 @@ object Dependencies {
   val scalaVersion213 = "2.13.8"
   val scalaVersion212 = "2.12.16"
 
-  val akkaVersion = "2.6.19"
+  val akkaVersion = "2.6.20"
   val borerVersion = "1.8.0"
   val circeYamlVersion = "0.14.1"
   val circeVersion = "0.14.2"

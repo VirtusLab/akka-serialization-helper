@@ -20,7 +20,8 @@ Test / logBuffered := false
 fork := true // must be true due to https://discuss.lightbend.com/t/akka-projection-getting-started-guide-example-could-not-run-eventgeneratorapp/9434/2
 Global / cancelable := false // ctrl-c
 
-val AkkaVersion = "2.6.19"
+
+val AkkaVersion = "2.6.20"
 val AkkaHttpVersion = "10.2.10"
 val AkkaManagementVersion = "1.1.4"
 val AkkaPersistenceJdbcVersion = "5.1.0"
