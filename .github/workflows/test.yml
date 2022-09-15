@@ -6,6 +6,8 @@ on:
 jobs:
   bump-intellij-version:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Update default IntelliJ version
