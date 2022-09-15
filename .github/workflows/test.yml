@@ -27,6 +27,7 @@ jobs:
               https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
             sudo apt update
             sudo apt install gh -y
+            gh repo fork --remote=true
             BRANCH_NAME="update_intellij_version_to_XXX"
             git branch $BRANCH_NAME
             git checkout $BRANCH_NAME
