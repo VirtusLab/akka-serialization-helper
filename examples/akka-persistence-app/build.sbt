@@ -32,7 +32,7 @@ enablePlugins(AkkaGrpcPlugin, JavaAppPackaging, DockerPlugin, AkkaSerializationH
 dockerBaseImage := "docker.io/library/adoptopenjdk:11-jre-hotspot"
 dockerUsername := sys.props.get("docker.username")
 dockerRepository := sys.props.get("docker.registry")
-
+//
 libraryDependencies ++= Seq(
   // 1. Basic dependencies for a clustered application
   "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
