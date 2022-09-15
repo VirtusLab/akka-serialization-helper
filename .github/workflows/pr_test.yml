@@ -18,13 +18,11 @@ jobs:
           git add .
           if [[ -n $(git status | grep 'modified') ]]
           then
-            RELEASE_LINE=$(grep 'release = \"' core/driver/sources/src/main/resources/reference.conf)
-            INTELLIJ_VERSION=$(awk -F'\"|\"' '{print $2}' <<< "$RELEASE_LINE")
-            git commit -m "updated default IntelliJ version to $INTELLIJ_VERSION"
+            git commit -m "updated default IntelliJ version to XXX"
             COMMIT_SHA=$(git rev-parse HEAD)
             git fetch
             git checkout $GITHUB_BASE_REF
-            BRANCH_NAME="update_intellij_version_to_$INTELLIJ_VERSION"
+            BRANCH_NAME="update_intellij_version_to_XXX"
             git branch $BRANCH_NAME
             git checkout $BRANCH_NAME
             git cherry-pick $COMMIT_SHA
@@ -35,12 +33,12 @@ jobs:
             apt update
             apt install gh -y
             echo $GITHUB_TOKEN | gh auth login --with-token
-            PR_TITLE="Update IntelliJ version to $INTELLIJ_VERSION"
+            PR_TITLE="Update IntelliJ version to XXX"
             SCALA_PLUGIN_FILE_URL="https://github.com/VirtusLab/ide-probe/blob/master/extensions/scala/tests/src/test/resources/scala.conf"
             SCALA_PLUGIN_VERSIONS_URL="https://plugins.jetbrains.com/plugin/1347-scala/versions"
             PR_BODY="Updates the default IntelliJ Version to the newest release. \
               Please, check currently used version of the scala plugin: $SCALA_PLUGIN_FILE_URL \
-              and verify if it is compatible with the new intelliJ IDEA version ($INTELLIJ_VERSION) here: $SCALA_PLUGIN_VERSIONS_URL. \
+              and verify if it is compatible with the new intelliJ IDEA version (XXX) here: $SCALA_PLUGIN_VERSIONS_URL. \
               If the version of the scala plugin used in $SCALA_PLUGIN_FILE_URL is NOT compatible - please update it in a separate commit."
             gh pr create --title $PR_TITLE --body $PR_BODY
           fi
