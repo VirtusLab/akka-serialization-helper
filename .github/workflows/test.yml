@@ -8,8 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Update default IntelliJ version
         run: |
           echo "test it" >> build.sbt
@@ -42,3 +40,5 @@ jobs:
               If the version of the scala plugin used in $SCALA_PLUGIN_FILE_URL is NOT compatible - please update it in a separate commit."
             gh pr create --title $PR_TITLE --body $PR_BODY
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
