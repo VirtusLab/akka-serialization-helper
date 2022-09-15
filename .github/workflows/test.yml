@@ -22,16 +22,17 @@ jobs:
             COMMIT_SHA=$(git rev-parse HEAD)
             git fetch
             git checkout $GITHUB_BASE_REF
-            BRANCH_NAME="update_intellij_version_to_XXX"
-            git branch $BRANCH_NAME
-            git checkout $BRANCH_NAME
-            git cherry-pick $COMMIT_SHA
-            git push --set-upstream origin $BRANCH_NAME
             curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
             echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] \
               https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
             sudo apt update
             sudo apt install gh -y
+            gh repo fork --remote=true
+            BRANCH_NAME="update_intellij_version_to_XXX"
+            git branch $BRANCH_NAME
+            git checkout $BRANCH_NAME
+            git cherry-pick $COMMIT_SHA
+            git push --set-upstream origin $BRANCH_NAME
             PR_TITLE="Update IntelliJ version to XXX"
             SCALA_PLUGIN_FILE_URL="https://github.com/VirtusLab/ide-probe/blob/master/extensions/scala/tests/src/test/resources/scala.conf"
             SCALA_PLUGIN_VERSIONS_URL="https://plugins.jetbrains.com/plugin/1347-scala/versions"
