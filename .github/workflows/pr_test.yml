@@ -32,7 +32,6 @@ jobs:
               https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
             sudo apt update
             sudo apt install gh -y
-            echo $GITHUB_TOKEN | gh auth login --with-token
             PR_TITLE="Update IntelliJ version to XXX"
             SCALA_PLUGIN_FILE_URL="https://github.com/VirtusLab/ide-probe/blob/master/extensions/scala/tests/src/test/resources/scala.conf"
             SCALA_PLUGIN_VERSIONS_URL="https://plugins.jetbrains.com/plugin/1347-scala/versions"
