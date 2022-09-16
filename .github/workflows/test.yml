@@ -32,3 +32,5 @@ jobs:
           fi
       - name: create PR
         uses: peter-evans/create-pull-request@v4
+        with:
+          branch: "update_intellij_version_to_XXX"
