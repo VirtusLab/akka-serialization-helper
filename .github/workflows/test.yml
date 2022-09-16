@@ -11,10 +11,15 @@ jobs:
       - name: Update default IntelliJ version
         run: |
           echo "test it" >> build.sbt
+      - name: Prepare variables for PR
+        run: |
+          echo "LINE=$(grep 'test it' build.sbt)" >> $GITHUB_ENV
           echo "PR_TITLE=test PR from github actions bot" >> $GITHUB_ENV
+          echo "BRANCH_NAME=1.2.3" >> $GITHUB_ENV
       - name: create PR
         uses: peter-evans/create-pull-request@v4
         with:
-          branch: "update_intellij_version_to_XXX"
+          branch: ${{ BRANCH_NAME }}
           base: "main"
           title: ${{ env.PR_TITLE }}
+          body: ${{ env.LINE }}
