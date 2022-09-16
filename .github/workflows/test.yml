@@ -14,7 +14,7 @@ jobs:
         run: |
           echo "test it" >> build.sbt
           git config user.name github-actions
-          git config user.email github-actions@users.noreply.github.com
+          git config user.email github-actions@github.com
           git add .
           if [[ -n $(git status | grep 'modified') ]]
           then
