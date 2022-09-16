@@ -34,3 +34,4 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           branch: "update_intellij_version_to_XXX"
+          base: "main"
