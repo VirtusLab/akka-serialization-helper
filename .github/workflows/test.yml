@@ -27,6 +27,7 @@ jobs:
             git branch $BRANCH_NAME
             git checkout $BRANCH_NAME
             git cherry-pick $COMMIT_SHA
+            git config -l
             git push --set-upstream origin $BRANCH_NAME
           fi
       #- name: create PR
