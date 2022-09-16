@@ -15,8 +15,8 @@ jobs:
       - name: Update default IntelliJ version
         run: |
           echo "test it" >> build.sbt
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name LukaszKontowski
+          git config user.email lkontowski@virtuslab.com
           git add .
           if [[ -n $(git status | grep 'modified') ]]
           then
