@@ -22,24 +22,9 @@ jobs:
             COMMIT_SHA=$(git rev-parse HEAD)
             git fetch
             git checkout $GITHUB_BASE_REF
-            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] \
-              https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-            sudo apt update
-            sudo apt install gh -y
             BRANCH_NAME="update_intellij_version_to_XXX"
             git branch $BRANCH_NAME
             git checkout $BRANCH_NAME
             git cherry-pick $COMMIT_SHA
             git push --set-upstream origin $BRANCH_NAME
-            PR_TITLE="Update IntelliJ version to XXX"
-            SCALA_PLUGIN_FILE_URL="https://github.com/VirtusLab/ide-probe/blob/master/extensions/scala/tests/src/test/resources/scala.conf"
-            SCALA_PLUGIN_VERSIONS_URL="https://plugins.jetbrains.com/plugin/1347-scala/versions"
-            PR_BODY="Updates the default IntelliJ Version to the newest release. \
-              Please, check currently used version of the scala plugin: $SCALA_PLUGIN_FILE_URL \
-              and verify if it is compatible with the new intelliJ IDEA version (XXX) here: $SCALA_PLUGIN_VERSIONS_URL. \
-              If the version of the scala plugin used in $SCALA_PLUGIN_FILE_URL is NOT compatible - please update it in a separate commit."
-            gh pr create --title $PR_TITLE --body $PR_BODY
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
