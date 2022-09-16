@@ -1,7 +1,9 @@
 name: Update IntelliJ Version
 
 on:
-  pull_request:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '10 12 * * *'
 
 jobs:
   bump-intellij-version:
