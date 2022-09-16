@@ -42,4 +42,4 @@ jobs:
             gh pr create --title $PR_TITLE --body $PR_BODY
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
