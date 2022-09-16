@@ -19,7 +19,7 @@ jobs:
       - name: create PR
         uses: peter-evans/create-pull-request@v4
         with:
-          branch: ${{ BRANCH_NAME }}
+          branch: ${{ env.BRANCH_NAME }}
           base: "main"
           title: ${{ env.PR_TITLE }}
           body: ${{ env.LINE }}
