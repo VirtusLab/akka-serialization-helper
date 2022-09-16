@@ -13,7 +13,10 @@ jobs:
           echo "test it" >> build.sbt
       - name: Prepare variables for PR
         run: |
-          echo "LINE=$(grep 'test it' build.sbt)" >> $GITHUB_ENV
+          echo "BODY=Updates the default IntelliJ Version to the newest release. \
+            Please, check currently used version of the scala plugin: xxxxxx \
+            and verify if it is compatible with the new intelliJ IDEA version (xxxxxxx) here: xxxxxxx. \
+            If the version of the scala plugin used in xxxxxxx is NOT compatible - please update it in a separate commit." >> $GITHUB_ENV
           echo "PR_TITLE=test PR from github actions bot" >> $GITHUB_ENV
           echo "BRANCH_NAME=1.2.3" >> $GITHUB_ENV
       - name: create PR
@@ -22,4 +25,4 @@ jobs:
           branch: ${{ env.BRANCH_NAME }}
           base: "main"
           title: ${{ env.PR_TITLE }}
-          body: ${{ env.LINE }}
+          body: ${{ env.BODY }}
