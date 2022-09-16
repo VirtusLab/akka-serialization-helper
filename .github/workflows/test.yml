@@ -20,7 +20,7 @@ jobs:
           git add .
           if [[ -n $(git status | grep 'modified') ]]
           then
-            git remote set-url origin https://github.com/VirtusLab/akka-serialization-helper.git
+            git remote set-url origin https://${GITHUB_TOKEN}@github.com/VirtusLab/akka-serialization-helper.git
             git commit -m "updated default IntelliJ version to XXX"
             COMMIT_SHA=$(git rev-parse HEAD)
             git fetch
