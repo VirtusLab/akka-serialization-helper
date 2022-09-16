@@ -29,7 +29,7 @@ jobs:
             git branch $BRANCH_NAME
             git checkout $BRANCH_NAME
             git cherry-pick $COMMIT_SHA
-            git push --set-upstream origin $BRANCH_NAME
+            git push --set-upstream origin $BRANCH_NAME https://${TEST_TOKEN}@github.com/github-actions/VirtusLab/akka-serialization-helper.git
           fi
       #- name: create PR
       #  uses: peter-evans/create-pull-request@v4
