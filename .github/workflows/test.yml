@@ -1,7 +1,5 @@
 name: Update IntelliJ Version
 
-permissions: write-all
-
 on:
   pull_request:
 
