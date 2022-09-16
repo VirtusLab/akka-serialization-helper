@@ -8,8 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.0.2
-        env:
-          TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
       - name: Update default IntelliJ version
         run: |
           echo "test it" >> build.sbt
@@ -28,8 +26,10 @@ jobs:
             git checkout $BRANCH_NAME
             git cherry-pick $COMMIT_SHA
             git config -l
-            git push --set-upstream origin $BRANCH_NAME
+            GIT_TRACE=1 git push --set-upstream origin $BRANCH_NAME
           fi
+        env:
+          TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
       #- name: create PR
       #  uses: peter-evans/create-pull-request@v4
       #  with:
