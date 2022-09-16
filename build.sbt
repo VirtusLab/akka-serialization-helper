@@ -232,3 +232,4 @@ lazy val dumpPersistenceSchemaCompilerPlugin = (projectMatrix in file("dump-pers
     libraryDependencies ++= Seq(sprayJson, betterFiles, akkaActorTyped % Test, akkaPersistenceTyped % Test))
   .settings(assemblySettings: _*)
   .jvmPlatform(scalaVersions = targetScalaVersions)
+test it
