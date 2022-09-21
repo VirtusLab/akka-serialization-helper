@@ -58,7 +58,8 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-unused",
     "-unchecked",
-    if (sys.env.getOrElse("CI", "false") == "true") "-Xfatal-warnings" else ""),
+    if (sys.env.getOrElse("CI", "false") == "true") "-Xfatal-warnings" else "",
+    "-Xsource:3"),
   libraryDependencies ++= commonDeps)
 
 // As usage of https://github.com/pathikrit/better-files and https://github.com/spray/spray-json
