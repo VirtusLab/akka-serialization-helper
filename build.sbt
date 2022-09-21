@@ -58,8 +58,7 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-unused",
     "-unchecked",
-    "-Xfatal-warnings"
-  ),
+    "-Xfatal-warnings"),
   libraryDependencies ++= commonDeps)
 
 // As usage of https://github.com/pathikrit/better-files and https://github.com/spray/spray-json
