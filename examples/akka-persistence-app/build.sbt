@@ -2,7 +2,7 @@ import org.virtuslab.ash.AkkaSerializationHelperPlugin
 
 name := "akka-persistence-app"
 
-scalaVersion := "2.13.8"
+scalaVersion := "2.13.9"
 
 Compile / scalacOptions ++= Seq(
   "-target:11",
@@ -71,5 +71,5 @@ libraryDependencies ++= Seq(
   AkkaSerializationHelperPlugin.circeAkkaSerializer)
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.5.9"
+ThisBuild / semanticdbVersion := "4.5.13"
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
