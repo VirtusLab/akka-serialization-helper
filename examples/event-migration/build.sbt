@@ -2,7 +2,7 @@ name := "event-migration"
 version := "0.1"
 scalaVersion := "2.13.9"
 
-val circeVersion = "0.14.2"
+val circeVersion = "0.14.3"
 val borerVersion = "1.8.0"
 val scalaTestVersion = "3.2.10"
 
