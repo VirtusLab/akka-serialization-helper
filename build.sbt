@@ -22,7 +22,8 @@ lazy val testAgainstScalaVersions =
     "2.13.5",
     "2.13.6",
     "2.13.7",
-    "2.13.8")
+    "2.13.8",
+    "2.13.9")
 
 ThisBuild / scalaVersion := targetScalaVersions.head
 ThisBuild / organization := "org.virtuslab.ash"
