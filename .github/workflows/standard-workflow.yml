@@ -120,6 +120,7 @@ jobs:
           sbt "++ 2.13.7 test"
           sbt "++ 2.13.8 test"
           sbt "++ 2.13.9 test"
+          sbt "++ 2.13.10 test"
 
   test-sbt-plugin:
     runs-on: ubuntu-latest
