@@ -6,7 +6,7 @@ object Dependencies {
 
   val akkaVersion = "2.6.20"
   val borerVersion = "1.8.0"
-  val circeYamlVersion = "0.14.1"
+  val circeYamlVersion = "0.14.2"
   val circeVersion = "0.14.3"
 
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.14"
