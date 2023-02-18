@@ -12,7 +12,7 @@ object Dependencies {
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15"
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.36"
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
-  val betterFiles = "com.github.pathikrit" %% "better-files" % "3.9.1"
+  val betterFiles = "com.github.pathikrit" %% "better-files" % "3.9.2"
   val sprayJson = "io.spray" %% "spray-json" % "1.3.6"
   val scalaCollectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0"
 
