@@ -26,7 +26,7 @@ val AkkaManagementVersion = "1.1.4"
 val AkkaPersistenceJdbcVersion = "5.1.0"
 val AkkaProjectionVersion = "1.2.5"
 val ScalikeJdbcVersion = "3.5.0"
-val CirceVersion = "0.14.3"
+val CirceVersion = "0.14.5"
 
 enablePlugins(AkkaGrpcPlugin, JavaAppPackaging, DockerPlugin, AkkaSerializationHelperPlugin)
 dockerBaseImage := "docker.io/library/adoptopenjdk:11-jre-hotspot"
