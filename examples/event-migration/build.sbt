@@ -1,16 +1,18 @@
+import sbt.Keys.{semanticdbEnabled, semanticdbVersion}
+
 name := "event-migration"
 version := "0.1"
 scalaVersion := "2.13.10"
 
-val circeVersion = "0.14.3"
+val circeVersion = "0.14.5"
+val circeGenericExtrasVersion = "0.14.3"
 val borerVersion = "1.8.0"
 val scalaTestVersion = "3.2.10"
 
-libraryDependencies ++= Seq(
-  "io.circe" %% "circe-core",
-  "io.circe" %% "circe-generic",
-  "io.circe" %% "circe-generic-extras",
-  "io.circe" %% "circe-parser").map(_ % circeVersion)
+libraryDependencies ++= Seq("io.circe" %% "circe-core", "io.circe" %% "circe-generic", "io.circe" %% "circe-parser")
+  .map(_ % circeVersion)
+
+libraryDependencies += "io.circe" %% "circe-generic-extras" % circeGenericExtrasVersion
 
 libraryDependencies ++= Seq(
   "io.bullet" %% "borer-core",
