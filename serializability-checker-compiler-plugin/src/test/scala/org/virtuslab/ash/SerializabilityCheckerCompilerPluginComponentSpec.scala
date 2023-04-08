@@ -180,5 +180,38 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
       val code = getResourceAsString("GenericsTest3.scala")
       SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should be("")
     }
+
+    "fail on usage of Either as a message" in {
+      val code = getResourceAsString("TellEitherTest.scala")
+      SerializabilityCheckerCompiler.compileCode(List(code)) should include(
+        "Right[Nothing,String] is used as Akka message")
+    }
+
+    "fail on usage of Seq as a message" in {
+      val code = getResourceAsString("TellSeqTest.scala")
+      SerializabilityCheckerCompiler.compileCode(List(code)) should include("Seq[String] is used as Akka message")
+    }
+
+    "fail on usage of Set as a message" in {
+      val code = getResourceAsString("TellSetTest.scala")
+      SerializabilityCheckerCompiler.compileCode(List(code)) should include("Set[String] is used as Akka message")
+    }
+
+    "not fail on usage of Either as a message when Either is explicitly marked as serializable" in {
+      val code = getResourceAsString("TellEitherTest.scala")
+      SerializabilityCheckerCompiler.compileCode(
+        List(code),
+        List(typesExplicitlyMarkedAsSerializable + "scala.util.Either")) should be("")
+    }
+
+    "when multiple types are used as a message, then only fail on the ones that are NOT explicitly marked as serializable" in {
+      val code = getResourceAsString("TellEitherSeqSetTest.scala")
+      val output = SerializabilityCheckerCompiler.compileCode(
+        List(code),
+        List(typesExplicitlyMarkedAsSerializable + "scala.util.Either,scala.collection.immutable.Set"))
+      output should include("Seq[String] is used as Akka message")
+      (output should not).include("Right[Nothing,String] is used as Akka message")
+      (output should not).include("Set[String] is used as Akka message")
+    }
   }
 }

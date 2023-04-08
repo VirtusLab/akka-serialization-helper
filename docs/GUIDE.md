@@ -118,6 +118,13 @@ This option disables detection of messages/events/state based on type of argumen
 This option disables detection of messages/events/state based on return type of the function given as argument to method. This detection is enabled by default. If you want to disable it, add the following setting:<br>
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--disable-detection-higher-order-function"`<br><br>
 
+- `--types-explicitly-marked-as-serializable=<type1>,<type2>,...`
+
+This option can be used to pass a comma-separated list of fully-qualified names of types that should be considered serializable by the checker, even if they do **not** extend a designated serializability trait.
+The list is empty by default. If you want to mark some types as serializable, add the following setting (here shown with sample types):<br>
+
+`Compile / scalacOptions += "-P:serializability-checker-plugin:--types-explicitly-marked-as-serializable=scala.util.Either,scala.collection.immutable.Set"`<br><br>
+
 ### Codec Registration Checker Compiler Plugin
 Before using this compiler plugin, make sure that you are using both [annotations](#annotations) properly. If so &mdash; the plugin can be used right away. This plugin checks whether classes marked with serializability trait are being referenced in a marked serializer, which ensures that codecs will be registered in runtime.
 

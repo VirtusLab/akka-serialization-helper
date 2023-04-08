@@ -192,6 +192,8 @@ class SerializabilityCheckerCompilerPluginComponent(
           Some(tp)
         else if (akkaSerializabilityTraits.contains(tp.typeSymbol.fullName))
           Some(tp)
+        else if (pluginOptions.typesExplicitlyMarkedAsSerializable.contains(tp.typeSymbol.fullName))
+          Some(tp)
         else if (tp.typeSymbol.isAbstractType)
           findSuperclassAnnotatedWithSerializabilityTrait(tp.upperBound)
         else
