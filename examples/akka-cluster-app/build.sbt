@@ -6,7 +6,7 @@ name := "akka-cluster-app"
 version := "0.1"
 scalaVersion := "2.13.10"
 
-val circeVersion = "0.14.3"
+val circeVersion = "0.14.5"
 val akkaVersion = "2.6.20"
 val logbackVersion = "1.2.11"
 

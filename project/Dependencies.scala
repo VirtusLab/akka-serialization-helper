@@ -7,7 +7,8 @@ object Dependencies {
   val akkaVersion = "2.6.20"
   val borerVersion = "1.8.0"
   val circeYamlVersion = "0.14.2"
-  val circeVersion = "0.14.3"
+  val circeVersion = "0.14.5"
+  val circeGenericExtrasVersion = "0.14.3"
 
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.15"
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.36"
@@ -33,7 +34,7 @@ object Dependencies {
 
   val circeCore = "io.circe" %% "circe-core" % circeVersion
   val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
-  val circeGenericExtras = "io.circe" %% "circe-generic-extras" % circeVersion
+  val circeGenericExtras = "io.circe" %% "circe-generic-extras" % circeGenericExtrasVersion
   val circeParser = "io.circe" %% "circe-parser" % circeVersion
   val circeYaml = "io.circe" %% "circe-yaml" % circeYamlVersion
 
