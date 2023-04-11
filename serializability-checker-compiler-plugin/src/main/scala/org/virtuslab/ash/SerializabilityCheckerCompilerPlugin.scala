@@ -27,6 +27,10 @@ class SerializabilityCheckerCompilerPlugin(override val global: Global) extends 
     pluginOptions.detectFromMethods = !options.contains(disableMethods)
     pluginOptions.detectFromUntypedMethods = !options.contains(disableMethodsUntyped)
     pluginOptions.detectFromHigherOrderFunctions = !options.contains(disableHigherOrderFunctions)
+    options.find(_.startsWith(typesExplicitlyMarkedAsSerializable)).foreach { opt =>
+      pluginOptions.typesExplicitlyMarkedAsSerializable =
+        opt.stripPrefix(typesExplicitlyMarkedAsSerializable).split(",").toSeq.map(_.strip())
+    }
     true
   }
 
@@ -37,6 +41,7 @@ class SerializabilityCheckerCompilerPlugin(override val global: Global) extends 
       |$disableMethods - disables detection of messages/events/state based on type of arguments to a method, e.g. akka.actor.typed.ActorRef.tell
       |$disableMethodsUntyped - disables detection of messages/events/state based on type of arguments to a method that takes Any, used for Akka Classic
       |$disableHigherOrderFunctions - disables detection of messages/events/state based on return type of the function given as argument to method
+      |$typesExplicitlyMarkedAsSerializable - comma-separated list of fully-qualified names of types that should be considered serializable by this checker, even if they do NOT extend a designated serializability trait
       |""".stripMargin)
 }
 
@@ -49,6 +54,7 @@ object SerializabilityCheckerCompilerPlugin {
     val disableMethods = "--disable-detection-methods"
     val disableMethodsUntyped = "--disable-detection-untyped-methods"
     val disableHigherOrderFunctions = "--disable-detection-higher-order-function"
+    val typesExplicitlyMarkedAsSerializable = "--types-explicitly-marked-as-serializable="
   }
   val serializabilityTraitType = "org.virtuslab.ash.annotation.SerializabilityTrait"
 }

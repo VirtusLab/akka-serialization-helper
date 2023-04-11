@@ -10,4 +10,5 @@ class SerializabilityCheckerOptions(
     var detectFromGenericMethods: Boolean = true,
     var detectFromMethods: Boolean = true,
     var detectFromUntypedMethods: Boolean = true,
-    var detectFromHigherOrderFunctions: Boolean = true)
+    var detectFromHigherOrderFunctions: Boolean = true,
+    var typesExplicitlyMarkedAsSerializable: Seq[String] = Seq.empty)
