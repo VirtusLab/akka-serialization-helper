@@ -2,6 +2,12 @@
 
 ## Working with project
 
+### IntelliJ setup
+
+Install the following plugins from Marketplace:
+  * [Scala](https://plugins.jetbrains.com/plugin/1347-scala)
+  * [HOCON](https://plugins.jetbrains.com/plugin/10481-hocon)
+
 ### Building
 
 To compile the project, type
@@ -14,14 +20,9 @@ To compile the tests, type
 sbt Test/compile
 ```
 
-To build docs, type
-```shell
-sbt doc
-```
-
 ### Running
 If some changes are made, you can test them by publishing it to the local Maven repository
-and using it in another project. Make sure that `mavenLocal` is added to the resolvers.
+and using it in another project. Make sure that `mavenLocal` is added to the resolvers on that target project.
 
 ```shell
 sbt publishM2
@@ -38,7 +39,7 @@ or
 ```shell
 cd examples/akka-persistence-app
 ```
-And follow instructions from projects' README files.
+And follow instructions from their README files.
 
 ### Testing
 
@@ -77,25 +78,26 @@ Before committing, don't forget to type
 sbt scalafmtAll scalafixAll scalafmtSbt
 ```
 to format the code, .sbt files and check imports. Run this command in the following directories:
-- the base directory ( `.` )
+- the base directory (`.`)
 - `examples/akka-cluster-app`
 - `examples/akka-persistence-app`
 - `examples/event-migration`
-You can use `pre-commit` hook, provided in `./pre-commit`, to do formatting and checking automatically.
+You can use `pre-commit` hook, provided in `./pre-commit`, to do the formatting and checking automatically.
 
 Additionally, all warnings locally are escalated to errors in CI, so make sure there are none.
 
 ### Compatible JDK versions
 
-To build this project successfully, use JDK version 11 or higher. It won't work with lower java versions.
+To build this project successfully, use JDK version 11 or higher. It won't work with a lower Java version.
 
 ## Releasing
 
-Releasing is done automatically by `sbt-ci-release` sbt plugin (read more on the plugin's [GitHub page](https://github.com/sbt/sbt-ci-release))
+Releasing is done automatically by `sbt-ci-release` sbt plugin (read more on the plugin's [GitHub page](https://github.com/sbt/sbt-ci-release)).
 
 ### Snapshots
 
-The new `SNAPSHOT` version is automatically published by GitHub Actions to [Sonatype OSS Snapshot repo](https://oss.sonatype.org/content/repositories/snapshots/org/virtuslab/ash/) every time a new commit is pushed to `main`.
+The new `SNAPSHOT` version is automatically published by GitHub Actions to [Sonatype OSS Snapshot repo](https://oss.sonatype.org/content/repositories/snapshots/org/virtuslab/ash/)
+every time a new commit is pushed to `main`.
 
 To depend on the newest version with sbt, add the following setting:
 ```scala
@@ -107,7 +109,7 @@ to both `build.sbt` **and** `project/build.sbt` (so that the sbt plugin added in
 
 Releases to [Maven Central](https://repo1.maven.org/maven2/org/virtuslab/ash/) are triggered by pushing a lightweight git tag with a version number.
 
-To publish version x.y.z, type in the console (on main branch)
+To publish version x.y.z, type in the console (on main branch):
 ```shell
 git tag vx.y.z
 git push origin vx.y.z
@@ -118,4 +120,5 @@ Note that we are using an [early semantic versioning scheme](https://www.scala-l
 
 ### Github Releases
 
-Github Releases are done automatically - with settings defined in the [publish-release-config](.github/publish-release-config.yml) file. Release is published when new "vX.Y.Z" git tag is pushed to the main branch.
+Github Releases are done automatically - with settings defined in the [publish-release-config](.github/publish-release-config.yml) file.
+Release is published when a new `vX.Y.Z` git tag is pushed.

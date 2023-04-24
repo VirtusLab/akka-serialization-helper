@@ -2,6 +2,7 @@ package org.virtuslab.ash
 
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
+import java.nio.channels.OverlappingFileLockException
 import java.nio.charset.StandardCharsets
 import java.util.regex.PatternSyntaxException
 
@@ -206,42 +207,57 @@ class SerializerCheckCompilerPluginComponent(
       private def interactWithTheCacheFile(
           mode: CacheFileInteractionMode,
           typeNamesToRemove: List[String] = List.empty): Unit = {
-        val raf = new RandomAccessFile(options.directClassDescendantsCacheFile, "rw")
-        try {
-          val channel = raf.getChannel
-          val lock = channel.lock()
+        var done = false
+        var loopCount = 0
+        val maxTries = 5
+        while (loopCount < maxTries && !done) {
+          val raf = new RandomAccessFile(options.directClassDescendantsCacheFile, "rw")
           try {
-            val buffer = ByteBuffer.allocate(channel.size().toInt)
-            channel.read(buffer)
-            val parentChildFQCNPairsFromCacheFile =
-              CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
+            try {
+              val channel = raf.getChannel
+              val lock = channel.lock()
+              try {
+                val buffer = ByteBuffer.allocate(channel.size().toInt)
+                channel.read(buffer)
+                val parentChildFQCNPairsFromCacheFile =
+                  CodecRegistrationCheckerCompilerPlugin.parseCacheFile(buffer.rewind()).toSet
 
-            var outParentChildFQCNPairs: List[ParentChildFQCNPair] = List.empty // had to use var not to repeat too much
-            mode match {
-              case DumpTypesIntoFile =>
-                outParentChildFQCNPairs = ((parentChildFQCNPairsFromCacheFile -- classSweepFQCNPairsToUpdate) |
-                  classSweepFoundFQCNPairs).toList
-                typeNamesToCheck ++= outParentChildFQCNPairs.groupBy(_.parentFQCN)
-                typesNotDumped = false
-              case RemoveOutdatedTypesFromFile =>
-                outParentChildFQCNPairs = parentChildFQCNPairsFromCacheFile
-                  .filterNot(pair =>
-                    typeNamesToRemove.contains(pair.parentFQCN) || typeNamesToRemove.contains(pair.childFQCN))
-                  .toList
+                var outParentChildFQCNPairs: List[ParentChildFQCNPair] =
+                  List.empty // had to use var not to repeat too much
+                mode match {
+                  case DumpTypesIntoFile =>
+                    outParentChildFQCNPairs = ((parentChildFQCNPairsFromCacheFile -- classSweepFQCNPairsToUpdate) |
+                      classSweepFoundFQCNPairs).toList
+                    typeNamesToCheck ++= outParentChildFQCNPairs.groupBy(_.parentFQCN)
+                    typesNotDumped = false
+                  case RemoveOutdatedTypesFromFile =>
+                    outParentChildFQCNPairs = parentChildFQCNPairsFromCacheFile
+                      .filterNot(pair =>
+                        typeNamesToRemove.contains(pair.parentFQCN) || typeNamesToRemove.contains(pair.childFQCN))
+                      .toList
+                }
+
+                val outData: String =
+                  outParentChildFQCNPairs.map(pair => pair.parentFQCN + "," + pair.childFQCN).sorted.mkString("\n")
+                channel.truncate(0)
+                channel.write(ByteBuffer.wrap(outData.getBytes(StandardCharsets.UTF_8)))
+                done = true
+              } finally {
+                lock.close()
+              }
+            } finally {
+              raf.close()
             }
-
-            val outData: String =
-              outParentChildFQCNPairs.map(pair => pair.parentFQCN + "," + pair.childFQCN).sorted.mkString("\n")
-            channel.truncate(0)
-            channel.write(ByteBuffer.wrap(outData.getBytes(StandardCharsets.UTF_8)))
-          } finally {
-            lock.close()
+          } catch {
+            case e: OverlappingFileLockException =>
+              if (loopCount + 1 == maxTries)
+                throw new RuntimeException(s"OverlappingFileLockException thrown, message: ${e.getMessage}")
+              else
+                Thread.sleep(20)
           }
-        } finally {
-          raf.close()
+          loopCount += 1
         }
       }
-
     }
   }
 }
