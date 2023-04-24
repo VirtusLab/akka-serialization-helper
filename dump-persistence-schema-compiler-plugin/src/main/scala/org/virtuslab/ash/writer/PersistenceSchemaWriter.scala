@@ -1,6 +1,7 @@
 package org.virtuslab.ash.writer
 
 import scala.collection.mutable
+import scala.util.Try
 
 import better.files.File
 import spray.json._
@@ -18,7 +19,7 @@ class PersistenceSchemaWriter(outputDirectory: File) extends DumpPersistenceSche
     outputDirectory
       .createDirectoryIfNotExists(createParents = true)
       .list(_.extension.contains(".json"))
-      .map(_.contentAsString.parseJson.convertTo[TypeDefinition])
+      .flatMap(file => Try(file.contentAsString.parseJson.convertTo[TypeDefinition]).toOption)
       .map(x => (x.name, x))
       .toMap
   }
