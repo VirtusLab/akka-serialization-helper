@@ -209,7 +209,7 @@ class SerializerCheckCompilerPluginComponent(
           typeNamesToRemove: List[String] = List.empty): Unit = {
         var done = false
         var loopCount = 0
-        val maxTries = 5
+        val maxTries = 15
         while (loopCount < maxTries && !done) {
           val raf = new RandomAccessFile(options.directClassDescendantsCacheFile, "rw")
           try {
