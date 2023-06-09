@@ -95,6 +95,7 @@ jobs:
           sbt "++ 2.13.3 test"
           sbt "++ 2.13.4 test"
           sbt "++ 2.13.5 test"
+          sbt "++ 2.13.6 test"
 
   test-213-2:
     runs-on: ubuntu-latest
@@ -116,11 +117,11 @@ jobs:
 
       - name: Run tests
         run: |
-          sbt "++ 2.13.6 test"
-          sbt "++ 2.13.7 test"
-          sbt "++ 2.13.8 test"
-          sbt "++ 2.13.9 test"
+          sbt "++ 2.13.7  test"
+          sbt "++ 2.13.8  test"
+          sbt "++ 2.13.9  test"
           sbt "++ 2.13.10 test"
+          sbt "++ 2.13.11 test"
 
   test-sbt-plugin:
     runs-on: ubuntu-latest

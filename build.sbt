@@ -23,7 +23,8 @@ lazy val testAgainstScalaVersions =
     "2.13.6",
     "2.13.7",
     "2.13.8",
-    "2.13.9")
+    "2.13.9",
+    "2.13.10")
 
 ThisBuild / scalaVersion := targetScalaVersions.head
 ThisBuild / organization := "org.virtuslab.ash"
@@ -42,7 +43,7 @@ sonatypeProfileName := "org.virtuslab"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.5.13"
+ThisBuild / semanticdbVersion := "4.7.8"
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 
 lazy val commonSettings = Seq(
