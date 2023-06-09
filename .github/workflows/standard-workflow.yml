@@ -70,6 +70,7 @@ jobs:
           sbt "++ 2.12.15 test"
           sbt "++ 2.12.16 test"
           sbt "++ 2.12.17 test"
+          sbt "++ 2.12.18 test"
 
   test-213-1:
     runs-on: ubuntu-latest
