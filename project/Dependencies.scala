@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   val scalaVersion213 = "2.13.11"
-  val scalaVersion212 = "2.12.17"
+  val scalaVersion212 = "2.12.18"
 
   val akkaVersion = "2.6.20"
   val borerVersion = "1.8.0"
