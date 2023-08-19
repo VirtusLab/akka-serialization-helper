@@ -1,5 +1,7 @@
 ## akka-persistence-app example project
-`akka-persistence-app` is an example project to show real usage of the Dump Persistence Schema Compiler Plugin. This project uses logic from the [akka-microservices-tutorial](https://developer.lightbend.com/docs/akka-platform-guide/microservices-tutorial/index.html) (the `shopping-cart-service`), with Akka Serialization Helper added.
+`akka-persistence-app` is an example project to show real usage of the Dump Persistence Schema Compiler Plugin.
+This project uses logic from the [akka-microservices-tutorial](https://developer.lightbend.com/docs/akka-platform-guide/microservices-tutorial/index.html)
+(the `shopping-cart-service`), with Akka Serialization Helper added.
 
 ## Dump Persistence Schema Compiler Plugin usage
 You can test Dump Persistence Schema Compiler Plugin on this example project. There are two possibilities to do it:

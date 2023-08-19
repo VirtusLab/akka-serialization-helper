@@ -17,7 +17,6 @@ libraryDependencies += "io.circe" %% "circe-generic-extras" % circeGenericExtras
 libraryDependencies ++= Seq(
   "io.bullet" %% "borer-core",
   "io.bullet" %% "borer-derivation",
-  "io.bullet" %% "borer-compat-akka",
   "io.bullet" %% "borer-compat-circe",
   "io.bullet" %% "borer-compat-scodec").map(_ % borerVersion)
 
@@ -27,5 +26,4 @@ scalacOptions += "-Ymacro-annotations"
 
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := "4.7.8"
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 scalacOptions += "-Ywarn-unused"

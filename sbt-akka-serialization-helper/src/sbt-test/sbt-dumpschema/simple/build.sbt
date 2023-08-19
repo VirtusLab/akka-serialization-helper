@@ -4,7 +4,8 @@ lazy val scala212 = "2.12.14"
 name := "simple-dump"
 version := "0.1"
 scalaVersion := scala213
-libraryDependencies += "com.typesafe.akka" %% "akka-persistence-typed" % "2.6.16"
+val akkaVersion = "2.6.20"
+libraryDependencies += "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion
 crossScalaVersions := Seq(scala213, scala212)
 
 enablePlugins(AkkaSerializationHelperPlugin)

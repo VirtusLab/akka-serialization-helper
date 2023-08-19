@@ -2,6 +2,10 @@ name: Standard Workflow
 
 on: workflow_call
 
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   code-style-check:
     runs-on: ubuntu-latest
@@ -10,28 +14,28 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+      - name: Run simple checks
+        run: |
+          PATH=$PATH:./scripts
+          set -x
+          enforce-issue-number-for-todos
+          enforce-newline-at-eof
+          prohibit-trailing-whitespace
+
+          npm install --global remark-cli remark-lint-no-dead-urls remark-validate-links
+          validate-markdown-links
+
       - name: Setup Scala
         uses: olafurpg/setup-scala@v10
         with:
           java-version: adopt@1.11
 
-      - name: Resolve dependencies
-        run: sbt update
-
-      - name: Run code checks
-        run: |
-          PATH=$PATH:./scripts
-          set -x
-          enforce-newline-at-eof
-          prohibit-trailing-whitespace
-          enforce-issue-number-for-todos
-
-          npm install --global remark-cli remark-lint-no-dead-urls remark-validate-links
-          validate-markdown-links
-
       - name: Check code style
         # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
+
+      - name: Substitute sbt plugin snapshot version
+        run: ./scripts/substitute-sbt-plugin-snapshot-version
 
       - name: Check code style - examples/event-migration
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
@@ -57,9 +61,6 @@ jobs:
         with:
           java-version: adopt@1.11
 
-      - name: Resolve dependencies
-        run: sbt update
-
       - name: Compile
         run: sbt compile Test/compile
 
@@ -84,9 +85,6 @@ jobs:
         with:
           java-version: adopt@1.11
 
-      - name: Resolve dependencies
-        run: sbt update
-
       - name: Compile
         run: sbt compile Test/compile
 
@@ -109,9 +107,6 @@ jobs:
         uses: olafurpg/setup-scala@v10
         with:
           java-version: adopt@1.11
-
-      - name: Resolve dependencies
-        run: sbt update
 
       - name: Compile
         run: sbt compile Test/compile
@@ -150,6 +145,9 @@ jobs:
         uses: olafurpg/setup-scala@v10
         with:
           java-version: adopt@1.11
+
+      - name: Substitute sbt plugin snapshot version
+        run: ./scripts/substitute-sbt-plugin-snapshot-version
 
       - name: Test event-migration-examples
         run: sbt test

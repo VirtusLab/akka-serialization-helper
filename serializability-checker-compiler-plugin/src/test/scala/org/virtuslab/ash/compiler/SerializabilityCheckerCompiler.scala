@@ -5,6 +5,8 @@ import java.io.PrintWriter
 import java.io.StringReader
 import java.io.StringWriter
 import java.net.URLClassLoader
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc.Global
@@ -23,7 +25,10 @@ object SerializabilityCheckerCompiler {
 
     getClass.getClassLoader match {
       case loader: URLClassLoader =>
-        val entries = loader.getURLs.map(_.getPath).toList
+        val entries = loader.getURLs.map { url =>
+          // URL decoding is needed for `+` characters (occurring in e.g. snapshot versions)
+          URLDecoder.decode(url.getPath, StandardCharsets.UTF_8)
+        }.toList
         val libraryPath = entries
           .collectFirst {
             case x if x.contains("scala-compiler") => x.replaceAll("scala-compiler", "scala-library")

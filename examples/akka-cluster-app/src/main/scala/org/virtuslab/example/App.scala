@@ -50,7 +50,7 @@ object App {
     // Override the configuration of the port when specified as program argument
     val config = ConfigFactory
       .parseString(s"""
-      akka.remote.artery.canonical.port=$port
+      akka.remote.artery.canonical.port = $port
       akka.cluster.roles = [$role]
       """)
       .withFallback(ConfigFactory.load("example"))

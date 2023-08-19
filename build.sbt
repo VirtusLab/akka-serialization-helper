@@ -36,7 +36,11 @@ ThisBuild / licenses := List(
   "MIT License" -> url("https://github.com/VirtusLab/akka-serialization-helper/blob/main/LICENSE"))
 ThisBuild / developers := List(
   Developer("MarconZet", "Marcin Złakowski", "mzlakowski@virtuslab.com", url("https://github.com/MarconZet")),
-  Developer("HubertBalcerzak", "Hubert Balcerzak", "hubertbalc@gmail.com", url("https://github.com/HubertBalcerzak")),
+  Developer(
+    "LukaszKontowski",
+    "Łukasz Kontowski",
+    "lkontowski@virtuslab.com",
+    url("https://github.com/LukaszKontowski")),
   Developer("PawelLipski", "Paweł Lipski", "plipski@virtuslab.com", url("https://github.com/PawelLipski")))
 
 sonatypeProfileName := "org.virtuslab"
@@ -45,7 +49,8 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := "4.7.8"
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
+
+ThisBuild / resolvers += Resolver.ApacheMavenSnapshotsRepo
 
 lazy val commonSettings = Seq(
   sonatypeProfileName := "org.virtuslab",
@@ -148,6 +153,7 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
   .settings(name := "serializability-checker-compiler-plugin")
   .settings(commonSettings)
   .settings(crossScalaVersions := testAgainstScalaVersions)
+  .settings(resolvers ++= Resolver.sonatypeOssRepos("snapshots"))
   .settings(
     libraryDependencies ++= {
       CrossVersion
@@ -165,7 +171,7 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
       akkaProjections % Test,
       betterFiles % Test,
       akkaGrpc % Test,
-      akkaGrpcWebSupport % Test))
+      akkaHttpCors % Test))
   .dependsOn(annotation)
   .jvmPlatform(scalaVersions = targetScalaVersions)
 

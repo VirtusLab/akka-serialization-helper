@@ -8,4 +8,5 @@ sbt "runMain org.virtuslab.example.App compute 25252"
 sbt "runMain org.virtuslab.example.App client 0"
 ```
 
-Note: this example-app's logic is based on akka-sample-custer-scala code from the official Akka repository. If you want to check this, see https://github.com/akka/akka-samples/tree/2.6/akka-sample-cluster-scala
+Note: this example-app's logic is based on akka-sample-custer-scala code from the official Akka repository,
+see [akka-sample-cluster-scala](https://github.com/akka/akka-samples/tree/2.6/akka-sample-cluster-scala).

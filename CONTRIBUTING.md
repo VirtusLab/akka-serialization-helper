@@ -73,18 +73,10 @@ You might as well use any other profiler, but using https://github.com/jvm-profi
 
 ### Code quality
 
-Before committing, don't forget to type
-```shell
-sbt scalafmtAll scalafixAll scalafmtSbt
-```
-to format the code, .sbt files and check imports. Run this command in the following directories:
-- the base directory (`.`)
-- `examples/akka-cluster-app`
-- `examples/akka-persistence-app`
-- `examples/event-migration`
-You can use `pre-commit` hook, provided in `./pre-commit`, to do the formatting and checking automatically.
+Don't forget to run `./scripts/format-code` before opening a pull request.
+You can symlink this file as git `pre-commit` hook, but beware that it runs quite long.
 
-Additionally, all warnings locally are escalated to errors in CI, so make sure there are none.
+All local Scala compilation warnings are escalated to errors in CI, so make sure there are none.
 
 ### Compatible JDK versions
 
@@ -118,7 +110,7 @@ The tagged commit is then released to Maven Central.
 
 Note that we are using an [early semantic versioning scheme](https://www.scala-lang.org/blog/2021/02/16/preventing-version-conflicts-with-versionscheme.html#early-semver-and-sbt-version-policy).
 
-### Github Releases
+### GitHub Releases
 
-Github Releases are done automatically - with settings defined in the [publish-release-config](.github/publish-release-config.yml) file.
+GitHub Releases are done automatically - with settings defined in the [publish-release-config](.github/publish-release-config.yml) file.
 Release is published when a new `vX.Y.Z` git tag is pushed.

@@ -1,0 +1,9 @@
+plugins:
+  lint-no-dead-urls:
+    skipUrlPatterns:
+      # TODO (#325): remove these patterns
+      - https://mvnrepository.com/artifact/org.virtuslab.ash  # failing for some reason
+      - https://mvnrepository.com/artifact/org.virtuslab.psh
+      - https://oss.sonatype.org/content/repositories/snapshots/org/virtuslab/psh/
+      - https://repo1.maven.org/maven2/org/virtuslab/psh/
+  validate-links: {}

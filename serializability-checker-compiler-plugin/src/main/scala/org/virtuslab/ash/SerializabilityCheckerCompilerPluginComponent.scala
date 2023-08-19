@@ -208,7 +208,7 @@ class SerializabilityCheckerCompilerPluginComponent(
       We should ignore scala.Any and other possible ignoredTypes in such cases.
       In particular, mentioned problem might occur when using ActorSystem[_] implicitly as parameter.
       For example, such scenario occurs when using object of type ActorSystem[_] in method calls
-      that in fact require akka.actor.ClassicActorSystemProvider (which is a supertype for ActorSystem).
+      that in fact require ClassicActorSystemProvider (which is a supertype for ActorSystem).
        */
       private def typeArgsAreHiddenIgnoreTypes(typ: global.Type): Boolean =
         if (typ.typeSymbol.fullName.matches(".+\\._\\$\\d"))

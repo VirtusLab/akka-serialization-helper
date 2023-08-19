@@ -145,7 +145,7 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
 
     }
 
-    "whitelist all akka types from checks" in {
+    "whitelist all Akka types from checks" in {
       val akkaWhitelist = getResourceAsString("AkkaWhitelistTest.scala")
 
       val out = SerializabilityCheckerCompiler.compileCode(List(serYesCode, akkaWhitelist))
@@ -171,7 +171,7 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
           List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
     }
 
-    "respect akka serializers" in {
+    "respect Akka serializers" in {
       val code = getResourceAsString("AkkaSerializabilityTraitsTest.scala")
       SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should be("")
     }
