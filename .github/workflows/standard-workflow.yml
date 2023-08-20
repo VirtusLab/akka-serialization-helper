@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Run simple checks
         run: |
@@ -25,10 +24,8 @@ jobs:
           npm install --global remark-cli remark-lint-no-dead-urls remark-validate-links
           validate-markdown-links
 
-      - name: Setup Scala
-        uses: olafurpg/setup-scala@v10
-        with:
-          java-version: adopt@1.11
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
 
       - name: Check code style
         # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
@@ -53,13 +50,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
-
-      - name: Setup Scala
-        uses: olafurpg/setup-scala@v10
-        with:
-          java-version: adopt@1.11
+      - uses: actions/checkout@v3
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
 
       - name: Compile
         run: sbt compile Test/compile
@@ -77,13 +70,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
-
-      - name: Setup Scala
-        uses: olafurpg/setup-scala@v10
-        with:
-          java-version: adopt@1.11
+      - uses: actions/checkout@v3
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
 
       - name: Compile
         run: sbt compile Test/compile
@@ -100,13 +89,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
-
-      - name: Setup Scala
-        uses: olafurpg/setup-scala@v10
-        with:
-          java-version: adopt@1.11
+      - uses: actions/checkout@v3
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
 
       - name: Compile
         run: sbt compile Test/compile
@@ -123,13 +108,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
-
-      - name: Set up Scala
-        uses: olafurpg/setup-scala@v10
-        with:
-          java-version: adopt@1.11
+      - uses: actions/checkout@v3
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
 
       - name: Test sbt plugin
         run: sbt scripted
@@ -138,13 +119,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up Scala
-        uses: olafurpg/setup-scala@v10
-        with:
-          java-version: adopt@1.11
+      - uses: actions/checkout@v3
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
 
       - name: Substitute sbt plugin snapshot version
         run: ./scripts/substitute-sbt-plugin-snapshot-version
@@ -166,15 +143,9 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-20.04
     steps:
-      - name: Check out
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Set up Scala
-        uses: olafurpg/setup-scala@v10
-        with:
-          java-version: adopt@1.11
+      - uses: actions/checkout@v3
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
 
       - name: Publish Maven artifacts
         run: sbt ci-release
