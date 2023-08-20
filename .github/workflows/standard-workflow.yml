@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Run simple checks
         run: |
@@ -54,7 +54,7 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Scala
         uses: olafurpg/setup-scala@v10
@@ -78,7 +78,7 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Scala
         uses: olafurpg/setup-scala@v10
@@ -101,7 +101,7 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Scala
         uses: olafurpg/setup-scala@v10
@@ -124,7 +124,7 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Scala
         uses: olafurpg/setup-scala@v10
@@ -139,7 +139,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Scala
         uses: olafurpg/setup-scala@v10
@@ -167,7 +167,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
