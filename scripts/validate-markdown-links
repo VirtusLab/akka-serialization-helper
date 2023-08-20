@@ -1,14 +1,6 @@
 #!/usr/bin/env bash
 
-set -e -o pipefail -u -x
+set -e -o pipefail -u
 
-self_dir=$(cd "$(dirname "$0")" &>/dev/null; pwd -P)
-source "$self_dir"/utils.sh
-
-case ${GITHUB_REF-} in
-  # We don't want a main branch/tag build to fail because some linked website has a random downtime.
-  refs/heads/main|refs/tags/*) options='--use=validate-links' ;;
-  *) options='--rc-path=.remarkrc.yml' ;;
-esac
-
-remark $options --ignore-path=.gitignore --frail .
+remark --use=validate-links    --ignore-path=.gitignore --frail .
+remark --use=lint-no-dead-urls --ignore-path=.gitignore .
