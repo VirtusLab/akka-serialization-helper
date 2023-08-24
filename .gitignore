@@ -2,6 +2,7 @@
 *.log
 
 .bsp/
+.DS_Store/
 .idea/
 .sbt/
 null/

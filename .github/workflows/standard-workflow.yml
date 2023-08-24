@@ -143,6 +143,7 @@ jobs:
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
 
+      - run: git fetch --tags
       - name: Publish Maven artifacts
         run: sbt ci-release
         env:
