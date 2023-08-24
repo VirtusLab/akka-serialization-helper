@@ -1,6 +1,6 @@
 package org.random.project
 
-import org.virtuslab.ash.annotation.Serializer
+import org.virtuslab.psh.annotation.Serializer
 
-@Serializer(classOf[SerializableTrait], org.virtuslab.ash.circe.Register.REGISTRATION_REGEX)
+@Serializer(classOf[SerializableTrait], org.virtuslab.psh.circe.Register.REGISTRATION_REGEX)
 class MacroRegexSerializer

@@ -1,9 +1,9 @@
 package org.random.project
 
-import akka.actor.ActorRef
-import akka.pattern._
-import akka.util.Timeout
-import org.virtuslab.ash.annotation.SerializabilityTrait
+import org.apache.pekko.actor.ActorRef
+import org.apache.pekko.pattern._
+import org.apache.pekko.util.Timeout
+import org.virtuslab.psh.annotation.SerializabilityTrait
 
 object AskSignClassicTest {
   final case class Msg() extends MySerializable

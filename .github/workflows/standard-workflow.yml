@@ -34,13 +34,13 @@ jobs:
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
         working-directory: examples/event-migration
 
-      - name: Check code style - examples/akka-cluster-app
+      - name: Check code style - examples/pekko-cluster-app
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
-        working-directory: examples/akka-cluster-app
+        working-directory: examples/pekko-cluster-app
 
-      - name: Check code style - examples/akka-persistence-app
+      - name: Check code style - examples/pekko-persistence-app
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
-        working-directory: examples/akka-persistence-app
+        working-directory: examples/pekko-persistence-app
 
   test-212:
     runs-on: ubuntu-latest
@@ -126,13 +126,13 @@ jobs:
         run: sbt test
         working-directory: examples/event-migration
 
-      - name: Compile akka-cluster-app
+      - name: Compile pekko-cluster-app
         run: sbt compile
-        working-directory: examples/akka-cluster-app
+        working-directory: examples/pekko-cluster-app
 
-      - name: Test akka-persistence-app
+      - name: Test pekko-persistence-app
         run: sbt test
-        working-directory: examples/akka-persistence-app
+        working-directory: examples/pekko-persistence-app
 
   publish-maven-artifacts:
     needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]

@@ -28,16 +28,16 @@ and using it in another project. Make sure that `mavenLocal` is added to the res
 sbt publishM2
 ```
 
-You can find two example applications that use Akka Serialization Helper:
-- [akka-cluster-app](examples/akka-cluster-app)
-- [akka-persistence-app](examples/akka-persistence-app)
+You can find two example applications that use Pekko Serialization Helper:
+- [pekko-cluster-app](examples/pekko-cluster-app)
+- [pekko-persistence-app](examples/pekko-persistence-app)
 These apps can be used for basic runtime testing as well. First, go to the app's directory:
 ```shell
-cd examples/akka-cluster-app
+cd examples/pekko-cluster-app
 ```
 or
 ```shell
-cd examples/akka-persistence-app
+cd examples/pekko-persistence-app
 ```
 And follow instructions from their README files.
 
@@ -68,7 +68,7 @@ Otherwise, incremental compilation might determine there is nothing to compile a
 
 ### Profiling
 
-To profile akka-serialization-helper compiler plugin used in another project - follow instructions from https://www.lightbend.com/blog/profiling-jvm-applications
+To profile pekko-serialization-helper compiler plugin used in another project - follow instructions from https://www.lightbend.com/blog/profiling-jvm-applications
 You might as well use any other profiler, but using https://github.com/jvm-profiling-tools/async-profiler with flamegraphs should be really effective and easy to achieve (+ no unexpected bugs / issues / errors).
 
 ### Code quality
@@ -88,7 +88,7 @@ Releasing is done automatically by `sbt-ci-release` sbt plugin (read more on the
 
 ### Snapshots
 
-The new `SNAPSHOT` version is automatically published by GitHub Actions to [Sonatype OSS Snapshot repo](https://oss.sonatype.org/content/repositories/snapshots/org/virtuslab/ash/)
+The new `SNAPSHOT` version is automatically published by GitHub Actions to [Sonatype OSS Snapshot repo](https://oss.sonatype.org/content/repositories/snapshots/org/virtuslab/psh/)
 every time a new commit is pushed to `main`.
 
 To depend on the newest version with sbt, add the following setting:
@@ -99,7 +99,7 @@ to both `build.sbt` **and** `project/build.sbt` (so that the sbt plugin added in
 
 ### Maven Central
 
-Releases to [Maven Central](https://repo1.maven.org/maven2/org/virtuslab/ash/) are triggered by pushing a lightweight git tag with a version number.
+Releases to [Maven Central](https://repo1.maven.org/maven2/org/virtuslab/psh/) are triggered by pushing a lightweight git tag with a version number.
 
 To publish version x.y.z, type in the console (on main branch):
 ```shell

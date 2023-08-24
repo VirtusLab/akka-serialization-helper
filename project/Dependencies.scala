@@ -4,8 +4,8 @@ object Dependencies {
   val scalaVersion213 = "2.13.11"
   val scalaVersion212 = "2.12.18"
 
-  val akkaProjectionVersion = "1.2.5"
-  val akkaVersion = "2.6.20"
+  val pekkoProjectionVersion = "0.0.0+68-6f80a745-SNAPSHOT"
+  val pekkoVersion = "1.0.1"
   val borerVersion = "1.8.0"
   val circeYamlVersion = "0.14.2"
   val circeVersion = "0.14.5"
@@ -18,20 +18,20 @@ object Dependencies {
   val sprayJson = "io.spray" %% "spray-json" % "1.3.6"
   val scalaCollectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.10.0"
 
-  val akkaActor = "com.typesafe.akka" %% "akka-actor" % akkaVersion
-  val akkaActorTyped = "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
-  val akkaStream = "com.typesafe.akka" %% "akka-stream" % akkaVersion
-  val akkaPersistenceTyped = "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion
-  val akkaProjections = "com.lightbend.akka" %% "akka-projection-eventsourced" % akkaProjectionVersion
-  val akkaTestKitTyped = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
-  val akkaStreamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
+  val pekkoActor = "org.apache.pekko" %% "pekko-actor" % pekkoVersion
+  val pekkoActorTyped = "org.apache.pekko" %% "pekko-actor-typed" % pekkoVersion
+  val pekkoStream = "org.apache.pekko" %% "pekko-stream" % pekkoVersion
+  val pekkoPersistenceTyped = "org.apache.pekko" %% "pekko-persistence-typed" % pekkoVersion
+  val pekkoProjections = "org.apache.pekko" %% "pekko-projection-eventsourced" % pekkoProjectionVersion
+  val pekkoTestKitTyped = "org.apache.pekko" %% "pekko-actor-testkit-typed" % pekkoVersion
+  val pekkoStreamTestKit = "org.apache.pekko" %% "pekko-stream-testkit" % pekkoVersion
 
-  val akkaHttpCors = "ch.megard" %% "akka-http-cors" % "1.2.0" // required by akka-grpc-runtime
-  val akkaGrpc = "com.lightbend.akka.grpc" %% "akka-grpc-runtime" % "2.1.6"
+  val pekkoHttpCors = "ch.megard" %% "pekko-http-cors" % "0.0.0-SNAPSHOT" // required by pekko-grpc-runtime
+  val pekkoGrpc = "org.apache.pekko" %% "pekko-grpc-runtime" % "1.0.0-RC2-2-56662643-SNAPSHOT"
 
   val borerCore = "io.bullet" %% "borer-core" % borerVersion
   val borerDerivation = "io.bullet" %% "borer-derivation" % borerVersion
-  val borerAkka = "io.bullet" %% "borer-compat-akka" % borerVersion
+  val borerPekko = "io.bullet" %% "borer-compat-pekko" % borerVersion
 
   val circeCore = "io.circe" %% "circe-core" % circeVersion
   val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
