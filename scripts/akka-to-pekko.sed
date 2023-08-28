@@ -21,7 +21,6 @@ s/\<ASH\>/ASH/g
 s/("ch\.megard" %% "pekko-http-cors") % ".*"/\1 % "0.0.0-SNAPSHOT"/
 s/("org\.apache\.pekko" %% "pekko-grpc-runtime") % ".*"/\1 % "1.0.0-RC2-2-56662643-SNAPSHOT"/
 s/("org\.apache\.pekko" % "sbt-pekko-grpc") % ".*"/\1 % "0.0.0-94-0bfb43a6-SNAPSHOT"/
-s/("org\.virtuslab\.psh" % "sbt-pekko-serialization-helper") % ".*"/\1 % "0.7.2.1"/
 s/(val pekkoHttp2SupportVersion) = .*/\1 = "0.0.0+4272-045c925b-SNAPSHOT"/
 s/(val pekkoHttpVersion) = .*/\1 = "1.0.0"/
 s/(val pekkoManagementVersion) = .*/\1 = "1.0.0"/
