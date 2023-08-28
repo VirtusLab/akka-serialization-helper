@@ -1,6 +1,6 @@
-sys.props.get("plugin.version") match {
-  case Some(x) => addSbtPlugin("org.virtuslab.ash" % "sbt-akka-serialization-helper" % x)
-  case _ =>
-    sys.error("""|The system property 'plugin.version' is not defined.
-                 |Specify this property using "-Dplugin.version=..." in `scriptedLaunchOpts` sbt setting""".stripMargin)
+val pluginVersion = sys.props.get("plugin.version") match {
+  case Some(x) => x
+  case _ => "0.7.3" // default, for the sake of Scala Steward where plugin.version system property isn't defined
 }
+
+addSbtPlugin("org.virtuslab.ash" % "sbt-akka-serialization-helper" % pluginVersion)
