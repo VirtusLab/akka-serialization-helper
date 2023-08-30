@@ -168,7 +168,7 @@ jobs:
           PSH_SSH_PRIVATE_KEY: ${{ secrets.PSH_SSH_PRIVATE_KEY }}
         run: mkdir -p ~/.ssh/ && echo "$PSH_SSH_PRIVATE_KEY" > ~/.ssh/psh && chmod 400 ~/.ssh/psh
       - run: git config --add --local core.sshCommand 'ssh -i ~/.ssh/psh'
-      - run: git push --force git@github.com:VirtusLab/pekko-serialization-helper.git main
+      - run: git push --force git@github.com:VirtusLab/pekko-serialization-helper.git HEAD:main
   # <END-AKKA>
 
   publish-maven-artifacts:
