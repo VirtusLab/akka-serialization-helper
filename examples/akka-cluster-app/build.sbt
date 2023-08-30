@@ -8,7 +8,7 @@ scalaVersion := "2.13.11"
 
 val circeVersion = "0.14.5"
 val akkaVersion = "2.6.20"
-val logbackVersion = "1.2.11"
+val logbackVersion = "1.2.12"
 
 lazy val `akka-cluster-app` = project
   .in(file("."))
