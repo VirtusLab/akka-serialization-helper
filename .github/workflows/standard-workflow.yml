@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Run simple checks
         run: |
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
 
@@ -66,7 +66,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
 
@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
 
@@ -104,7 +104,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
 
@@ -115,7 +115,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
 
@@ -140,7 +140,7 @@ jobs:
     needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           # Fetch all history so that a push to pekko-serialization-helper succeeds.
           # See https://stackoverflow.com/q/76470864
@@ -176,7 +176,7 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
       - uses: coursier/setup-action@v1
 
