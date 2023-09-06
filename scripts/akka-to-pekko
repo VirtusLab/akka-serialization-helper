@@ -5,3 +5,5 @@ set -e -o pipefail -u
 git ls-files | grep -Ev 'akka-to-pekko|logo/|scalafmt\.conf|scala-steward\.conf' | xargs sed -E -f scripts/akka-to-pekko.sed -i
 
 git ls-files | grep -Ev 'akka-to-pekko|logo/' | rename -e 's/akka/pekko/' -e 's/Akka/Pekko/' -e 's/\b(ash)\b/psh/' --make-dirs --stdin
+
+git rm -f .github/dependabot.yml

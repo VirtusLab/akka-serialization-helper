@@ -5,6 +5,8 @@ object Dependencies {
   val scalaVersion212 = "2.12.18"
 
   val akkaProjectionVersion = "1.2.5"
+  val akkaGrpcRuntimeVersion = "2.1.6"
+  val akkaHttpCorsVersion = "1.2.0"
   val akkaVersion = "2.6.20"
   val borerVersion = "1.8.0"
   val circeYamlVersion = "0.14.2"
@@ -26,8 +28,8 @@ object Dependencies {
   val akkaTestKitTyped = "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion
   val akkaStreamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion
 
-  val akkaHttpCors = "ch.megard" %% "akka-http-cors" % "1.2.0" // required by akka-grpc-runtime
-  val akkaGrpc = "com.lightbend.akka.grpc" %% "akka-grpc-runtime" % "2.1.6"
+  val akkaHttpCors = "ch.megard" %% "akka-http-cors" % akkaHttpCorsVersion // required by akka-grpc-runtime
+  val akkaGrpc = "com.lightbend.akka.grpc" %% "akka-grpc-runtime" % akkaGrpcRuntimeVersion
 
   val borerCore = "io.bullet" %% "borer-core" % borerVersion
   val borerDerivation = "io.bullet" %% "borer-derivation" % borerVersion
