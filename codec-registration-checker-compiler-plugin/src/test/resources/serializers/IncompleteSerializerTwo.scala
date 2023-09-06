@@ -1,6 +1,6 @@
 package org.random.project
 
-import org.virtuslab.ash.annotation.Serializer
+import org.virtuslab.psh.annotation.Serializer
 
 @Serializer(classOf[SerializableTrait])
 class IncompleteSerializerTwo {

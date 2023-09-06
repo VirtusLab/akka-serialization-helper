@@ -1,6 +1,0 @@
-package org.virtuslab.ash
-
-sealed trait CacheFileInteractionMode
-
-case object DumpTypesIntoFile extends CacheFileInteractionMode
-case object RemoveOutdatedTypesFromFile extends CacheFileInteractionMode

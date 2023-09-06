@@ -1,10 +1,10 @@
 package org.random.project
 
-import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
-import akka.util.Timeout
-import akka.actor.typed.scaladsl.AskPattern._
-import org.virtuslab.ash.annotation.SerializabilityTrait
+import org.apache.pekko.actor.typed.scaladsl.Behaviors
+import org.apache.pekko.actor.typed.{ActorRef, ActorSystem, Behavior}
+import org.apache.pekko.util.Timeout
+import org.apache.pekko.actor.typed.scaladsl.AskPattern._
+import org.virtuslab.psh.annotation.SerializabilityTrait
 
 import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success}

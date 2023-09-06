@@ -1,13 +1,13 @@
 package org.random.project
 
-import akka.actor.typed.ActorSystem
-import akka.persistence.query.Offset
-import akka.projection.eventsourced.EventEnvelope
-import akka.projection.eventsourced.scaladsl.EventSourcedProvider
-import akka.projection.scaladsl.SourceProvider
-import akka.persistence.typed.scaladsl.Effect
-import akka.actor.typed.Behavior
-import org.virtuslab.ash.annotation.SerializabilityTrait
+import org.apache.pekko.actor.typed.ActorSystem
+import org.apache.pekko.persistence.query.Offset
+import org.apache.pekko.projection.eventsourced.EventEnvelope
+import org.apache.pekko.projection.eventsourced.scaladsl.EventSourcedProvider
+import org.apache.pekko.projection.scaladsl.SourceProvider
+import org.apache.pekko.persistence.typed.scaladsl.Effect
+import org.apache.pekko.actor.typed.Behavior
+import org.virtuslab.psh.annotation.SerializabilityTrait
 
 object EffectTest {
 

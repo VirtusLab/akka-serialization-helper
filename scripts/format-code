@@ -7,8 +7,8 @@ sbt scalafmtAll scalafixAll scalafmtSbt
 cd examples/event-migration
 sbt scalafmtAll scalafixAll scalafmtSbt
 
-cd ../akka-cluster-app
+cd ../pekko-cluster-app
 sbt scalafmtAll scalafixAll scalafmtSbt
 
-cd ../akka-persistence-app
+cd ../pekko-persistence-app
 sbt scalafmtAll scalafixAll scalafmtSbt

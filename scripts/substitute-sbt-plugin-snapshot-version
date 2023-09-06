@@ -4,10 +4,10 @@ set -e -o pipefail -u
 
 sbt publishLocal
 
-version=$(ls -1t ~/.ivy2/local/org.virtuslab.ash/sbt-akka-serialization-helper/scala_2.12/sbt_1.0/ | head -1)
+version=$(ls -1t ~/.ivy2/local/org.virtuslab.psh/sbt-pekko-serialization-helper/scala_2.12/sbt_1.0/ | head -1)
 # Version can be more elegantly extracted using:
 #   sbt -Dsbt.supershell=false -error "print sbtPekkoSerializationHelper/version"
 # but the problem is that snapshot versions include minute-resolution timestamp,
 # which is likely to change from the preceding `sbt publishLocal`.
 
-find . -type f | grep '\.sbt$' | xargs sed -E 's/("sbt-akka-serialization-helper") % ".*"/\1 % "'"$version"'"/' -i
+find . -type f | grep '\.sbt$' | xargs sed -E 's/("sbt-pekko-serialization-helper") % ".*"/\1 % "'"$version"'"/' -i

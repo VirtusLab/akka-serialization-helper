@@ -28,12 +28,12 @@ lazy val testAgainstScalaVersions =
     "2.13.10")
 
 ThisBuild / scalaVersion := targetScalaVersions.head
-ThisBuild / organization := "org.virtuslab.ash"
+ThisBuild / organization := "org.virtuslab.psh"
 ThisBuild / organizationName := "VirtusLab"
 ThisBuild / versionScheme := Some("early-semver")
-ThisBuild / homepage := Some(url("https://github.com/VirtusLab/akka-serialization-helper"))
+ThisBuild / homepage := Some(url("https://github.com/VirtusLab/pekko-serialization-helper"))
 ThisBuild / licenses := List(
-  "MIT License" -> url("https://github.com/VirtusLab/akka-serialization-helper/blob/main/LICENSE"))
+  "MIT License" -> url("https://github.com/VirtusLab/pekko-serialization-helper/blob/main/LICENSE"))
 ThisBuild / developers := List(
   Developer("MarconZet", "Marcin Złakowski", "mzlakowski@virtuslab.com", url("https://github.com/MarconZet")),
   Developer(
@@ -99,15 +99,15 @@ publish / skip := true
 
 lazy val scalaVersionAxis = settingKey[Option[String]]("Project scala version")
 
-lazy val circeAkkaSerializer = (projectMatrix in file("circe-akka-serializer"))
-  .settings(name := "circe-akka-serializer")
+lazy val circePekkoSerializer = (projectMatrix in file("circe-pekko-serializer"))
+  .settings(name := "circe-pekko-serializer")
   .settings(commonSettings)
   .settings(crossScalaVersions := testAgainstScalaVersions)
   .settings(libraryDependencies ++= Seq(
-    akkaActor % Provided,
-    akkaActorTyped % Provided,
-    akkaTestKitTyped % Test,
-    akkaStream % Provided,
+    pekkoActor % Provided,
+    pekkoActorTyped % Provided,
+    pekkoTestKitTyped % Test,
+    pekkoStream % Provided,
     circeCore,
     circeParser,
     circeGeneric,
@@ -165,13 +165,13 @@ lazy val serializabilityCheckerCompilerPlugin = (projectMatrix in file("serializ
         .getOrElse(Seq.empty)
     },
     libraryDependencies ++= Seq(
-      akkaActor % Test,
-      akkaActorTyped % Test,
-      akkaPersistenceTyped % Test,
-      akkaProjections % Test,
+      pekkoActor % Test,
+      pekkoActorTyped % Test,
+      pekkoPersistenceTyped % Test,
+      pekkoProjections % Test,
       betterFiles % Test,
-      akkaGrpc % Test,
-      akkaHttpCors % Test))
+      pekkoGrpc % Test,
+      pekkoHttpCors % Test))
   .dependsOn(annotation)
   .jvmPlatform(scalaVersions = targetScalaVersions)
 
@@ -190,12 +190,12 @@ lazy val codecRegistrationCheckerCompilerPlugin = (projectMatrix in file("codec-
         .getOrElse(Seq.empty)
     },
     libraryDependencies += betterFiles % Test)
-  .dependsOn(annotation, circeAkkaSerializer % Test)
+  .dependsOn(annotation, circePekkoSerializer % Test)
   .jvmPlatform(scalaVersions = targetScalaVersions)
 
-lazy val sbtAkkaSerializationHelper = (project in file("sbt-akka-serialization-helper"))
+lazy val sbtPekkoSerializationHelper = (project in file("sbt-pekko-serialization-helper"))
   .enablePlugins(SbtPlugin)
-  .settings(name := "sbt-akka-serialization-helper")
+  .settings(name := "sbt-pekko-serialization-helper")
   .settings(commonSettings)
   .settings(
     pluginCrossBuild / sbtVersion := "1.2.8",
@@ -214,8 +214,8 @@ lazy val sbtAkkaSerializationHelper = (project in file("sbt-akka-serialization-h
       // both head and tail.head must be published because they are separate projects, one for scala 2.13, one for 2.12
       (annotation.projectRefs.head / publishLocal).value
       (annotation.projectRefs.tail.head / publishLocal).value
-      (circeAkkaSerializer.projectRefs.head / publishLocal).value
-      (circeAkkaSerializer.projectRefs.tail.head / publishLocal).value
+      (circePekkoSerializer.projectRefs.head / publishLocal).value
+      (circePekkoSerializer.projectRefs.tail.head / publishLocal).value
       (codecRegistrationCheckerCompilerPlugin.projectRefs.head / publishLocal).value
       (codecRegistrationCheckerCompilerPlugin.projectRefs.tail.head / publishLocal).value
       (dumpPersistenceSchemaCompilerPlugin.projectRefs.head / publishLocal).value
@@ -240,6 +240,6 @@ lazy val dumpPersistenceSchemaCompilerPlugin = (projectMatrix in file("dump-pers
         }
         .getOrElse(Seq.empty)
     },
-    libraryDependencies ++= Seq(sprayJson, betterFiles, akkaActorTyped % Test, akkaPersistenceTyped % Test))
+    libraryDependencies ++= Seq(sprayJson, betterFiles, pekkoActorTyped % Test, pekkoPersistenceTyped % Test))
   .settings(assemblySettings: _*)
   .jvmPlatform(scalaVersions = targetScalaVersions)

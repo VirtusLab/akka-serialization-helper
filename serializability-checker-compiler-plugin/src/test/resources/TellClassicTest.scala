@@ -1,7 +1,7 @@
 package org.random.project
 
-import akka.actor.ActorRef
-import org.virtuslab.ash.annotation.SerializabilityTrait
+import org.apache.pekko.actor.ActorRef
+import org.virtuslab.psh.annotation.SerializabilityTrait
 
 object TellClassicTest {
   final case class Msg() extends MySerializable
