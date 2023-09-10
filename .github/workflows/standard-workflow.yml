@@ -135,7 +135,7 @@ jobs:
         working-directory: examples/akka-persistence-app
 
   # <START-AKKA>
-  open-pr-to-ash:
+  patch-and-push-to-ash:
     if: github.event_name != 'pull_request'
     needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
     runs-on: ubuntu-latest
@@ -155,7 +155,7 @@ jobs:
       - run: git add .
       - run: git config user.email "psh@virtuslab.com"
       - run: git config user.name "Pekko Serialization Helper Bot"
-      - run: git commit -m 'Migrate commit from ASH'
+      - run: git commit -m 'Migrate `main` branch from from akka-serialization-helper'
       - run: git clean -dxf
       - run: ./scripts/format-code
       - run: git commit -a --amend --no-edit
