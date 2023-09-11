@@ -4,9 +4,9 @@
 [![GitHub Actions](https://github.com/VirtusLab/akka-serialization-helper/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VirtusLab/akka-serialization-helper/actions)
 [![License: MIT](https://img.shields.io/github/license/VirtusLab/akka-serialization-helper)](LICENSE)
 
-<!-- <START-AKKA> --->
+<!-- <PEKKO-REMOVE-START> --->
 ![logo_ash_horizontal@4x](logo/ash/png-4x/logo_ash_horizontal@4x.png)
-<!-- <END-AKKA> --->
+<!-- <PEKKO-REMOVE-END> --->
 
 Serialization toolbox for Akka messages, events and persistent state that helps achieve compile-time guarantee on
 serializability. There are some Akka serialization caveats this tool can help with:
@@ -15,9 +15,9 @@ serializability. There are some Akka serialization caveats this tool can help wi
 3. [Jackson Akka Serializer](#jackson-akka-serializer)
 4. [Missing Codec registration](#missing-codec-registration)
 
-<!-- <START-AKKA> --->
+<!-- <PEKKO-REMOVE-START> --->
 # ⚠️ Check [pekko-serialization-helper](https://github.com/VirtusLab/pekko-serialization-helper) for Pekko ⚠️
-<!-- <END-AKKA> --->
+<!-- <PEKKO-REMOVE-END> --->
 
 ## Install
 

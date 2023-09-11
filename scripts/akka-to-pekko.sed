@@ -1,7 +1,8 @@
-/<START-AKKA>/, /<END-AKKA>/ d
-s/import akka/import org.apache.pekko/
+/<PEKKO-REMOVE-START>/, /<PEKKO-REMOVE-END>/ d
+s/^.*<PEKKO-UNCOMMENT> *//
 
-# All cases where "akka" isn't simply replaced with "pekko"
+# All cases where "akka" isn't simply replaced with "pekko"; imports must be replaced first
+s/import akka/import org.apache.pekko/
 s/"akka\./"org.apache.pekko./
 s/akka\.actor\.typed/org.apache.pekko.actor.typed/g
 s/akka\.persistence\.typed/org.apache.pekko.persistence.typed/g

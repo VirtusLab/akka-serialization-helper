@@ -134,7 +134,7 @@ jobs:
         run: sbt test
         working-directory: examples/akka-persistence-app
 
-  # <START-AKKA>
+  # <PEKKO-REMOVE-START>
   patch-and-push-to-ash:
     if: github.event_name != 'pull_request'
     needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
@@ -169,7 +169,7 @@ jobs:
         run: mkdir -p ~/.ssh/ && echo "$PSH_SSH_PRIVATE_KEY" > ~/.ssh/psh && chmod 400 ~/.ssh/psh
       - run: git config --add --local core.sshCommand 'ssh -i ~/.ssh/psh'
       - run: git push --force git@github.com:VirtusLab/pekko-serialization-helper.git HEAD:main
-  # <END-AKKA>
+  # <PEKKO-REMOVE-END>
 
   publish-maven-artifacts:
     needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
