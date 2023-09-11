@@ -1,6 +1,6 @@
 # Akka Serialization Helper
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.virtuslab.ash/sbt-akka-serialization-helper/badge.svg)](https://mvnrepository.com/artifact/org.virtuslab.ash)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.virtuslab.ash/annotation_2.13/badge.svg)](https://mvnrepository.com/artifact/org.virtuslab.ash)
 [![GitHub Actions](https://github.com/VirtusLab/akka-serialization-helper/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VirtusLab/akka-serialization-helper/actions)
 [![License: MIT](https://img.shields.io/github/license/VirtusLab/akka-serialization-helper)](LICENSE)
 

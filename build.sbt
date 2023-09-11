@@ -32,15 +32,10 @@ ThisBuild / organization := "org.virtuslab.ash"
 ThisBuild / organizationName := "VirtusLab"
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / homepage := Some(url("https://github.com/VirtusLab/akka-serialization-helper"))
-ThisBuild / licenses := List(
-  "MIT License" -> url("https://github.com/VirtusLab/akka-serialization-helper/blob/main/LICENSE"))
+ThisBuild / licenses := List("MIT License" -> url("https://github.com/VirtusLab/akka-serialization-helper/blob/main/LICENSE"))
 ThisBuild / developers := List(
   Developer("MarconZet", "Marcin Złakowski", "mzlakowski@virtuslab.com", url("https://github.com/MarconZet")),
-  Developer(
-    "LukaszKontowski",
-    "Łukasz Kontowski",
-    "lkontowski@virtuslab.com",
-    url("https://github.com/LukaszKontowski")),
+  Developer("LukaszKontowski", "Łukasz Kontowski", "lkontowski@virtuslab.com", url("https://github.com/LukaszKontowski")),
   Developer("PawelLipski", "Paweł Lipski", "plipski@virtuslab.com", url("https://github.com/PawelLipski")))
 
 sonatypeProfileName := "org.virtuslab"

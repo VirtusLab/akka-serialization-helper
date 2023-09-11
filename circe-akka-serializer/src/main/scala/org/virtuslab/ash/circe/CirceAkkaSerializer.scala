@@ -8,6 +8,7 @@ import scala.reflect.ClassTag
 import akka.actor.ExtendedActorSystem
 import akka.event.Logging
 import akka.serialization.SerializerWithStringManifest
+
 import io.circe._
 import io.circe.jawn.JawnParser
 
@@ -98,19 +99,17 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
   /**
    * The intended usage of this method is to provide any form of support for generic classes.
    *
-   * Because of type erasure, it's impossible to [[org.virtuslab.ash.circe.Register]] one generic class two times with
-   * different type parameters.
+   * Because of type erasure, it's impossible to [[org.virtuslab.ash.circe.Register]] one generic class two times with different
+   * type parameters.
    *
-   * The trick for combating type erasure is to register generic class only once with type parameter being its upper
-   * bound, and provide custom made [[io.circe.Codec]] that can serialize/deserialize all classes that are used as a
-   * type parameter.
+   * The trick for combating type erasure is to register generic class only once with type parameter being its upper bound, and
+   * provide custom made [[io.circe.Codec]] that can serialize/deserialize all classes that are used as a type parameter.
    *
-   * For example, if the upper bound is `Any`, but you know that only `Int` and `String` are used as a type parameter,
-   * then you can create a custom [[io.circe.Codec]] for `Any` that handles `Int` and `String` and throws `Exception`
-   * otherwise.
+   * For example, if the upper bound is `Any`, but you know that only `Int` and `String` are used as a type parameter, then you
+   * can create a custom [[io.circe.Codec]] for `Any` that handles `Int` and `String` and throws `Exception` otherwise.
    *
-   * To use this method correctly, set the upper bound for the type parameter of generic class to `Ser` and put the
-   * returned Codec as implicit in a place that can be seen by type derivation.
+   * To use this method correctly, set the upper bound for the type parameter of generic class to `Ser` and put the returned
+   * Codec as implicit in a place that can be seen by type derivation.
    *
    * Example of generic class:
    * {{{
@@ -129,12 +128,7 @@ abstract class CirceAkkaSerializer[Ser <: AnyRef: ClassTag](system: ExtendedActo
   private def logDuration(action: String, obj: AnyRef, startTime: Long, bytes: Array[Byte]): Unit = {
     if (isDebugEnabled) {
       val durationMicros = (System.nanoTime - startTime) / 1000
-      log.debug(
-        "{} of [{}] took [{}] microsecond, size [{}] bytes",
-        action,
-        obj.getClass.getName,
-        durationMicros,
-        bytes.length)
+      log.debug("{} of [{}] took [{}] microsecond, size [{}] bytes", action, obj.getClass.getName, durationMicros, bytes.length)
     }
   }
 

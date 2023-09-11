@@ -17,22 +17,21 @@ trait CirceTraitCodec[Ser <: AnyRef] extends Codec[Ser] {
   /**
    * Sequence that must contain [[org.virtuslab.ash.circe.Registration]] for all direct subclasses of Ser.
    *
-   * Each `Registration` is created using [[org.virtuslab.ash.circe.Register]]s
-   * [[org.virtuslab.ash.circe.Register#apply]] method.
+   * Each `Registration` is created using [[org.virtuslab.ash.circe.Register]]s [[org.virtuslab.ash.circe.Register#apply]]
+   * method.
    *
    * To check if all needed classes are registered, use Codec Registration Checker.
    *
    * @see
-   *   [[org.virtuslab.ash.circe.Register]][[org.virtuslab.ash.circe.Register#apply]] for more information about type
-   *   derivation
+   *   [[org.virtuslab.ash.circe.Register]][[org.virtuslab.ash.circe.Register#apply]] for more information about type derivation
    */
   val codecs: Seq[Registration[_ <: Ser]]
 
   /**
    * A sequence containing information used in type migration.
    *
-   * If you ever change the name of a class that is a direct descendant of `Ser` and is persisted in any way, you must
-   * append new pair to this field.
+   * If you ever change the name of a class that is a direct descendant of `Ser` and is persisted in any way, you must append
+   * new pair to this field.
    *   - The first element of the pair is a String with the value of old FQCN.
    *   - The second element of the pair is a Class that had its name changed
    *

@@ -15,6 +15,7 @@ import akka.persistence.typed.scaladsl.Effect
 import akka.persistence.typed.scaladsl.EventSourcedBehavior
 import akka.persistence.typed.scaladsl.ReplyEffect
 import akka.persistence.typed.scaladsl.RetentionCriteria
+
 import io.circe.Codec
 import io.circe.generic.semiauto.deriveCodec
 

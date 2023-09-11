@@ -96,7 +96,7 @@ class SerializerCheckCompilerPluginComponent(
             val typeRegexPatternOption =
               regexTree match {
                 case Select(_, TermName("$lessinit$greater$default$2")) => Some(".*")
-                case other => extractValueOfLiteralConstantFromTree[String](other)
+                case other                                              => extractValueOfLiteralConstantFromTree[String](other)
               }
 
             (fqcnOption, typeRegexPatternOption) match {
@@ -129,9 +129,7 @@ class SerializerCheckCompilerPluginComponent(
               .filter(_.toString.matches(typeRegexPattern))
           } catch {
             case e: PatternSyntaxException =>
-              reporter.error(
-                serializerImplDef.pos,
-                "Exception throw during the use of type regex pattern: " + e.getMessage)
+              reporter.error(serializerImplDef.pos, "Exception throw during the use of type regex pattern: " + e.getMessage)
               return
           }
         }
@@ -157,8 +155,7 @@ class SerializerCheckCompilerPluginComponent(
         if (possibleMissingFullyQualifiedClassNames.nonEmpty) {
           // Due to the way how incremental compilation works - `possibleMissingFullyQualifiedClassNames` could contain
           // "false-positives" - that's why additional check in `collectMissingClassNames` is needed.
-          val actuallyMissingFullyQualifiedClassNames = collectMissingClassNames(
-            possibleMissingFullyQualifiedClassNames)
+          val actuallyMissingFullyQualifiedClassNames = collectMissingClassNames(possibleMissingFullyQualifiedClassNames)
           if (actuallyMissingFullyQualifiedClassNames.nonEmpty) {
             reporter.error(
               serializerImplDef.pos,
@@ -188,9 +185,7 @@ class SerializerCheckCompilerPluginComponent(
                 None
             }
           case other =>
-            reporter.error(
-              other.pos,
-              s"Annotation argument must be a literal constant. Currently: ${other.summaryString}")
+            reporter.error(other.pos, s"Annotation argument must be a literal constant. Currently: ${other.summaryString}")
             None
         }
       }

@@ -141,9 +141,7 @@ class CodecRegistrationCheckerCompilerPluginSpec extends AnyWordSpecLike with sh
       "path in argument contains in invalid" in {
         assertThrows[RuntimeException] {
           File.usingTemporaryDirectory() { directory =>
-            CodecRegistrationCheckerCompiler.compileCode(
-              dataSourceCode,
-              List(s"${directory.toJava.getAbsolutePath}\u0000"))
+            CodecRegistrationCheckerCompiler.compileCode(dataSourceCode, List(s"${directory.toJava.getAbsolutePath}\u0000"))
           }
         }
       }

@@ -4,14 +4,14 @@ import scala.annotation.nowarn
 import scala.reflect.runtime.{universe => ru}
 
 import akka.actor.ExtendedActorSystem
+
 import io.circe._
 import io.circe.generic.auto._
 
 import org.virtuslab.ash.circe.data.ModifiedCodec._
 import org.virtuslab.ash.circe.data._
 
-class CustomSerializer(actorSystem: ExtendedActorSystem)
-    extends CirceAkkaSerializer[CirceSerializabilityTrait](actorSystem) {
+class CustomSerializer(actorSystem: ExtendedActorSystem) extends CirceAkkaSerializer[CirceSerializabilityTrait](actorSystem) {
 
   @nowarn implicit private val serializabilityCodec: Codec[CirceSerializabilityTrait] = genericCodec
 

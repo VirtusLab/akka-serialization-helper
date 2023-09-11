@@ -36,8 +36,7 @@ class PersistenceSchemaWriterSpec extends AnyWordSpecLike with should.Matchers w
         schemaWriter.isUpToDate(testDef.name) should equal(false)
         schemaWriter.consumeTypeDefinition(testDef)
         schemaWriter.isUpToDate(testDef.name) should equal(true)
-        new String((directory / s"${testDef.name}.json").loadBytes).parseJson.convertTo[TypeDefinition] should equal(
-          testDef)
+        new String((directory / s"${testDef.name}.json").loadBytes).parseJson.convertTo[TypeDefinition] should equal(testDef)
       }
     }
 

@@ -13,8 +13,7 @@ class DumpPersistenceSchemaCompilerPlugin(override val global: Global) extends P
   // Placeholder options
   private val pluginOptions = new DumpPersistenceSchemaOptions("/tmp", verbose = false)
 
-  override val components: List[PluginComponent] = List(
-    new DumpPersistenceSchemaCompilerPluginComponent(pluginOptions, global))
+  override val components: List[PluginComponent] = List(new DumpPersistenceSchemaCompilerPluginComponent(pluginOptions, global))
 
   override def init(options: List[String], error: String => Unit): Boolean = {
     if (options.contains("--disable"))

@@ -14,10 +14,7 @@ object Compression {
   // TODO (#159): add support for LZ4 java compression
   // case class LZ4(greaterThan: Long) extends Algorithm
 
-  private[circe] def compressIfNeeded(
-      bytes: Array[Byte],
-      bufferSize: Int,
-      compressionAlgorithm: Algorithm): Array[Byte] =
+  private[circe] def compressIfNeeded(bytes: Array[Byte], bufferSize: Int, compressionAlgorithm: Algorithm): Array[Byte] =
     compressionAlgorithm match {
       case Compression.Off => bytes
       case Compression.GZip(largerThan) =>

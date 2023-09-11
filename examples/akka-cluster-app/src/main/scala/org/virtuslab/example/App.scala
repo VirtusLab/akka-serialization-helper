@@ -7,6 +7,7 @@ import akka.actor.typed.receptionist.ServiceKey
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.scaladsl.Routers
 import akka.cluster.typed.Cluster
+
 import com.typesafe.config.ConfigFactory
 
 object App {

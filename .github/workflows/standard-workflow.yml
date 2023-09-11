@@ -135,7 +135,7 @@ jobs:
         working-directory: examples/akka-persistence-app
 
   # <PEKKO-REMOVE-START>
-  patch-and-push-to-ash:
+  patch-and-push-to-psh:
     if: github.event_name != 'pull_request'
     needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
     runs-on: ubuntu-latest
@@ -145,10 +145,8 @@ jobs:
           # Fetch all history so that a push to pekko-serialization-helper succeeds.
           # See https://stackoverflow.com/q/76470864
           fetch-depth: 0
-      - uses: coursier/cache-action@v6
-      - uses: coursier/setup-action@v1
       - run: git status
-      - run: git checkout -b chore/from-ash
+      - run: git checkout -b TEMP/from-ash
       - run: curl -sL https://raw.githubusercontent.com/ap/rename/master/rename | sudo tee /usr/local/bin/rename
       - run: sudo chmod +x /usr/local/bin/rename
       - run: ./scripts/akka-to-pekko
@@ -156,9 +154,6 @@ jobs:
       - run: git config user.email "psh@virtuslab.com"
       - run: git config user.name "Pekko Serialization Helper Bot"
       - run: git commit -m 'Migrate `main` branch from from akka-serialization-helper'
-      - run: git clean -dxf
-      - run: ./scripts/format-code
-      - run: git commit -a --amend --no-edit
       - env:
           # 2.1 Generate an SSH key in terminal (Leave the passphrase empty)
           # 2.2 Add public key in the external repository: <external repository>/Settings/Deploy keys/Add deploy key
@@ -167,7 +162,7 @@ jobs:
           #     Paste the private key.
           PSH_SSH_PRIVATE_KEY: ${{ secrets.PSH_SSH_PRIVATE_KEY }}
         run: mkdir -p ~/.ssh/ && echo "$PSH_SSH_PRIVATE_KEY" > ~/.ssh/psh && chmod 400 ~/.ssh/psh
-      - run: git config --add --local core.sshCommand 'ssh -i ~/.ssh/psh'
+      - run: git config core.sshCommand "ssh -i $HOME/.ssh/psh"
       - run: git push --force git@github.com:VirtusLab/pekko-serialization-helper.git HEAD:main
   # <PEKKO-REMOVE-END>
 

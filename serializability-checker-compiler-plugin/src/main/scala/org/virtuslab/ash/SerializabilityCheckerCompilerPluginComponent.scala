@@ -6,9 +6,7 @@ import scala.tools.nsc.plugins.PluginComponent
 
 import org.virtuslab.ash.SerializabilityCheckerCompilerPlugin.serializabilityTraitType
 
-class SerializabilityCheckerCompilerPluginComponent(
-    val pluginOptions: SerializabilityCheckerOptions,
-    val global: Global)
+class SerializabilityCheckerCompilerPluginComponent(val pluginOptions: SerializabilityCheckerOptions, val global: Global)
     extends PluginComponent {
 
   import global._

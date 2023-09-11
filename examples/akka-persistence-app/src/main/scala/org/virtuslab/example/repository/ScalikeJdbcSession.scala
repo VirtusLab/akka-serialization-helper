@@ -4,6 +4,7 @@ import java.sql.Connection
 
 import akka.japi.function.Function
 import akka.projection.jdbc.JdbcSession
+
 import scalikejdbc._
 
 object ScalikeJdbcSession {

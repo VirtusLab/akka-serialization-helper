@@ -6,6 +6,7 @@ import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.management.cluster.bootstrap.ClusterBootstrap
 import akka.management.scaladsl.AkkaManagement
+
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
 
