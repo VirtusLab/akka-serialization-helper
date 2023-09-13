@@ -2,7 +2,7 @@ import sbt.Keys.{semanticdbEnabled, semanticdbVersion}
 
 name := "event-migration"
 version := "0.1"
-scalaVersion := "2.13.11"
+scalaVersion := "2.13.12"
 
 val circeVersion = "0.14.6"
 val circeGenericExtrasVersion = "0.14.3"
