@@ -21,7 +21,7 @@ s/\<ash\>/psh/g
 s/\<ASH\>/ASH/g
 
 s/(val pekkoGrpcRuntimeVersion) = ".*"/\1 = "1.0.0"/
-s/(val pekkoGrpcSbtPluginVersion) = ".*"/\1 = "0.0.0-94-0bfb43a6-SNAPSHOT"/
+s/(val pekkoGrpcSbtPluginVersion) = ".*"/\1 = "0.0.0-1478-391440e2-SNAPSHOT"/
 s/(val pekkoHttp2SupportVersion) = .*/\1 = "0.0.0+4272-045c925b-SNAPSHOT"/
 s/(val pekkoHttpCorsVersion) = .*/\1 = "1.0.0"/
 s/(val pekkoHttpVersion) = .*/\1 = "1.0.0"/
