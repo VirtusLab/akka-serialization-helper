@@ -28,5 +28,5 @@ s/(val pekkoHttpCorsVersion) = .*/\1 = "1.0.0"/
 s/(val pekkoHttpVersion) = .*/\1 = "1.0.0"/
 s/(val pekkoManagementVersion) = .*/\1 = "1.0.0"/
 s/(val pekkoPersistenceJdbcVersion) = .*/\1 = "1.0.0"/
-s/(val pekkoProjectionVersion) = .*/\1 = "0.0.0+77-d4f6767f-SNAPSHOT"/
+s/(val pekkoProjectionVersion) = .*/\1 = "0.0.0+79-2f39f1e4-SNAPSHOT"/
 s/(val pekkoVersion) = .*/\1 = "1.0.1"/
