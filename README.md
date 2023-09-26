@@ -4,9 +4,7 @@
 [![GitHub Actions](https://github.com/VirtusLab/akka-serialization-helper/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VirtusLab/akka-serialization-helper/actions)
 [![License: MIT](https://img.shields.io/github/license/VirtusLab/akka-serialization-helper)](LICENSE)
 
-<!-- <PEKKO-REMOVE-START> --->
-![logo_ash_horizontal@4x](logo/ash/png-4x/logo_ash_horizontal@4x.png)
-<!-- <PEKKO-REMOVE-END> --->
+![logo-ash-horizontal](logo/ash/svg/logo-ash-horizontal.svg)
 
 Serialization toolbox for Akka messages, events and persistent state that helps achieve compile-time guarantee on
 serializability. There are some Akka serialization caveats this tool can help with:
@@ -21,7 +19,7 @@ serializability. There are some Akka serialization caveats this tool can help wi
 
 ## Install
 
-Add the following line to `plugins.sbt` (take `Version` from the above maven badge or [GitHub Releases](https://github.com/VirtusLab/akka-serialization-helper/releases)):
+Add the following line to `plugins.sbt` (take `Version` from the above Maven badge or [GitHub Releases](https://github.com/VirtusLab/akka-serialization-helper/releases)):
 
 ```scala
 addSbtPlugin("org.virtuslab.ash" % "sbt-akka-serialization-helper" % Version)
