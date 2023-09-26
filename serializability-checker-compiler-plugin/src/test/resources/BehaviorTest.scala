@@ -1,6 +1,6 @@
 package org.random.project
 
-import akka.actor.typed.Behavior
+import org.apache.pekko.actor.typed.Behavior
 
 object BehaviorTest {
   sealed trait Command extends MySerializable

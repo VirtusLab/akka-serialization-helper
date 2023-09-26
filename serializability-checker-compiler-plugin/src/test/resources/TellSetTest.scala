@@ -1,6 +1,6 @@
 package org.random.project
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 
 object TellSetTest {
 

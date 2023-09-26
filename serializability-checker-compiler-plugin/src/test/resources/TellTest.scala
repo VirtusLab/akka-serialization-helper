@@ -1,8 +1,8 @@
 package org.random.project
 
-import akka.actor.typed.ActorRef
-import akka.actor.typed.scaladsl.Behaviors
-import org.virtuslab.ash.annotation.SerializabilityTrait
+import org.apache.pekko.actor.typed.ActorRef
+import org.apache.pekko.actor.typed.scaladsl.Behaviors
+import org.virtuslab.psh.annotation.SerializabilityTrait
 
 object TellTest {
   @SerializabilityTrait

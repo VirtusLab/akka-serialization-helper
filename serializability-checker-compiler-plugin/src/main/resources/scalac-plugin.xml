@@ -1,4 +1,4 @@
 <plugin>
     <name>serializability-checker-plugin</name>
-    <classname>org.virtuslab.ash.SerializabilityCheckerCompilerPlugin</classname>
+    <classname>org.virtuslab.psh.SerializabilityCheckerCompilerPlugin</classname>
 </plugin>

@@ -34,13 +34,13 @@ jobs:
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
         working-directory: examples/event-migration
 
-      - name: Check code style - examples/akka-cluster-app
+      - name: Check code style - examples/pekko-cluster-app
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
-        working-directory: examples/akka-cluster-app
+        working-directory: examples/pekko-cluster-app
 
-      - name: Check code style - examples/akka-persistence-app
+      - name: Check code style - examples/pekko-persistence-app
         run: sbt scalafmtCheckAll scalafmtSbtCheck "scalafixAll --check"
-        working-directory: examples/akka-persistence-app
+        working-directory: examples/pekko-persistence-app
 
   test-212:
     runs-on: ubuntu-latest
@@ -127,45 +127,14 @@ jobs:
         run: sbt test
         working-directory: examples/event-migration
 
-      - name: Compile akka-cluster-app
+      - name: Compile pekko-cluster-app
         run: sbt compile
-        working-directory: examples/akka-cluster-app
+        working-directory: examples/pekko-cluster-app
 
-      - name: Test akka-persistence-app
+      - name: Test pekko-persistence-app
         run: sbt test
-        working-directory: examples/akka-persistence-app
+        working-directory: examples/pekko-persistence-app
 
-  # <PEKKO-REMOVE-START>
-  patch-and-push-to-psh:
-    if: github.event_name != 'pull_request'
-    needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # Fetch all history so that a push to pekko-serialization-helper succeeds.
-          # See https://stackoverflow.com/q/76470864
-          fetch-depth: 0
-      - run: git status
-      - run: git checkout -b TEMP/from-ash
-      - run: curl -sL https://raw.githubusercontent.com/ap/rename/master/rename | sudo tee /usr/local/bin/rename
-      - run: sudo chmod +x /usr/local/bin/rename
-      - run: ./scripts/akka-to-pekko
-      - run: git add .
-      - run: git config user.email "psh@virtuslab.com"
-      - run: git config user.name "Pekko Serialization Helper Bot"
-      - run: git commit -m 'Migrate `main` branch from from akka-serialization-helper'
-      - env:
-          # 2.1 Generate an SSH key in terminal (Leave the passphrase empty)
-          # 2.2 Add public key in the external repository: <external repository>/Settings/Deploy keys/Add deploy key
-          #     Paste the public key. Enable "Allow write access"
-          # 2.3 Add private key in the source repository: <external repository>/Settings/Secrets/Actions/New repository secret
-          #     Paste the private key.
-          PSH_SSH_PRIVATE_KEY: ${{ secrets.PSH_SSH_PRIVATE_KEY }}
-        run: mkdir -p ~/.ssh/ && echo "$PSH_SSH_PRIVATE_KEY" > ~/.ssh/psh && chmod 400 ~/.ssh/psh
-      - run: git config core.sshCommand "ssh -i $HOME/.ssh/psh"
-      - run: git push --force git@github.com:VirtusLab/pekko-serialization-helper.git HEAD:main
-  # <PEKKO-REMOVE-END>
 
   publish-maven-artifacts:
     needs: [code-style-check, test-212, test-213-1, test-213-2, test-sbt-plugin, run-examples]

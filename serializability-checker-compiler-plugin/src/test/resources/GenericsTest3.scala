@@ -1,8 +1,8 @@
 package org.random.project
 
-import akka.actor.typed.ActorSystem
-import akka.grpc.scaladsl.WebHandler
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
+import org.apache.pekko.actor.typed.ActorSystem
+import org.apache.pekko.grpc.scaladsl.WebHandler
+import org.apache.pekko.http.scaladsl.model.{HttpRequest, HttpResponse}
 
 import scala.concurrent.Future
 
