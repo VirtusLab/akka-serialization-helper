@@ -4,7 +4,8 @@
 [![GitHub Actions](https://github.com/VirtusLab/akka-serialization-helper/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VirtusLab/akka-serialization-helper/actions)
 [![License: MIT](https://img.shields.io/github/license/VirtusLab/akka-serialization-helper)](LICENSE)
 
-![logo-ash-horizontal](logo/ash/svg/logo-ash-horizontal.svg)
+![logo-ash-horizontal](logo/ash/svg/logo-ash-horizontal.svg#gh-light-mode-only)
+![logo-ash-horizontal](logo/ash/svg/logo-ash-horizontal-dark-bg.svg#gh-dark-mode-only)
 
 Serialization toolbox for Akka messages, events and persistent state that helps achieve compile-time guarantee on
 serializability. There are some Akka serialization caveats this tool can help with:
