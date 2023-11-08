@@ -9,7 +9,7 @@ object Dependencies {
   val akkaHttpCorsVersion = "1.2.0"
   val akkaVersion = "2.6.20"
   val borerVersion = "1.8.0"
-  val circeYamlVersion = "0.15.1"
+  val circeYamlVersion = "1.15.0"
   val circeVersion = "0.14.6"
   val circeGenericExtrasVersion = "0.14.3"
 
