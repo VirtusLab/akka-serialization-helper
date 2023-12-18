@@ -11,4 +11,7 @@ class SerializabilityCheckerOptions(
     var detectFromMethods: Boolean = true,
     var detectFromUntypedMethods: Boolean = true,
     var detectFromHigherOrderFunctions: Boolean = true,
+    var includeMessages: Boolean = true,
+    var includePersistentEvents: Boolean = true,
+    var includePersistentStates: Boolean = true,
     var typesExplicitlyMarkedAsSerializable: Seq[String] = Seq.empty)

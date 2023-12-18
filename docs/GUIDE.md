@@ -118,6 +118,21 @@ This option disables detection of messages/events/state based on type of argumen
 This option disables detection of messages/events/state based on return type of the function given as argument to method. This detection is enabled by default. If you want to disable it, add the following setting:<br>
 `Compile / scalacOptions += "-P:serializability-checker-plugin:--disable-detection-higher-order-function"`<br><br>
 
+- `--exclude-messages`
+
+This option disables serializability checks on all messages. These checks are enabled by default. If you want to disable them, add the following setting:<br>
+`Compile / scalacOptions += "-P:serializability-checker-plugin:--exclude-messages"`<br><br>
+
+- `--exclude-persistent-events`
+
+This option disables serializability checks on all persistent events. These checks are enabled by default. If you want to disable them, add the following setting:<br>
+`Compile / scalacOptions += "-P:serializability-checker-plugin:--exclude-persistent-events"`<br><br>
+
+- `--exclude-persistent-states`
+
+This option disables serializability checks on all persistent state classes. These checks are enabled by default. If you want to disable them, add the following setting:<br>
+`Compile / scalacOptions += "-P:serializability-checker-plugin:--exclude-persistent-states"`<br><br>
+
 - `--types-explicitly-marked-as-serializable=<type1>,<type2>,...`
 
 This option can be used to pass a comma-separated list of fully-qualified names of types that should be considered serializable by the checker, even if they do **not** extend a designated serializability trait.
