@@ -11,154 +11,181 @@ class SerializabilityCheckerCompilerPluginComponentSpec extends AnyWordSpecLike 
   private def getResourceAsString(name: String) =
     new String(File(getClass.getClassLoader.getResource(name)).loadBytes)
 
-  private val serYesCode = getResourceAsString("MySerializableYes.scala")
-  private val serNoCode = getResourceAsString("MySerializableNo.scala")
+  private val mySerializableAnnotated = getResourceAsString("MySerializableAnnotated.scala")
+  private val mySerializableNotAnnotated = getResourceAsString("MySerializableNotAnnotated.scala")
 
-  private def testCode(resourceName: String, errorTypes: ClassType = ClassType.Message, chosenDisableFlags: List[String]) = {
+  private def expectSerializabilityErrors(
+      resourceName: String,
+      expectedErrorType: ClassKind = ClassKind.Message,
+      pluginFlags: List[String]) = {
     val code = getResourceAsString(resourceName)
-    SerializabilityCheckerCompiler.compileCode(List(code, serYesCode), chosenDisableFlags) should be("")
-    val noOut = SerializabilityCheckerCompiler.compileCode(List(code, serNoCode), chosenDisableFlags)
-    noOut should include("error")
-    noOut should include(errorTypes.name)
+    SerializabilityCheckerCompiler.compileCode(List(code, mySerializableAnnotated), pluginFlags) should be("")
+    val output = SerializabilityCheckerCompiler.compileCode(List(code, mySerializableNotAnnotated), pluginFlags)
+    output should include("error")
+    output should include(expectedErrorType.name)
+  }
+
+  private def expectNoSerializabilityErrors(resourceName: String, pluginFlags: List[String]) = {
+    val code = getResourceAsString(resourceName)
+    SerializabilityCheckerCompiler.compileCode(List(code, mySerializableAnnotated), pluginFlags) should be("")
+    SerializabilityCheckerCompiler.compileCode(List(code, mySerializableNotAnnotated), pluginFlags) should be("")
   }
 
   "Serializability checker compiler plugin" should {
 
     "correctly detect and traverse to serialization marker trait" when {
       "given Behavior" in {
-        testCode(
+        expectSerializabilityErrors(
           "BehaviorTest.scala",
-          chosenDisableFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given EventEnvelope" in {
-        testCode(
+        expectSerializabilityErrors(
           "EventEnvelopeTest.scala",
-          ClassType.PersistentEvent,
-          chosenDisableFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          ClassKind.PersistentEvent,
+          pluginFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given Persistent State in ReplyEffect" in {
-        testCode(
+        expectSerializabilityErrors(
           "ReplyEffectTestState.scala",
-          ClassType.PersistentState,
-          chosenDisableFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          ClassKind.PersistentState,
+          pluginFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "give Persistent Event in ReplyEffect" in {
-        testCode(
+        expectSerializabilityErrors(
           "ReplyEffectTestEvent.scala",
-          ClassType.PersistentEvent,
-          chosenDisableFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          ClassKind.PersistentEvent,
+          pluginFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given Effect" in {
-        testCode(
+        expectSerializabilityErrors(
           "EffectTest.scala",
-          ClassType.PersistentEvent,
-          chosenDisableFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          ClassKind.PersistentEvent,
+          pluginFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given ask pattern" in {
-        testCode(
+        expectSerializabilityErrors(
           "AskTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given tell pattern" in {
-        testCode(
+        expectSerializabilityErrors(
           "TellTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableGenericMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableGenericMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given ask pattern with sign" in {
-        testCode(
+        expectSerializabilityErrors(
           "AskSignTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given tell pattern with sign" in {
-        testCode(
+        expectSerializabilityErrors(
           "TellSignTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableGenericMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableGenericMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given pipe pattern" in {
-        testCode(
+        expectSerializabilityErrors(
           "PipeTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
       "given classic tell pattern" in {
-        testCode(
+        expectSerializabilityErrors(
           "TellClassicTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
       }
 
       "given classic tell sing pattern" in {
-        testCode(
+        expectSerializabilityErrors(
           "TellSignClassicTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
       }
 
       "given classic ask pattern" in {
-        testCode(
+        expectSerializabilityErrors(
           "AskClassicTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
       }
 
       "given classic ask pattern with sign" in {
-        testCode(
+        expectSerializabilityErrors(
           "AskSignClassicTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableHigherOrderFunctions))
       }
 
       "given classic ask pattern with higher order function" in {
-        testCode(
+        expectSerializabilityErrors(
           "AskHigherOrderClassicTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableMethodsUntyped))
+          pluginFlags = List(disableGenerics, disableGenericMethods, disableMethods, disableMethodsUntyped))
       }
 
       "RecipientRef type is used instead of ActorRef to reference an Actor" in {
-        testCode(
+        expectSerializabilityErrors(
           "AskRecipientRefTest.scala",
-          chosenDisableFlags = List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+          pluginFlags = List(disableGenerics, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
       }
 
     }
 
-    "whitelist all Akka types from checks" in {
-      val akkaWhitelist = getResourceAsString("AkkaWhitelistTest.scala")
+    "exclude messages from checks" in {
+      expectNoSerializabilityErrors("AskTest.scala", pluginFlags = List(excludeMessages))
+    }
 
-      val out = SerializabilityCheckerCompiler.compileCode(List(serYesCode, akkaWhitelist))
-      out should have size 0
+    "exclude events and/or state from checks" in {
+
+      expectSerializabilityErrors(
+        "ReplyEffectTestEventAndState.scala",
+        expectedErrorType = ClassKind.PersistentState,
+        pluginFlags = List(excludePersistentEvents))
+
+      expectSerializabilityErrors(
+        "ReplyEffectTestEventAndState.scala",
+        expectedErrorType = ClassKind.PersistentEvent,
+        pluginFlags = List(excludePersistentStates))
+
+      expectNoSerializabilityErrors(
+        "ReplyEffectTestEventAndState.scala",
+        pluginFlags = List(excludePersistentEvents, excludePersistentStates))
+    }
+
+    "whitelist all Akka types from checks" in {
+      expectNoSerializabilityErrors("AkkaWhitelistTest.scala", pluginFlags = List())
     }
 
     "be able to detect serializer trait in generics" in {
-      testCode(
+      expectSerializabilityErrors(
         "GenericsTest.scala",
-        chosenDisableFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+        pluginFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
     }
 
     "detect lack of upper bounds in generics" in {
       val code = getResourceAsString("GenericsTest2.scala")
-      SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should include("error")
+      SerializabilityCheckerCompiler.compileCode(List(mySerializableNotAnnotated, code)) should include("error")
     }
 
     "ignore Any and Nothing" in {
-      testCode(
+      expectSerializabilityErrors(
         "AnyNothingTest.scala",
-        chosenDisableFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
+        pluginFlags = List(disableGenericMethods, disableMethods, disableMethodsUntyped, disableHigherOrderFunctions))
     }
 
     "respect Akka serializers" in {
       val code = getResourceAsString("AkkaSerializabilityTraitsTest.scala")
-      SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should be("")
+      SerializabilityCheckerCompiler.compileCode(List(mySerializableNotAnnotated, code)) should be("")
     }
 
     "recognize upper bound type for [_] wildcard usage as scala.Any for ._$<DIGIT> types" in {
       val code = getResourceAsString("GenericsTest3.scala")
-      SerializabilityCheckerCompiler.compileCode(List(serNoCode, code)) should be("")
+      SerializabilityCheckerCompiler.compileCode(List(mySerializableNotAnnotated, code)) should be("")
     }
 
     "fail on usage of Either as a message" in {

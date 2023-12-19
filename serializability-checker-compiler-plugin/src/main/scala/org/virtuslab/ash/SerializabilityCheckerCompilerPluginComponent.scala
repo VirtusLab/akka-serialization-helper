@@ -12,7 +12,7 @@ class SerializabilityCheckerCompilerPluginComponent(val pluginOptions: Serializa
   import global._
 
   // just to avoid using tuples where possible
-  private case class TypeWithClassType(typ: Type, classType: ClassType)
+  private case class TypeWithClassKind(typ: Type, classKind: ClassKind)
 
   override val phaseName: String = "serializability-checker"
   override val runsAfter: List[String] = List("refchecks")
@@ -45,74 +45,74 @@ class SerializabilityCheckerCompilerPluginComponent(val pluginOptions: Serializa
 
       private val ignoredTypePrefixes = List("akka.")
 
-      private val genericsToTypes: Map[String, Seq[ClassType]] = Map(
-        "akka.actor.typed.ActorSystem" -> Seq(ClassType.Message),
-        "akka.actor.typed.ActorRef" -> Seq(ClassType.Message),
-        "akka.actor.typed.Behavior" -> Seq(ClassType.Message),
-        "akka.actor.typed.RecipientRef" -> Seq(ClassType.Message),
-        "akka.pattern.PipeToSupport.PipeableFuture" -> Seq(ClassType.Message),
-        "akka.pattern.PipeToSupport.PipeableCompletionStage" -> Seq(ClassType.Message),
-        "akka.persistence.typed.scaladsl.ReplyEffect" -> Seq(ClassType.PersistentEvent, ClassType.PersistentState),
-        "akka.persistence.typed.scaladsl.Effect" -> Seq(ClassType.PersistentEvent),
-        "akka.persistence.typed.scaladsl.EffectBuilder" -> Seq(ClassType.PersistentEvent),
-        "akka.projection.eventsourced.EventEnvelope" -> Seq(ClassType.PersistentEvent, ClassType.PersistentState))
+      private val genericsToKinds: Map[String, Seq[ClassKind]] = Map(
+        "akka.actor.typed.ActorSystem" -> Seq(ClassKind.Message),
+        "akka.actor.typed.ActorRef" -> Seq(ClassKind.Message),
+        "akka.actor.typed.Behavior" -> Seq(ClassKind.Message),
+        "akka.actor.typed.RecipientRef" -> Seq(ClassKind.Message),
+        "akka.pattern.PipeToSupport.PipeableFuture" -> Seq(ClassKind.Message),
+        "akka.pattern.PipeToSupport.PipeableCompletionStage" -> Seq(ClassKind.Message),
+        "akka.persistence.typed.scaladsl.ReplyEffect" -> Seq(ClassKind.PersistentEvent, ClassKind.PersistentState),
+        "akka.persistence.typed.scaladsl.Effect" -> Seq(ClassKind.PersistentEvent),
+        "akka.persistence.typed.scaladsl.EffectBuilder" -> Seq(ClassKind.PersistentEvent),
+        "akka.projection.eventsourced.EventEnvelope" -> Seq(ClassKind.PersistentEvent, ClassKind.PersistentState))
 
-      private val genericMethodsToTypes: Map[String, Seq[ClassType]] = Map(
-        "akka.actor.typed.scaladsl.ActorContext.ask" -> Seq(ClassType.Message, ClassType.Message),
-        "akka.actor.typed.scaladsl.AskPattern.Askable.$qmark" -> Seq(ClassType.Message),
-        "akka.pattern.PipeToSupport.pipe" -> Seq(ClassType.Message),
-        "akka.pattern.PipeToSupport.pipeCompletionStage" -> Seq(ClassType.Message))
+      private val genericMethodsToKinds: Map[String, Seq[ClassKind]] = Map(
+        "akka.actor.typed.scaladsl.ActorContext.ask" -> Seq(ClassKind.Message, ClassKind.Message),
+        "akka.actor.typed.scaladsl.AskPattern.Askable.$qmark" -> Seq(ClassKind.Message),
+        "akka.pattern.PipeToSupport.pipe" -> Seq(ClassKind.Message),
+        "akka.pattern.PipeToSupport.pipeCompletionStage" -> Seq(ClassKind.Message))
 
-      private val concreteMethodsToTypes: Map[String, Seq[ClassType]] = Map(
-        "akka.actor.typed.ActorRef.ActorRefOps.$bang" -> Seq(ClassType.Message),
-        "akka.actor.typed.ActorRef.tell" -> Seq(ClassType.Message),
-        "akka.actor.typed.RecipientRef.tell" -> Seq(ClassType.Message))
+      private val concreteMethodsToKinds: Map[String, Seq[ClassKind]] = Map(
+        "akka.actor.typed.ActorRef.ActorRefOps.$bang" -> Seq(ClassKind.Message),
+        "akka.actor.typed.ActorRef.tell" -> Seq(ClassKind.Message),
+        "akka.actor.typed.RecipientRef.tell" -> Seq(ClassKind.Message))
 
-      private val concreteUntypedMethodsToTypes: Map[String, Seq[ClassType]] = Map(
-        "akka.actor.ActorRef.tell" -> Seq(ClassType.Message, ClassType.Ignore),
-        "akka.actor.ActorRef.$bang" -> Seq(ClassType.Message),
-        "akka.actor.ActorRef.forward" -> Seq(ClassType.Message),
-        "akka.pattern.AskSupport.ask" -> Seq(ClassType.Ignore, ClassType.Message, ClassType.Ignore),
-        "akka.pattern.AskSupport.askWithStatus" -> Seq(ClassType.Ignore, ClassType.Message, ClassType.Ignore),
-        "akka.pattern.AskableActorRef.ask" -> Seq(ClassType.Message),
-        "akka.pattern.AskableActorRef.askWithStatus" -> Seq(ClassType.Message),
-        "akka.pattern.AskableActorRef.$qmark" -> Seq(ClassType.Message),
-        "akka.pattern.AskableActorSelection.ask" -> Seq(ClassType.Message),
-        "akka.pattern.AskableActorSelection.$qmark" -> Seq(ClassType.Message),
-        "akka.pattern.ExplicitAskSupport.ask" -> Seq(ClassType.Ignore, ClassType.Message, ClassType.Ignore))
+      private val concreteUntypedMethodsToKinds: Map[String, Seq[ClassKind]] = Map(
+        "akka.actor.ActorRef.tell" -> Seq(ClassKind.Message, ClassKind.Ignore),
+        "akka.actor.ActorRef.$bang" -> Seq(ClassKind.Message),
+        "akka.actor.ActorRef.forward" -> Seq(ClassKind.Message),
+        "akka.pattern.AskSupport.ask" -> Seq(ClassKind.Ignore, ClassKind.Message, ClassKind.Ignore),
+        "akka.pattern.AskSupport.askWithStatus" -> Seq(ClassKind.Ignore, ClassKind.Message, ClassKind.Ignore),
+        "akka.pattern.AskableActorRef.ask" -> Seq(ClassKind.Message),
+        "akka.pattern.AskableActorRef.askWithStatus" -> Seq(ClassKind.Message),
+        "akka.pattern.AskableActorRef.$qmark" -> Seq(ClassKind.Message),
+        "akka.pattern.AskableActorSelection.ask" -> Seq(ClassKind.Message),
+        "akka.pattern.AskableActorSelection.$qmark" -> Seq(ClassKind.Message),
+        "akka.pattern.ExplicitAskSupport.ask" -> Seq(ClassKind.Ignore, ClassKind.Message, ClassKind.Ignore))
 
-      private val concreteHigherOrderFunctionsToTypes: Map[String, Seq[ClassType]] = Map(
-        "akka.pattern.ExplicitlyAskableActorRef.ask" -> Seq(ClassType.Message),
-        "akka.pattern.ExplicitlyAskableActorRef.$qmark" -> Seq(ClassType.Message),
-        "akka.pattern.ExplicitlyAskableActorSelection.ask" -> Seq(ClassType.Message),
-        "akka.pattern.ExplicitlyAskableActorSelection.$qmark" -> Seq(ClassType.Message))
+      private val concreteHigherOrderFunctionsToKinds: Map[String, Seq[ClassKind]] = Map(
+        "akka.pattern.ExplicitlyAskableActorRef.ask" -> Seq(ClassKind.Message),
+        "akka.pattern.ExplicitlyAskableActorRef.$qmark" -> Seq(ClassKind.Message),
+        "akka.pattern.ExplicitlyAskableActorSelection.ask" -> Seq(ClassKind.Message),
+        "akka.pattern.ExplicitlyAskableActorSelection.$qmark" -> Seq(ClassKind.Message))
 
-      private val combinedMap: Map[String, Seq[ClassType]] =
-        genericsToTypes ++ genericMethodsToTypes ++ concreteMethodsToTypes ++ concreteUntypedMethodsToTypes ++ concreteHigherOrderFunctionsToTypes
+      private val symbolsToKinds: Map[String, Seq[ClassKind]] =
+        genericsToKinds ++ genericMethodsToKinds ++ concreteMethodsToKinds ++ concreteUntypedMethodsToKinds ++ concreteHigherOrderFunctionsToKinds
 
       override def apply(unit: global.CompilationUnit): Unit = {
         val body = unit.body
         val reporter = CrossVersionReporter(global)
 
-        val genericsNames = genericsToTypes.keySet
-        val genericMethods = genericMethodsToTypes.keySet
-        val concreteMethods = concreteMethodsToTypes.keySet
-        val concreteUntypedMethods = concreteUntypedMethodsToTypes.keySet
-        val concreteHigherOrderFunctions = concreteHigherOrderFunctionsToTypes.keySet
+        val genericsNames = genericsToKinds.keySet
+        val genericMethods = genericMethodsToKinds.keySet
+        val concreteMethods = concreteMethodsToKinds.keySet
+        val concreteUntypedMethods = concreteUntypedMethodsToKinds.keySet
+        val concreteHigherOrderFunctions = concreteHigherOrderFunctionsToKinds.keySet
 
-        def extractTypes(args: List[Tree], x: Tree): List[(TypeWithClassType, Position)] =
+        def extractTypes(args: List[Tree], x: Tree): List[(TypeWithClassKind, Position)] =
           args
             .map(_.tpe)
-            .zip(combinedMap(x.symbol.fullName))
-            .map(typeClassTypeTuple => (TypeWithClassType(typeClassTypeTuple._1, typeClassTypeTuple._2), x.pos))
+            .zip(symbolsToKinds(x.symbol.fullName))
+            .map(typeClassTypeTuple => (TypeWithClassKind(typeClassTypeTuple._1, typeClassTypeTuple._2), x.pos))
 
-        val detectedTypes: Iterable[(TypeWithClassType, Position)] = body
+        val detectedTypes: Iterable[(TypeWithClassKind, Position)] = body
           .collect {
             case _: ApplyToImplicitArgs => Nil
             case x: TypeTree if genericsNames.contains(x.tpe.typeSymbol.fullName) && pluginOptions.detectFromGenerics =>
               x.tpe.typeArgs
-                .zip(combinedMap(x.tpe.typeSymbol.fullName))
-                .map(typeClassTypeTuple => (TypeWithClassType(typeClassTypeTuple._1, typeClassTypeTuple._2), x.pos))
+                .zip(genericsToKinds(x.tpe.typeSymbol.fullName))
+                .map(typeClassTypeTuple => (TypeWithClassKind(typeClassTypeTuple._1, typeClassTypeTuple._2), x.pos))
             case x @ TypeApply(_, args)
                 if genericMethods.contains(x.symbol.fullName) && pluginOptions.detectFromGenericMethods =>
               extractTypes(args, x)
@@ -127,13 +127,16 @@ class SerializabilityCheckerCompilerPluginComponent(val pluginOptions: Serializa
                   pluginOptions.detectFromHigherOrderFunctions =>
               extractTypes(args, x).flatMap { resultTuple =>
                 resultTuple._1.typ.typeArguments match {
-                  case List(_, out) => Some(resultTuple.copy(_1 = TypeWithClassType(out, resultTuple._1.classType)))
+                  case List(_, out) => Some(resultTuple.copy(_1 = TypeWithClassKind(out, resultTuple._1.classKind)))
                   case _            => None
                 }
               }
           }
           .flatten
-          .filterNot(_._1.classType == ClassType.Ignore)
+          .filter(_._1.classKind != ClassKind.Ignore)
+          .filter(pluginOptions.includeMessages || _._1.classKind != ClassKind.Message)
+          .filter(pluginOptions.includePersistentEvents || _._1.classKind != ClassKind.PersistentEvent)
+          .filter(pluginOptions.includePersistentStates || _._1.classKind != ClassKind.PersistentState)
           .groupBy(_._1.typ)
           .map(_._2.head)
 
@@ -167,8 +170,8 @@ class SerializabilityCheckerCompilerPluginComponent(val pluginOptions: Serializa
                 reporter.error(
                   detectedPosition,
                   s"""${typeWithClassType.typ
-                      .toString()} is used as Akka ${typeWithClassType.classType.name} but does not extend a trait annotated with $serializabilityTraitType.
-                     |Passing an object of a class that does NOT extend a trait annotated with $serializabilityTraitType as a ${typeWithClassType.classType.name}
+                      .toString()} is used as Akka ${typeWithClassType.classKind.name} but does not extend a trait annotated with $serializabilityTraitType.
+                     |Passing an object of a class that does NOT extend a trait annotated with $serializabilityTraitType as a ${typeWithClassType.classKind.name}
                      |may cause Akka to fall back to Java serialization during runtime.
                      |
                      |""".stripMargin)

@@ -22,11 +22,17 @@ class SerializabilityCheckerCompilerPlugin(override val global: Global) extends 
       return false
 
     pluginOptions.verbose = options.contains(verbose)
+
     pluginOptions.detectFromGenerics = !options.contains(disableGenerics)
     pluginOptions.detectFromGenericMethods = !options.contains(disableGenericMethods)
     pluginOptions.detectFromMethods = !options.contains(disableMethods)
     pluginOptions.detectFromUntypedMethods = !options.contains(disableMethodsUntyped)
     pluginOptions.detectFromHigherOrderFunctions = !options.contains(disableHigherOrderFunctions)
+
+    pluginOptions.includeMessages = !options.contains(excludeMessages)
+    pluginOptions.includePersistentEvents = !options.contains(excludePersistentEvents)
+    pluginOptions.includePersistentStates = !options.contains(excludePersistentStates)
+
     options.find(_.startsWith(typesExplicitlyMarkedAsSerializable)).foreach { opt =>
       pluginOptions.typesExplicitlyMarkedAsSerializable =
         opt.stripPrefix(typesExplicitlyMarkedAsSerializable).split(",").toSeq.map(_.strip())
@@ -41,6 +47,9 @@ class SerializabilityCheckerCompilerPlugin(override val global: Global) extends 
       |$disableMethods - disables detection of messages/events/state based on type of arguments to a method, e.g. akka.actor.typed.ActorRef.tell
       |$disableMethodsUntyped - disables detection of messages/events/state based on type of arguments to a method that takes Any, used for Akka Classic
       |$disableHigherOrderFunctions - disables detection of messages/events/state based on return type of the function given as argument to method
+      |$excludeMessages - exclude all messages from the serializability check
+      |$excludePersistentEvents - exclude all events from the serializability check
+      |$excludePersistentStates - exclude all states from the serializability check
       |$typesExplicitlyMarkedAsSerializable - comma-separated list of fully-qualified names of types that should be considered serializable by this checker, even if they do NOT extend a designated serializability trait
       |""".stripMargin)
 }
@@ -54,6 +63,9 @@ object SerializabilityCheckerCompilerPlugin {
     val disableMethods = "--disable-detection-methods"
     val disableMethodsUntyped = "--disable-detection-untyped-methods"
     val disableHigherOrderFunctions = "--disable-detection-higher-order-function"
+    val excludeMessages = "--exclude-messages"
+    val excludePersistentEvents = "--exclude-persistent-events"
+    val excludePersistentStates = "--exclude-persistent-states"
     val typesExplicitlyMarkedAsSerializable = "--types-explicitly-marked-as-serializable="
   }
   val serializabilityTraitType = "org.virtuslab.ash.annotation.SerializabilityTrait"
