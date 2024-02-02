@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Publishes new Release as new git tag (vX.Y.Z) is pushed to repository
-      - uses: release-drafter/release-drafter@v5
+      - uses: release-drafter/release-drafter@v6
         with:
           config-name: publish-release-config.yml
           publish: true
