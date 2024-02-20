@@ -13,7 +13,7 @@ object Dependencies {
   val circeVersion = "0.14.6"
   val circeGenericExtrasVersion = "0.14.3"
 
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.17"
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.18"
   val logger = "org.slf4j" % "slf4j-simple" % "1.7.36"
   val reflections = "net.oneandone.reflections8" % "reflections8" % "0.11.7"
   val betterFiles = "com.github.pathikrit" %% "better-files" % "3.9.2"
