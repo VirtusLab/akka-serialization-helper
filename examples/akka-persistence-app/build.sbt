@@ -63,7 +63,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-serialization-jackson" % akkaVersion,
   "com.lightbend.akka" %% "akka-persistence-jdbc" % akkaPersistenceJdbcVersion,
   "com.typesafe.akka" %% "akka-persistence-testkit" % akkaVersion % Test,
-  "org.postgresql" % "postgresql" % "42.7.2",
+  "org.postgresql" % "postgresql" % "42.7.3",
   // 4. Querying or projecting data from Akka Persistence
   "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion,
   "com.lightbend.akka" %% "akka-projection-eventsourced" % akkaProjectionVersion,
