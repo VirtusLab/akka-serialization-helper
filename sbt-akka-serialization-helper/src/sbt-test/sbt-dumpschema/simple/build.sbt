@@ -1,5 +1,5 @@
-lazy val scala213 = "2.13.6"
-lazy val scala212 = "2.12.14"
+lazy val scala213 = "2.13.14"
+lazy val scala212 = "2.12.18"
 
 name := "simple-dump"
 version := "0.1"
