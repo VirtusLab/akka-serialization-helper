@@ -31,4 +31,4 @@ lazy val ashDependencies =
 lazy val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.5.6"
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.7.8"
+ThisBuild / semanticdbVersion := "4.9.3"

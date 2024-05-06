@@ -76,4 +76,4 @@ libraryDependencies ++= Seq(
   AkkaSerializationHelperPlugin.circeAkkaSerializer)
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.7.8"
+ThisBuild / semanticdbVersion := "4.9.3"
