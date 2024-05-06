@@ -1,6 +1,5 @@
 package org.virtuslab.ash.circe
 
-import scala.annotation.nowarn
 import scala.reflect.runtime.{universe => ru}
 
 import akka.actor.ExtendedActorSystem
@@ -13,7 +12,7 @@ import org.virtuslab.ash.circe.data._
 
 class CustomSerializer(actorSystem: ExtendedActorSystem) extends CirceAkkaSerializer[CirceSerializabilityTrait](actorSystem) {
 
-  @nowarn implicit private val serializabilityCodec: Codec[CirceSerializabilityTrait] = genericCodec
+  implicit val serializabilityCodec: Codec[CirceSerializabilityTrait] = genericCodec
 
   override def identifier: Int = 42352
 

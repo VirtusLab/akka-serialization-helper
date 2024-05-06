@@ -87,7 +87,8 @@ lazy val assemblySettings = Seq(
     val art = (Compile / assembly / artifact).value
     art.withClassifier(None)
   },
-  assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar", // Warning: this is a default name for packageBin artefact. Without explicit rename of packageBin will result in race condition
+  // Warning: this is a default name for packageBin artefact. Without explicit rename of packageBin will result in race condition
+  assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar",
   addArtifact(Compile / assembly / artifact, assembly))
 
 publish / skip := true
