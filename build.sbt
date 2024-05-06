@@ -11,21 +11,7 @@ initialize ~= { _ =>
 
 lazy val targetScalaVersions = List(scalaVersion213, scalaVersion212)
 lazy val testAgainstScalaVersions =
-  targetScalaVersions ++ List(
-    "2.12.13",
-    "2.12.14",
-    "2.12.15",
-    "2.12.16",
-    "2.12.17",
-    "2.13.2",
-    "2.13.3",
-    "2.13.4",
-    "2.13.5",
-    "2.13.6",
-    "2.13.7",
-    "2.13.8",
-    "2.13.9",
-    "2.13.10")
+  targetScalaVersions ++ List("2.12.16", "2.12.17", "2.12.18")
 
 ThisBuild / scalaVersion := targetScalaVersions.head
 ThisBuild / organization := "org.virtuslab.ash"
@@ -43,7 +29,7 @@ sonatypeProfileName := "org.virtuslab"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.7.8"
+ThisBuild / semanticdbVersion := "4.9.3"
 
 ThisBuild / resolvers += Resolver.ApacheMavenSnapshotsRepo
 
@@ -87,7 +73,8 @@ lazy val assemblySettings = Seq(
     val art = (Compile / assembly / artifact).value
     art.withClassifier(None)
   },
-  assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar", // Warning: this is a default name for packageBin artefact. Without explicit rename of packageBin will result in race condition
+  // Warning: this is a default name for packageBin artefact. Without explicit rename of packageBin will result in race condition
+  assembly / assemblyJarName := s"${name.value}_${scalaBinaryVersion.value}-${version.value}.jar",
   addArtifact(Compile / assembly / artifact, assembly))
 
 publish / skip := true

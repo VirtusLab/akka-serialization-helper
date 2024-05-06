@@ -4,9 +4,9 @@ import org.virtuslab.ash.AkkaSerializationHelperPlugin
 
 name := "akka-cluster-app"
 version := "0.1"
-scalaVersion := "2.13.13"
+scalaVersion := "2.13.14"
 
-val circeVersion = "0.14.6"
+val circeVersion = "0.14.7"
 val akkaVersion = "2.6.20"
 
 lazy val `akka-cluster-app` = project
@@ -31,4 +31,4 @@ lazy val ashDependencies =
 lazy val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.5.6"
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.7.8"
+ThisBuild / semanticdbVersion := "4.9.3"

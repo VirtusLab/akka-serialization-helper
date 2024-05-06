@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  val scalaVersion213 = "2.13.13"
+  val scalaVersion213 = "2.13.14"
   val scalaVersion212 = "2.12.19"
 
   val akkaProjectionVersion = "1.2.5"
@@ -10,7 +10,7 @@ object Dependencies {
   val akkaVersion = "2.6.20"
   val borerVersion = "1.8.0"
   val circeYamlVersion = "1.15.0"
-  val circeVersion = "0.14.6"
+  val circeVersion = "0.14.7"
   val circeGenericExtrasVersion = "0.14.3"
 
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.18"

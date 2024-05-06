@@ -2,7 +2,7 @@ import org.virtuslab.ash.AkkaSerializationHelperPlugin
 
 name := "akka-persistence-app"
 
-scalaVersion := "2.13.13"
+scalaVersion := "2.13.14"
 
 Compile / scalacOptions ++= Seq(
   "-target:11",
@@ -28,7 +28,7 @@ val akkaHttp2SupportVersion = "10.2.10"
 val akkaManagementVersion = "1.1.4"
 val akkaPersistenceJdbcVersion = "5.1.0"
 val akkaProjectionVersion = "1.2.5"
-val circeVersion = "0.14.6"
+val circeVersion = "0.14.7"
 val scalikeJdbcVersion = "3.5.0"
 
 enablePlugins(AkkaGrpcPlugin, JavaAppPackaging, DockerPlugin, AkkaSerializationHelperPlugin)
@@ -76,4 +76,4 @@ libraryDependencies ++= Seq(
   AkkaSerializationHelperPlugin.circeAkkaSerializer)
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.7.8"
+ThisBuild / semanticdbVersion := "4.9.3"
