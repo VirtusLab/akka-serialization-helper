@@ -140,3 +140,5 @@ jobs:
       - run: git config core.sshCommand "ssh -i $HOME/.ssh/psh"
       - run: git push --force git@github.com:VirtusLab/pekko-serialization-helper.git HEAD:main
   # <PEKKO-REMOVE-END>
+
+###
