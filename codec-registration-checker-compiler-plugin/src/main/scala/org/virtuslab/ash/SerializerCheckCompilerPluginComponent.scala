@@ -180,8 +180,7 @@ class SerializerCheckCompilerPluginComponent(
               case other =>
                 reporter.error(
                   literal.pos,
-                  s"Annotation argument must have a type during compilation of [${classTag[
-                      A].runtimeClass.toString}]. Current type is [${other.getClass.toString}]")
+                  s"Annotation argument must have a type during compilation of [${classTag[A].runtimeClass.toString}]. Current type is [${other.getClass.toString}]")
                 None
             }
           case other =>
