@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   val scalaVersion213 = "2.13.14"
-  val scalaVersion212 = "2.12.19"
+  val scalaVersion212 = "2.12.20"
 
   val akkaProjectionVersion = "1.2.5"
   val akkaGrpcRuntimeVersion = "2.1.6"
