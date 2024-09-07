@@ -28,7 +28,7 @@ val akkaHttp2SupportVersion = "10.2.10"
 val akkaManagementVersion = "1.1.4"
 val akkaPersistenceJdbcVersion = "5.1.0"
 val akkaProjectionVersion = "1.2.5"
-val circeVersion = "0.14.9"
+val circeVersion = "0.14.10"
 val scalikeJdbcVersion = "3.5.0"
 
 enablePlugins(AkkaGrpcPlugin, JavaAppPackaging, DockerPlugin, AkkaSerializationHelperPlugin)
@@ -54,7 +54,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-discovery" % akkaVersion,
   // Common dependencies for logging and testing
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "ch.qos.logback" % "logback-classic" % "1.5.7",
+  "ch.qos.logback" % "logback-classic" % "1.5.8",
   "org.scalatest" %% "scalatest" % "3.2.12" % Test,
   // 2. Using gRPC and/or protobuf
   "com.typesafe.akka" %% "akka-http2-support" % akkaHttp2SupportVersion,

@@ -6,7 +6,7 @@ name := "akka-cluster-app"
 version := "0.1"
 scalaVersion := "2.13.14"
 
-val circeVersion = "0.14.9"
+val circeVersion = "0.14.10"
 val akkaVersion = "2.6.20"
 
 lazy val `akka-cluster-app` = project
@@ -28,7 +28,7 @@ lazy val circeDependency = "io.circe" %% "circe-core" % circeVersion
 lazy val ashDependencies =
   Seq(AkkaSerializationHelperPlugin.annotation, AkkaSerializationHelperPlugin.circeAkkaSerializer)
 
-lazy val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.5.7"
+lazy val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.5.8"
 
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := "4.9.3"
