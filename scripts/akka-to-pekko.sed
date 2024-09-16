@@ -30,5 +30,5 @@ s/(val pekkoHttpVersion) = .*/\1 = "1.0.1"/
 s/(val pekkoManagementVersion) = .*/\1 = "1.0.0"/
 s/(val pekkoPersistenceJdbcVersion) = .*/\1 = "1.0.0"/
 s/(val pekkoProjectionVersion) = .*/\1 = "1.0.0"/
-s/(val pekkoVersion) = .*/\1 = "1.1.0"/
+s/(val pekkoVersion) = .*/\1 = "1.1.1"/
 s/(val sbtNativePackagerVersion) = ".*"/\1 = "1.10.0"/
