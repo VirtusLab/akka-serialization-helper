@@ -54,7 +54,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-discovery" % akkaVersion,
   // Common dependencies for logging and testing
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "ch.qos.logback" % "logback-classic" % "1.5.8",
+  "ch.qos.logback" % "logback-classic" % "1.5.10",
   "org.scalatest" %% "scalatest" % "3.2.12" % Test,
   // 2. Using gRPC and/or protobuf
   "com.typesafe.akka" %% "akka-http2-support" % akkaHttp2SupportVersion,
