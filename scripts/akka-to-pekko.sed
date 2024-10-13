@@ -22,13 +22,13 @@ s/Akka/Pekko/g
 s/\<ash\>/psh/g
 s/\<ASH\>/ASH/g
 
-s/(val pekkoGrpcRuntimeVersion) = ".*"/\1 = "1.0.2"/
-s/(val pekkoGrpcSbtPluginVersion) = ".*"/\1 = "1.0.2"/
+s/(val pekkoGrpcRuntimeVersion) = ".*"/\1 = "1.1.0"/
+s/(val pekkoGrpcSbtPluginVersion) = ".*"/\1 = "1.1.0"/
 s/(val pekkoHttp2SupportVersion) = .*/\1 = "0.0.0+4272-045c925b-SNAPSHOT"/
 s/(val pekkoHttpCorsVersion) = .*/\1 = "1.1.0"/
 s/(val pekkoHttpVersion) = .*/\1 = "1.1.0"/
 s/(val pekkoManagementVersion) = .*/\1 = "1.0.0"/
 s/(val pekkoPersistenceJdbcVersion) = .*/\1 = "1.1.0"/
 s/(val pekkoProjectionVersion) = .*/\1 = "1.0.0"/
-s/(val pekkoVersion) = .*/\1 = "1.1.1"/
+s/(val pekkoVersion) = .*/\1 = "1.1.2"/
 s/(val sbtNativePackagerVersion) = ".*"/\1 = "1.10.0"/
