@@ -10,6 +10,24 @@ jobs:
     uses: ./.github/workflows/standard-workflow.yml
     secrets: inherit
 
+  publish-maven-artifacts:
+    needs: [run-scala-ci-release]
+    if: github.event.base_ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: coursier/cache-action@v6
+      - uses: coursier/setup-action@v1
+
+      - run: git fetch --tags
+      - name: Publish Maven artifacts
+        run: sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+
   publish-github-release:
     needs: [run-scala-ci-release]
     if: github.event.base_ref == 'refs/heads/main'
