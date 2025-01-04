@@ -24,7 +24,6 @@ ThisBuild / resolvers += Resolver.ApacheMavenSnapshotsRepo
 
 val akkaVersion = "2.6.20"
 val akkaHttpVersion = "10.2.10"
-val akkaHttp2SupportVersion = "10.2.10"
 val akkaManagementVersion = "1.1.4"
 val akkaPersistenceJdbcVersion = "5.1.0"
 val akkaProjectionVersion = "1.2.5"
@@ -56,8 +55,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "ch.qos.logback" % "logback-classic" % "1.5.15",
   "org.scalatest" %% "scalatest" % "3.2.12" % Test,
-  // 2. Using gRPC and/or protobuf
-  "com.typesafe.akka" %% "akka-http2-support" % akkaHttp2SupportVersion,
   // 3. Using Akka Persistence
   "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion,
   "com.typesafe.akka" %% "akka-serialization-jackson" % akkaVersion,
