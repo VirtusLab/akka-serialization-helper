@@ -4,7 +4,7 @@ import org.virtuslab.ash.AkkaSerializationHelperPlugin
 
 name := "akka-cluster-app"
 version := "0.1"
-scalaVersion := "2.13.15"
+scalaVersion := "2.13.16"
 
 val circeVersion = "0.14.10"
 val akkaVersion = "2.6.20"
