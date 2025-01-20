@@ -21,7 +21,7 @@ jobs:
           validate-markdown-links
 
       - uses: coursier/cache-action@v6
-      - uses: coursier/setup-action@v1
+      - uses: sbt/setup-sbt@v1
 
       - name: Check code style
         # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
