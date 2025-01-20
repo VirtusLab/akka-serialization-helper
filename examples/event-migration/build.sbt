@@ -25,5 +25,5 @@ libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % Test
 scalacOptions += "-Ymacro-annotations"
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.9.3"
+ThisBuild / semanticdbVersion := "4.12.6"
 scalacOptions += "-Ywarn-unused"
