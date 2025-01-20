@@ -29,7 +29,7 @@ sonatypeProfileName := "org.virtuslab"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.9.3"
+ThisBuild / semanticdbVersion := "4.12.6"
 
 ThisBuild / resolvers += Resolver.ApacheMavenSnapshotsRepo
 

@@ -21,7 +21,7 @@ jobs:
           validate-markdown-links
 
       - uses: coursier/cache-action@v6
-      - uses: coursier/setup-action@v1
+      - uses: sbt/setup-sbt@v1
 
       - name: Check code style
         # Curiously, scalafmtCheckAll doesn't cover *.sbt files, hence scalafmtSbtCheck is needed as well
@@ -48,17 +48,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
-      - uses: coursier/setup-action@v1
-
-      - name: Compile
-        run: sbt compile Test/compile
+      - uses: sbt/setup-sbt@v1
 
       - name: Run tests
         run: |
-          sbt "++ 2.12.16 test"
           sbt "++ 2.12.17 test"
           sbt "++ 2.12.18 test"
           sbt "++ 2.12.19 test"
+          sbt "++ 2.12.20 test"
 
   test-213:
     runs-on: ubuntu-latest
@@ -66,14 +63,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
-      - uses: coursier/setup-action@v1
-
-      - name: Compile
-        run: sbt compile Test/compile
+      - uses: sbt/setup-sbt@v1
 
       - name: Run tests
         run: |
           sbt "++ 2.13.14 test"
+          sbt "++ 2.13.15 test"
+          sbt "++ 2.13.16 test"
 
   test-sbt-plugin:
     runs-on: ubuntu-latest
@@ -81,7 +77,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
-      - uses: coursier/setup-action@v1
+      - uses: sbt/setup-sbt@v1
 
       - name: Test sbt plugin
         run: sbt scripted
@@ -92,7 +88,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: coursier/cache-action@v6
-      - uses: coursier/setup-action@v1
+      - uses: sbt/setup-sbt@v1
 
       - name: Substitute sbt plugin snapshot version
         run: ./scripts/substitute-sbt-plugin-snapshot-version

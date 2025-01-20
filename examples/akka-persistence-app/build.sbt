@@ -2,7 +2,7 @@ import org.virtuslab.ash.AkkaSerializationHelperPlugin
 
 name := "akka-persistence-app"
 
-scalaVersion := "2.13.15"
+scalaVersion := "2.13.16"
 
 Compile / scalacOptions ++= Seq(
   "-target:11",
@@ -53,14 +53,14 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-discovery" % akkaVersion,
   // Common dependencies for logging and testing
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "ch.qos.logback" % "logback-classic" % "1.5.15",
+  "ch.qos.logback" % "logback-classic" % "1.5.16",
   "org.scalatest" %% "scalatest" % "3.2.12" % Test,
   // 3. Using Akka Persistence
   "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion,
   "com.typesafe.akka" %% "akka-serialization-jackson" % akkaVersion,
   "com.lightbend.akka" %% "akka-persistence-jdbc" % akkaPersistenceJdbcVersion,
   "com.typesafe.akka" %% "akka-persistence-testkit" % akkaVersion % Test,
-  "org.postgresql" % "postgresql" % "42.7.4",
+  "org.postgresql" % "postgresql" % "42.7.5",
   // 4. Querying or projecting data from Akka Persistence
   "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion,
   "com.lightbend.akka" %% "akka-projection-eventsourced" % akkaProjectionVersion,
@@ -73,4 +73,4 @@ libraryDependencies ++= Seq(
   AkkaSerializationHelperPlugin.circeAkkaSerializer)
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.9.3"
+ThisBuild / semanticdbVersion := "4.12.6"

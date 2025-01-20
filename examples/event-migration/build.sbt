@@ -2,7 +2,7 @@ import sbt.Keys.{semanticdbEnabled, semanticdbVersion}
 
 name := "event-migration"
 version := "0.1"
-scalaVersion := "2.13.15"
+scalaVersion := "2.13.16"
 
 val circeVersion = "0.14.10"
 val circeGenericExtrasVersion = "0.14.4"
@@ -25,5 +25,5 @@ libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % Test
 scalacOptions += "-Ymacro-annotations"
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.9.3"
+ThisBuild / semanticdbVersion := "4.12.6"
 scalacOptions += "-Ywarn-unused"
