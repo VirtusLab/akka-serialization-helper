@@ -51,8 +51,8 @@ object ShoppingCart {
   /**
    * A command to add an item to the cart.
    *
-   * It replies with `StatusReply[Summary]`, which is sent back to the caller when all the events emitted by this
-   * command are successfully persisted.
+   * It replies with `StatusReply[Summary]`, which is sent back to the caller when all the events emitted by this command are
+   * successfully persisted.
    */
   final case class AddItem(itemId: String, quantity: Int, replyTo: ActorRef[StatusReply[Summary]]) extends Command
 
