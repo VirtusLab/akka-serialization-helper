@@ -27,7 +27,7 @@ val akkaHttpVersion = "10.2.10"
 val akkaManagementVersion = "1.1.4"
 val akkaPersistenceJdbcVersion = "5.1.0"
 val akkaProjectionVersion = "1.2.5"
-val circeVersion = "0.14.10"
+val circeVersion = "0.14.12"
 val scalikeJdbcVersion = "3.5.0"
 
 enablePlugins(AkkaGrpcPlugin, JavaAppPackaging, DockerPlugin, AkkaSerializationHelperPlugin)
