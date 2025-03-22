@@ -8,8 +8,7 @@ import org.virtuslab.ash.circe.Register
 import org.virtuslab.ash.circe.Registration
 
 @Serializer(classOf[CirceAkkaSerializable], Register.REGISTRATION_REGEX)
-class ExampleSerializer(actorSystem: ExtendedActorSystem)
-    extends CirceAkkaSerializer[CirceAkkaSerializable](actorSystem) {
+class ExampleSerializer(actorSystem: ExtendedActorSystem) extends CirceAkkaSerializer[CirceAkkaSerializable](actorSystem) {
   override def identifier: Int = 2137
 
   override lazy val codecs: Seq[Registration[_ <: CirceAkkaSerializable]] = Seq(

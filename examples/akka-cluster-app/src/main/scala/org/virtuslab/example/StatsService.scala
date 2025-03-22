@@ -68,10 +68,7 @@ object StatsAggregator {
       waiting(replyTo, words.size, Nil)
     }
 
-  private def waiting(
-      replyTo: ActorRef[StatsService.Response],
-      expectedResponses: Int,
-      results: List[Int]): Behavior[Event] =
+  private def waiting(replyTo: ActorRef[StatsService.Response], expectedResponses: Int, results: List[Int]): Behavior[Event] =
     Behaviors.receiveMessage {
       case CalculationComplete(length) =>
         val newResults = results :+ length
