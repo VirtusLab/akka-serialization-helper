@@ -1,5 +1,7 @@
 /<PEKKO-REMOVE-START>/,    /<PEKKO-REMOVE-END>/    d
 /<PEKKO-UNCOMMENT-START>/, /<PEKKO-UNCOMMENT-END>/ s/^#//
+/<PEKKO-UNCOMMENT-START>/, /<PEKKO-UNCOMMENT-END>/ s/^<!-- //
+/<PEKKO-UNCOMMENT-START>/, /<PEKKO-UNCOMMENT-END>/ s/ -->$//
 /<PEKKO-UNCOMMENT-START>|<PEKKO-UNCOMMENT-END>/    d
 
 # All cases where "akka" isn't simply replaced with "pekko"; imports must be replaced first
