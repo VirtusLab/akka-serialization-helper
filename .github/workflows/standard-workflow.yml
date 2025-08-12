@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Run simple checks
         run: |
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: coursier/cache-action@v6
       - uses: sbt/setup-sbt@v1
 
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: coursier/cache-action@v6
       - uses: sbt/setup-sbt@v1
 
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: coursier/cache-action@v6
       - uses: sbt/setup-sbt@v1
 
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: coursier/cache-action@v6
       - uses: sbt/setup-sbt@v1
 
@@ -111,7 +111,7 @@ jobs:
     needs: [code-style-check, test-212, test-213, test-sbt-plugin, run-examples]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # Fetch all history so that a push to pekko-serialization-helper succeeds.
           # See https://stackoverflow.com/q/76470864

@@ -15,7 +15,7 @@ jobs:
     if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: coursier/cache-action@v6
       - uses: sbt/setup-sbt@v1
 
