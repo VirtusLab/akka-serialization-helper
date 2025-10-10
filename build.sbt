@@ -29,7 +29,7 @@ sonatypeProfileName := "org.virtuslab"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := "4.12.6"
+ThisBuild / semanticdbVersion := "4.13.10"
 
 ThisBuild / resolvers += Resolver.ApacheMavenSnapshotsRepo
 
@@ -49,7 +49,8 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-unused",
     "-unchecked",
-    "-Xfatal-warnings"),
+    "-Xfatal-warnings",
+    "-Wconf:cat=unused-nowarn:s"),
   libraryDependencies ++= commonDeps)
 
 // As usage of https://github.com/pathikrit/better-files and https://github.com/spray/spray-json
