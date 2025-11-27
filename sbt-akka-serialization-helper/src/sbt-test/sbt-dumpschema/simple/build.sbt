@@ -1,4 +1,4 @@
-lazy val scala213 = "2.13.17"
+lazy val scala213 = "2.13.18"
 lazy val scala212 = "2.12.18"
 
 name := "simple-dump"
