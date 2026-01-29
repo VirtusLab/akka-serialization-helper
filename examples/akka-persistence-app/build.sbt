@@ -53,7 +53,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-discovery" % akkaVersion,
   // Common dependencies for logging and testing
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "ch.qos.logback" % "logback-classic" % "1.5.24",
+  "ch.qos.logback" % "logback-classic" % "1.5.26",
   "org.scalatest" %% "scalatest" % "3.2.12" % Test,
   // 3. Using Akka Persistence
   "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion,
