@@ -20,7 +20,7 @@ jobs:
           npm install --global remark-cli remark-lint-no-dead-urls remark-validate-links
           validate-markdown-links
 
-      - uses: coursier/cache-action@v7
+      - uses: coursier/cache-action@v8
       - uses: sbt/setup-sbt@v1
 
       - name: Check code style
@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: coursier/cache-action@v7
+      - uses: coursier/cache-action@v8
       - uses: sbt/setup-sbt@v1
 
       - name: Run tests
@@ -62,7 +62,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: coursier/cache-action@v7
+      - uses: coursier/cache-action@v8
       - uses: sbt/setup-sbt@v1
 
       - name: Run tests
@@ -76,7 +76,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: coursier/cache-action@v7
+      - uses: coursier/cache-action@v8
       - uses: sbt/setup-sbt@v1
 
       - name: Test sbt plugin
@@ -87,7 +87,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: coursier/cache-action@v7
+      - uses: coursier/cache-action@v8
       - uses: sbt/setup-sbt@v1
 
       - name: Substitute sbt plugin snapshot version
