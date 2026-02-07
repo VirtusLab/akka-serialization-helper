@@ -28,7 +28,7 @@ lazy val circeDependency = "io.circe" %% "circe-core" % circeVersion
 lazy val ashDependencies =
   Seq(AkkaSerializationHelperPlugin.annotation, AkkaSerializationHelperPlugin.circeAkkaSerializer)
 
-lazy val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.5.26"
+lazy val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.5.28"
 
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := "4.13.10"
