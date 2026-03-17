@@ -6,7 +6,7 @@ object Dependencies {
 
   val akkaProjectionVersion = "1.2.5"
   val akkaGrpcRuntimeVersion = "2.1.6"
-  val akkaHttpCorsVersion = "1.3.0"
+  val akkaHttpCorsVersion = "1.3.1"
   val akkaVersion = "2.6.20"
   val borerVersion = "1.8.0"
   val circeYamlVersion = "1.15.0"
