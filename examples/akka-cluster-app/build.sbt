@@ -6,7 +6,7 @@ name := "akka-cluster-app"
 version := "0.1"
 scalaVersion := "2.13.18"
 
-val circeVersion = "0.14.15"
+val circeVersion = "0.14.16"
 val akkaVersion = "2.6.20"
 
 lazy val `akka-cluster-app` = project
