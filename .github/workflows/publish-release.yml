@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: coursier/cache-action@v8
-      - uses: sbt/setup-sbt@v1.5.4
+      - uses: sbt/setup-sbt@v1.5.5
 
       - run: git fetch --tags
       - name: Publish Maven artifacts
