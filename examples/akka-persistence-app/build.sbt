@@ -2,7 +2,7 @@ import org.virtuslab.ash.AkkaSerializationHelperPlugin
 
 name := "akka-persistence-app"
 
-scalaVersion := "2.13.18"
+scalaVersion := "3.10.0"
 
 Compile / scalacOptions ++= Seq(
   "-target:11",
